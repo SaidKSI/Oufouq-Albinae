@@ -2,20 +2,20 @@
   <!-- Brand Logo Light -->
   <a href="index.php" class="logo logo-light">
     <span class="logo-lg">
-      <img src="assets/images/logo.png" alt="logo" />
+      <img src="{{ asset('assets/images/logo.png')}}" alt="logo" />
     </span>
     <span class="logo-sm">
-      <img src="assets/images/logo-sm.png" alt="small logo" />
+      <img src="{{ asset('assets/images/logo-sm.png')}}" alt="small logo" />
     </span>
   </a>
 
   <!-- Brand Logo Dark -->
   <a href="index.php" class="logo logo-dark">
     <span class="logo-lg">
-      <img src="assets/images/logo-dark.png" alt="dark logo" />
+      <img src="{{ asset('assets/images/logo-dark.png')}}" alt="dark logo" />
     </span>
     <span class="logo-sm">
-      <img src="assets/images/logo-sm.png" alt="small logo" />
+      <img src="{{ asset('assets/images/logo-sm.png')}}" alt="small logo" />
     </span>
   </a>
 
@@ -51,10 +51,10 @@
         <div class="collapse" id="sidebarTasks">
           <ul class="side-nav-second-level">
             <li>
-              <a href="{{route('dashboard.maintenance')}}">Bon de Livraison</a>
+              <a href="{{route('supplier.index')}}">Bon de Livraison</a>
             </li>
             <li>
-              <a href="{{route('dashboard.maintenance')}}">Les Achats</a>
+              <a href="{{route('purchase')}}">Les Achats</a>
             </li>
             <li>
               <a href="{{route('dashboard.maintenance')}}">Relegement</a>
@@ -75,7 +75,10 @@
         <div class="collapse" id="sidebarClients">
           <ul class="side-nav-second-level">
             <li>
-              <a href="{{route('dashboard.maintenance')}}">Projet</a>
+              <a href="{{route('client.index')}}">Client</a>
+            </li>
+            <li>
+              <a href="{{route('project.index')}}">Projet</a>
             </li>
             <li>
               <a href="{{route('dashboard.maintenance')}}">Les Charge de Projet</a>
@@ -102,7 +105,7 @@
         </a>
       </li>
       <li class="side-nav-item">
-        <a href="{{route('dashboard.maintenance')}}" class="side-nav-link">
+        <a href="{{route('order.index')}}" class="side-nav-link">
           <i class="bi bi-file-earmark-text-fill"></i>
           <span> Bon de Commande  </span>
         </a>

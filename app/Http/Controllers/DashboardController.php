@@ -16,7 +16,5 @@ class DashboardController extends Controller
         return view('maintenance');
     }
 
-    function login() {
-        return view('auth.login');
-    }
+    
 }

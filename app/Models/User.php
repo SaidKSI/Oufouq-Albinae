@@ -18,8 +18,13 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
+        'user_name',
         'email',
+        'phone',
+        'is_block',
+        'is_suspended',
         'password',
     ];
 
@@ -42,4 +47,21 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function session()
+    {
+        return $this->hasOne(UserSession::class);
+    }
+
+
+    // when user creating assign the username to the first litter of the first name and last name
+    //example john deo => j.deo
+    public static function boot()
+    {
+        parent::boot();
+        static::creating(function ($user) {
+            $user->user_name = substr($user->first_name, 0, 1) . '.' . $user->last_name;
+        });
+    }
+    
 }

@@ -1,5 +1,5 @@
 @extends('layouts.main')
-
+@section('title', 'Login')
 @section('main-content')
 
 <body class="authentication-bg position-relative">
@@ -25,7 +25,8 @@
                 <p class="text-muted mb-4">Enter your email address and password to access admin panel.</p>
               </div>
 
-              <form >
+              <form action="{{ route('submit.login') }}" method="POST">
+                @csrf
                 <div class="mb-3">
                   <label for="emailaddress" class="form-label">Email address</label>
                   <input class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" type="email" name="email"
@@ -60,7 +61,7 @@
                 </div>
 
                 <div class="mb-3 mb-0 text-center">
-                  <a class="btn btn-primary" type="submit" href="{{route('dashboard.index')}}"> Log In </a>
+                  <button class="btn btn-primary" type="submit" type="submit"> Log In </button>
                 </div>
 
               </form>

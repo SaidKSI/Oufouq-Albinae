@@ -7,20 +7,20 @@
 
         <a href="index.php" class="logo-light">
           <span class="logo-lg">
-            <img src="assets/images/logo.png" alt="logo">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="logo">
           </span>
           <span class="logo-sm">
-            <img src="assets/images/logo-sm.png" alt="small logo">
+            <img src="{{ asset('assets/images/logo-sm.png') }}" alt="small logo">
           </span>
         </a>
 
 
         <a href="index.php" class="logo-dark">
           <span class="logo-lg">
-            <img src="assets/images/logo-dark.png" alt="dark logo">
+            <img src="{{ asset('assets/images/logo-dark.png') }}" alt="dark logo">
           </span>
           <span class="logo-sm">
-            <img src="assets/images/logo-sm.png" alt="small logo">
+            <img src="{{ asset('assets/images/logo-sm.png') }}" alt="small logo">
           </span>
         </a>
       </div>
@@ -81,7 +81,7 @@
 
             <a href="javascript:void(0);" class="dropdown-item notify-item">
               <div class="d-flex">
-                <img class="d-flex me-2 rounded-circle" src="assets/images/users/avatar-2.jpg"
+                <img class="d-flex me-2 rounded-circle" src="{{ asset('assets/images/users/avatar-2.jpg') }}"
                   alt="Generic placeholder image" height="32">
                 <div class="w-100">
                   <h5 class="m-0 fs-14">Erwin Brown</h5>
@@ -93,7 +93,7 @@
 
             <a href="javascript:void(0);" class="dropdown-item notify-item">
               <div class="d-flex">
-                <img class="d-flex me-2 rounded-circle" src="assets/images/users/avatar-5.jpg"
+                <img class="d-flex me-2 rounded-circle" src="{{ asset('assets/images/users/avatar-5.jpg') }}"
                   alt="Generic placeholder image" height="32">
                 <div class="w-100">
                   <h5 class="m-0 fs-14">Jacob Deo</h5>
@@ -188,7 +188,7 @@
                 <div class="d-flex align-items-center">
                   <div class="flex-shrink-0">
                     <div class="notify-icon">
-                      <img src="assets/images/users/avatar-2.jpg" class="img-fluid rounded-circle" alt="" />
+                      <img src="{{ asset('assets/images/users/avatar-2.jpg') }}" class="img-fluid rounded-circle" alt="" />
                     </div>
                   </div>
                   <div class="flex-grow-1 text-truncate ms-2">
@@ -225,7 +225,7 @@
                 <div class="d-flex align-items-center">
                   <div class="flex-shrink-0">
                     <div class="notify-icon">
-                      <img src="assets/images/users/avatar-4.jpg" class="img-fluid rounded-circle" alt="" />
+                      <img src="{{ asset('assets/images/users/avatar-4.jpg') }}" class="img-fluid rounded-circle" alt="" />
                     </div>
                   </div>
                   <div class="flex-grow-1 text-truncate ms-2">
@@ -265,7 +265,7 @@
         <a class="nav-link dropdown-toggle arrow-none nav-user px-2" data-bs-toggle="dropdown" href="#" role="button"
           aria-haspopup="false" aria-expanded="false">
           <span class="account-user-avatar">
-            <img src="assets/images/users/avatar-1.jpg" alt="user-image" width="32" class="rounded-circle">
+            <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="user-image" width="32" class="rounded-circle">
           </span>
           <span class="d-lg-flex flex-column gap-1 d-none">
             <h5 class="my-0">Tosha Minner</h5>
