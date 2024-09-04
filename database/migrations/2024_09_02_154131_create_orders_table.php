@@ -19,9 +19,10 @@ return new class extends Migration
             $table->foreign('supplier_id')->references('id')->on('suppliers')->onDelete('cascade');
             $table->integer('Ref');
             $table->decimal('total_price', 10, 2)->default(0);
-            $table->decimal('paid_amount', 10, 2)->nullable();
+            $table->decimal('paid_amount', 10, 2)->default(0);
             $table->decimal('remaining', 10, 2)->nullable();
             $table->enum('status', ['pending', 'in_progress', 'completed'])->default('pending');
+            $table->enum('payment_status', ['paid', 'pending'])->default('pending');
             $table->text('description')->nullable();
             $table->date('due_date');
             $table->timestamps();

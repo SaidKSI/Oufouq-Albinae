@@ -36,10 +36,21 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
     public function updateTotalPrice()
     {
         $this->total_price = $this->items()->sum('total_price');
         $this->save();
+    }
+
+    function updateRemaining()
+    {
+        $this->remaining = $this->total_price - $this->paid_amount;
+        $this->save();
+
     }
 
     // Method to add an item and update the total price

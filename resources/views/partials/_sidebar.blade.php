@@ -54,6 +54,9 @@
               <a href="{{route('supplier.index')}}">Bon de Livraison</a>
             </li>
             <li>
+              <a href="{{route('product.index')}}">Product</a>
+            </li>
+            <li>
               <a href="{{route('purchase')}}">Les Achats</a>
             </li>
             <li>

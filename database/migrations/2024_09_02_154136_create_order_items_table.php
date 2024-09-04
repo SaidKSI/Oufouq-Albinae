@@ -14,12 +14,13 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('order_id');
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
-            $table->string('name');
-            $table->string('unit');
+            $table->unsignedBigInteger('product_id');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');            
             $table->decimal('price_unit', 10, 2);
             $table->integer('quantity');
             $table->decimal('total_price', 10, 2);
             $table->enum('status', ['pending', 'delivered'])->default('pending');
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

@@ -79,9 +79,9 @@
                     style="height: 100px" name="description"></textarea>
                   <label for="floatingTextarea">Description</label>
                 </div>
-                <div class="modal-footer">
-                  <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
               </div>
             </form>
           </div>
@@ -89,9 +89,8 @@
       </div>
     </div>
 
-
     <div class="card-body p-2">
-      <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
+      <table id="basic-datatable" class="table table-striped dt-responsive">
         <thead>
           <tr>
             <th>Name</th>
@@ -100,9 +99,9 @@
             <th>Email</th>
             <th>City</th>
             <th>Description</th>
-            <th>address</th>
+            <th>Address</th>
             <th>Rating</th>
-            <th>Date</th>
+            {{-- <th>Date</th> --}}
             <th>Action</th>
           </tr>
         </thead>
@@ -127,7 +126,7 @@
                       <h5 class="modal-title" id="supplierModalLabel{{$supplier->id}}">{{$supplier->full_name}}</h5>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body text-wrap">
                       {{$supplier->description}}
 
                       <ul class="social-list list-inline mt-3 mb-0">
@@ -164,15 +163,9 @@
                 </div>
               </div>
             </td>
-            <td>
-              {{$supplier->address}}
-            </td>
-            <td>
-              {{$supplier->rating}}
-            </td>
-            <td>
-              {{$supplier->created_at}}
-            </td>
+            <td>{{$supplier->address}}</td>
+            <td>{{$supplier->rating}}</td>
+            {{-- <td>{{$supplier->created_at}}</td> --}}
             <td>
               <a href="#" class="text-danger" onclick="confirmDelete({{$supplier->id}})"><i
                   class="ri-delete-bin-2-fill"></i></a>
@@ -255,34 +248,30 @@
                             style="height: 100px" name="description">{{$supplier->description}}</textarea>
                           <label for="floatingTextarea">Description</label>
                         </div>
-                        <div class="modal-footer">
-                          <button type="submit" class="btn btn-primary">Submit</button>
-                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
                       </div>
                     </form>
                   </div>
                 </div>
               </div>
-
             </td>
           </tr>
           @endforeach
         </tbody>
       </table>
-
-
     </div>
   </div>
 </div>
-
 @endsection
 
 @push('scripts')
 <script>
   function confirmDelete(id) {
-      if (confirm('Are you sure you want to delete this supplier?')) {
-          document.getElementById('delete-form-' + id).submit();
-      }
+    if (confirm('Are you sure you want to delete this supplier?')) {
+        document.getElementById('delete-form-' + id).submit();
+    }
   }
 </script>
 <script>
@@ -304,7 +293,6 @@
     });
 
     // Handle form submission (you can customize this part to send data to your server)
-    
   });
 </script>
 @endpush

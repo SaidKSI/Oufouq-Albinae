@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
@@ -48,8 +50,21 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
     Route::put('/order/{id}', [OrderController::class, 'update'])->name('order.update');
     Route::delete('/order/{id}', [OrderController::class, 'destroy'])->name('order.destroy');
+    Route::get('/order/{id}', [OrderController::class, 'edit'])->name('order.edit');
+    Route::get('/order/show/{id}', [OrderController::class, 'show'])->name('order.show');
+    //  ?  Products
+    Route::get('/products', [ProductController::class, 'index'])->name('product.index');
+    Route::get('/get-products', [ProductController::class, 'getProducts'])->name('products.index');
+    Route::get('/search-products', [ProductController::class, 'search'])->name('products.search');
+    Route::post('/products/store', [ProductController::class, 'productStore'])->name('product.store');
+    Route::put('/products/{id}', [ProductController::class, 'productUpdate'])->name('product.update');
+    Route::delete('/products/{id}', [ProductController::class, 'productDestroy'])->name('product.destroy');
+    // ? Payment Routes
+    Route::post('/payments', [PaymentController::class, 'store'])->name('payment.store');
     
     Route::get('/purchase', [SupplierController::class, 'purchase'])->name('purchase');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::get('/maintenance', [DashboardController::class, 'maintenance'])->name('dashboard.maintenance');
+
+    
 });
