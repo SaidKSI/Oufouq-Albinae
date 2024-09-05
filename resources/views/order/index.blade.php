@@ -50,12 +50,6 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="due_date" class="form-label">Due Date</label>
-                                    <input type="date" class="form-control" id="due_date" name="due_date">
-                                </div>
-
-
-                                <div class="mb-3">
                                     <label class="form-label">Order Items</label>
                                     <table class="table table-bordered" id="orderItemsTable">
                                         <thead>
@@ -94,11 +88,10 @@
                         <th>N°</th>
                         <th>Supplier</th>
                         <th>Project Name</th>
-                        <th>Items</th>
+                        <th>Produc</th>
                         <th>Total Price</th>
                         <th>Paid Amount</th>
                         <th>Remaining</th>
-                        <th>Due time</th>
                         <th>Order Date</th>
                         <th>Status</th>
                         <th>Action</th>
@@ -107,9 +100,9 @@
                 <tbody>
                     @foreach ($orders as $order)
                     <tr>
-                        <td><a href="{{route('order.show',['id'=>$order->id])}}" >{{$order->Ref}}</a></td>
+                        <td><a href="{{route('order.show',['id'=>$order->id])}}">{{$order->Ref}}</a></td>
                         <td>{{$order->supplier->full_name}}</td>
-                        <td>{{$order->project->name}}</td>
+                        <td><a href="{{route('project.show',['id'=>$order->project_id])}}">{{$order->project->name}} </a> </td>
                         <td>
                             <i class="ri-file-list-3-line" data-bs-toggle="modal"
                                 data-bs-target="#OrderDetails{{$order->id}}" style="cursor: pointer;"></i>
@@ -150,7 +143,7 @@
                                                             <span class="badge bg-warning text-dark">Pending</span>
                                                             @break
                                                             @case('delivered')
-                                                            <span class="badge bg-success text-dark">Pending</span>
+                                                            <span class="badge bg-success text-dark">Delivered</span>
                                                             @break
                                                             @endswitch
                                                         </td>
@@ -173,9 +166,6 @@
                             {{$order->remaining}}
                         </td>
                         <td>
-                            {{$order->due_date}}
-                        </td>
-                        <td>
                             {{$order->created_at}}
                         </td>
                         <td>
@@ -183,8 +173,9 @@
                             @case('pending')
                             <span class="badge bg-warning text-dark">Pending</span>
                             @break
-                            @case('delviered')
-                            <span class="badge bg-success text-dark">Delviered</span>
+                            @case('completed')
+                            <span class="badge bg-success text-dark">Delviered </span><small>at
+                                {{$order->due_date}}</small>
                             @break
                             @endswitch
                         </td>
@@ -259,6 +250,46 @@
                                                 <button type="submit" class="btn btn-primary">Submit Payment</button>
                                             </div>
                                         </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Link that triggers the modal -->
+                            <a href="javascript:void(0);" class="text-success" data-bs-toggle="modal"
+                                data-bs-target="#orderStatusModal">
+                                <i class="ri-checkbox-circle-fill"></i>
+                            </a>
+
+                            <!-- Modal Structure -->
+                            <div class="modal fade" id="orderStatusModal" tabindex="-1"
+                                aria-labelledby="orderStatusModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="orderStatusModalLabel">Change Order Status</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{{ route('order.changeStatus',['id'=>$order->id]) }}"
+                                                method="POST" enctype="multipart/form-data">
+                                                @csrf
+                                                <div class="mb-3">
+                                                    <label for="orderStatus" class="form-label">Order Status</label>
+                                                    <select class="form-select" id="orderStatus" name="status">
+                                                        <option selected>Select status</option>
+                                                        <option value="Pending">Pending</option>
+                                                        <option value="in_progress">in Progress</option>
+                                                        <option value="completed">completed</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="document" class="form-label">Document</label>
+                                                    <input type="file" id="document" name="document"
+                                                        class="form-control">
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

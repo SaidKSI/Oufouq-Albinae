@@ -75,7 +75,7 @@
             </div>
         </div>
         <div class="card-body p-2">
-            <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
+            <table id="basic-datatable" class="table table-striped w-100">
                 <thead>
                     <tr>
                         <th>Project Name</th>
@@ -94,7 +94,7 @@
                 <tbody>
                     @foreach ($projects as $project)
                     <tr>
-                        <td><a href="#" class="text-dark">{{$project->name}}</a></td>
+                        <td><a href="{{route('project.show',['id'=>$project->id])}}">{{$project->name}}</a></td>
                         <td><a href="#" class="text-dark">{{$project->client->name}}</a></td>
                         <td>{{$project->ref}}</td>
                         <td>{{$project->city}}</td>
@@ -137,7 +137,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td>{{$project->created_at}}</td>
+                        <td>{{$project->created_at->format('d-m-Y')}}</td>
                         <td>
                             @switch($project->status)
                             @case('pending')

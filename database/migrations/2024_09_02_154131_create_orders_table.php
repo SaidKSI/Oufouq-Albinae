@@ -24,7 +24,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'in_progress', 'completed'])->default('pending');
             $table->enum('payment_status', ['paid', 'pending'])->default('pending');
             $table->text('description')->nullable();
-            $table->date('due_date');
+            $table->date('due_date')->nullable();
             $table->timestamps();
         });
     }

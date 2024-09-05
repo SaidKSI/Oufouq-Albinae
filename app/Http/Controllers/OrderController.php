@@ -27,7 +27,6 @@ class OrderController extends Controller
         $validator = Validator::make($request->all(), [
             'project_id' => 'required|exists:projects,id',
             'supplier_id' => 'required|exists:suppliers,id',
-            'due_date' => 'required|date',
             'description' => 'nullable|string',
             'order_items' => 'required|array',
             'order_items.*.product_id' => 'nullable|exists:products,id',
@@ -49,7 +48,6 @@ class OrderController extends Controller
             'Ref' => $ref,
             'status' => 'pending',
             'description' => $request->description,
-            'due_date' => $request->due_date,
         ]);
 
         foreach ($request->order_items as $item) {
@@ -74,7 +72,6 @@ class OrderController extends Controller
         $validator = Validator::make($request->all(), [
             'project_id' => 'required|exists:projects,id',
             'supplier_id' => 'required|exists:suppliers,id',
-            'due_date' => 'required|date',
             'description' => 'nullable|string',
             'order_items' => 'required|array',
             'order_items.*.id' => 'nullable|exists:order_items,id',
@@ -96,7 +93,6 @@ class OrderController extends Controller
             'project_id' => $request->project_id,
             'supplier_id' => $request->supplier_id,
             'description' => $request->description,
-            'due_date' => $request->due_date,
         ]);
 
         // Compare the order items and the updated order items
@@ -153,7 +149,49 @@ class OrderController extends Controller
     function show($id)
     {
         $order = Order::findOrFail($id);
-        return view('order.show',['order'=>$order]);
+        return view('order.show', ['order' => $order]);
+    }
+
+    function changeStatus(Request $request, $id)
+    {
+        
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|string|in:pending,processing,completed',  
+            'document' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpeg,png,jpg,gif|max:2048',
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $errorMessage = implode('<br>', $errors);
+            toastr()->error($errorMessage);
+            return back()->withErrors($validator->errors())->withInput();
+        }
+        
+        $order = Order::findOrFail($id);
+        //check if the order remaining amount is greater than 0
+        if ($order->remaining > 0) {
+            // toastr()->error('order not fully paid yet.');
+            return back()->with('error', 'order not fully paid yet.');
+        }
+        $order->status = $request->status;
+        $order->due_date = today()->format('Y-m-d');
+        $order->save();
+        // change all order item status to delivered
+
+        foreach ($order->items as $item) {
+            $item->status = 'delivered';
+            $item->save();
+        }
+        if ($request->hasFile('document')) {
+            $file = $request->file('document');
+            $extension = $file->getClientOriginalExtension();
+            $fileName =  'N°'.$order->Ref . '.' . $extension;
+            $path = $file->storeAs('order-documents', $fileName, 'public');
+            $order->documents()->create([
+                'path' => $path,
+            ]);
+        }
+
+        return redirect()->route('order.index')->with('success', 'Order status changed successfully.');
     }
 
 }

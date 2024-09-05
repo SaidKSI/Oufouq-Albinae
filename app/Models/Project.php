@@ -24,6 +24,10 @@ class Project extends Model
     {
         return $this->belongsTo(Client::class);
     }
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
     protected static function boot()
     {
         parent::boot();

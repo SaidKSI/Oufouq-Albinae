@@ -25,7 +25,10 @@ class Order extends Model
     {
         return $this->belongsTo(Supplier::class);
     }
-
+    public function documents()
+    {
+        return $this->morphMany('App\Models\Document', 'documentable');
+    }
     public function project()
     {
         return $this->belongsTo(Project::class);

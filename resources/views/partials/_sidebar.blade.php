@@ -96,6 +96,12 @@
         </div>
       </li>
       <li class="side-nav-item">
+        <a href="{{route('stock')}}" class="side-nav-link">
+          <i class="bi bi-boxes"></i>
+          <span> Stock  </span>
+        </a>
+      </li>
+      <li class="side-nav-item">
         <a href="{{route('dashboard.maintenance')}}" class="side-nav-link">
           <i class="bi bi-file-earmark-text-fill"></i>
           <span> Devis </span>
@@ -126,7 +132,10 @@
               <a href="{{route('dashboard.maintenance')}}">Fixe</a>
             </li>
             <li>
-              <a href="{{route('dashboard.maintenance')}}">Variables</a>
+              <a href="{{route('expenses.variable')}}">Variables</a>
+            </li>
+            <li>
+              <a href="{{route('expenses.transportation')}}">Transportation</a>
             </li>
           </ul>
         </div>
@@ -140,6 +149,9 @@
         </a>
         <div class="collapse" id="sidebarPersonnels">
           <ul class="side-nav-second-level">
+            <li>
+              <a href="{{route('employee.index')}}">Employees</a>
+            </li>
             <li>
               <a href="{{route('dashboard.maintenance')}}">Information</a>
             </li>

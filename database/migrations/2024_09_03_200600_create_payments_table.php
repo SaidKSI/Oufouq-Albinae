@@ -11,6 +11,7 @@ class CreatePaymentsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('order_id');
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->string('payment_id');
             $table->decimal('paid_price', 10, 2);
             $table->decimal('remaining', 10, 2);
             $table->string('payment_method');

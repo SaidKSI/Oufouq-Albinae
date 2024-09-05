@@ -30,11 +30,6 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="due_date" class="form-label">Due Date</label>
-                        <input type="date" class="form-control" id="due_date" name="due_date"
-                            value="{{ $order->due_date }}">
-                    </div>
-                    <div class="mb-3">
                         <label class="form-label">Order Items</label>
                         <table class="table table-bordered" id="orderItemsTable{{$order->id}}">
                             <thead>

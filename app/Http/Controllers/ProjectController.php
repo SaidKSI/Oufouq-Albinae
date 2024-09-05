@@ -64,7 +64,7 @@ class ProjectController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'nullable|date',
             'description' => 'required|string',
-            'progress_percentage'=>'required|integer'
+            'progress_percentage' => 'required|integer'
         ]);
 
         if ($validator->fails()) {
@@ -94,5 +94,11 @@ class ProjectController extends Controller
         $project = Project::find($id);
         $project->delete();
         return redirect()->back()->with('success', 'Project deleted successfully.');
+    }
+
+    function show($id)
+    {
+        $project = Project::find($id);
+        return view('project.show', ['project' => $project]);
     }
 }

@@ -111,9 +111,7 @@
                                 @method('DELETE')
                             </form>
                             <a href="#" class="text-danger" onclick="confirmDelete({{$product->id}})"><i
-                                class="ri-delete-bin-2-fill"></i></a>
-            
-
+                                    class="ri-delete-bin-2-fill"></i></a>
                         </td>
                     </tr>
                     @endforeach
