@@ -18,10 +18,8 @@ return new class extends Migration
             $table->string('city');
             $table->string('cine');
             $table->string('address');
-            $table->string('type');
-            $table->decimal('wage', 10, 2);
             $table->foreignId('profession_id')->constrained('professions')->onDelete('cascade');
-            $table->string('cnss');
+            $table->boolean('cnss');
             $table->decimal('wage_per_hr', 10, 2);
             $table->timestamps();
         });

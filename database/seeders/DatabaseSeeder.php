@@ -29,6 +29,8 @@ class DatabaseSeeder extends Seeder
             SupplierSeeder::class,
             ProjectSeeder::class, 
             ProductSeeder::class,
+            ProfessionSeeder::class,
+            EmployerSeeder::class,
         ]);
     }
 }

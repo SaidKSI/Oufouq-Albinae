@@ -98,7 +98,7 @@
       <li class="side-nav-item">
         <a href="{{route('stock')}}" class="side-nav-link">
           <i class="bi bi-boxes"></i>
-          <span> Stock  </span>
+          <span> Stock </span>
         </a>
       </li>
       <li class="side-nav-item">
@@ -116,7 +116,7 @@
       <li class="side-nav-item">
         <a href="{{route('order.index')}}" class="side-nav-link">
           <i class="bi bi-file-earmark-text-fill"></i>
-          <span> Bon de Commande  </span>
+          <span> Bon de Commande </span>
         </a>
       </li>
       <li class="side-nav-item">
@@ -141,29 +141,74 @@
         </div>
       </li>
       <li class="side-nav-item">
-        <a data-bs-toggle="collapse" href="#sidebarPersonnels" aria-expanded="false" aria-controls="sidebarPersonnels"
-          class="side-nav-link">
-          <i class="bi bi-person-badge"></i>
-          <span> Personnels </span>
+        <a
+          data-bs-toggle="collapse"
+          href="#sidebarMultiLevel"
+          aria-expanded="false"
+          aria-controls="sidebarMultiLevel"
+          class="side-nav-link"
+        >
+        <i class="bi bi-person-badge"></i>
+          <span> Personnel </span>
           <span class="menu-arrow"></span>
         </a>
-        <div class="collapse" id="sidebarPersonnels">
+        <div class="collapse" id="sidebarMultiLevel">
           <ul class="side-nav-second-level">
-            <li>
-              <a href="{{route('employee.index')}}">Employees</a>
+            <li class="side-nav-item">
+              <a
+                data-bs-toggle="collapse"
+                href="#personnel"
+                aria-expanded="false"
+                aria-controls="personnel"
+              >
+             
+              <span><i class="ri-map-pin-user-fill"></i> Employee </span>
+                <span class="menu-arrow"></span>
+              </a>
+              <div class="collapse" id="personnel">
+                <ul class="side-nav-third-level">
+                  <li>
+                    <a href="{{route('employee.index')}}">Employees</a>
+                  </li>
+                  <li>
+                    <a href="{{route('dashboard.maintenance')}}">Information</a>
+                  </li>
+                  <li>
+                    <a href="{{route('dashboard.maintenance')}}">Absense</a>
+                  </li>
+                  <li>
+                    <a href="{{route('dashboard.maintenance')}}">Regelement</a>
+                  </li>
+      
+                  <li>
+                    <a href="{{route('profession')}}">Employees Profession</a>
+                  </li>
+                </ul>
+              </div>
             </li>
-            <li>
-              <a href="{{route('dashboard.maintenance')}}">Information</a>
-            </li>
-            <li>
-              <a href="{{route('dashboard.maintenance')}}">Absense</a>
-            </li>
-            <li>
-              <a href="{{route('dashboard.maintenance')}}">Regelement</a>
+            <li class="side-nav-item">
+              <a
+                data-bs-toggle="collapse"
+                href="#shift"
+                aria-expanded="false"
+                aria-controls="shift"
+              >
+             
+              <span><i class="ri-time-fill"></i> Shift </span>
+                <span class="menu-arrow"></span>
+              </a>
+              <div class="collapse" id="shift">
+                <ul class="side-nav-third-level">
+                  <li>
+                    <a href="{{route('shift.index')}}">Shifts</a>
+                  </li>
+                </ul>
+              </div>
             </li>
           </ul>
         </div>
       </li>
+
       <li class="side-nav-item">
         <a data-bs-toggle="collapse" href="#sidebarDeveloper" aria-expanded="false" aria-controls="sidebarDeveloper"
           class="side-nav-link">

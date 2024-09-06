@@ -9,6 +9,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
@@ -83,4 +84,18 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     // ? Employee
     Route::get('/employee', [EmployerController::class, 'index'])->name('employee.index');
     Route::post('/employee/store', [EmployerController::class, 'store'])->name('employee.store');
+    Route::put('/employee/{id}', [EmployerController::class, 'update'])->name('employee.update');
+    Route::delete('/employee/{id}', [EmployerController::class, 'destroy'])->name('employee.destroy');
+    // Profession
+    Route::get('/profession', [EmployerController::class, 'profession'])->name('profession');
+    Route::post('/profession/store', [EmployerController::class, 'storeProfession'])->name('profession.store');
+    Route::put('/profession/{id}', [EmployerController::class, 'updateProfession'])->name('profession.update');
+    Route::delete('/profession/{id}', [EmployerController::class, 'deleteProfession'])->name('profession.destroy');
+    // ? Shift
+    Route::get('/shift', [ShiftController::class, 'index'])->name('shift.index');
+    Route::get('/shift/generate', [ShiftController::class, 'index'])->name('shift.generate');
+    Route::post('/shifts/generate-weekly', [ShiftController::class, 'generateWeeklyShifts'])->name('shifts.generateWeekly');
+    // Assign employees to shift
+    Route::post('/shifts/assign-users', [ShiftController::class, 'assignUsers'])->name('shifts.assignUsers');
+ 
 });

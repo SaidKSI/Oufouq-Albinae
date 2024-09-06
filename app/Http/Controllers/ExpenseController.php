@@ -22,6 +22,7 @@ class ExpenseController extends Controller
         $products = Product::whereHas('orderItems', function ($query) {
             $query->where('status', 'delivered');
         })->get();
+    
         return view('expense.transportation', [
             'projects' => $projects,
             'products' => $products,

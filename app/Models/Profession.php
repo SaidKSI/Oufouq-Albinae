@@ -10,7 +10,7 @@ class Profession extends Model
     use HasFactory;
     protected $fillable = ['name'];
 
-    public function employers()
+    public function employees()
     {
         return $this->hasMany(Employer::class);
     }
