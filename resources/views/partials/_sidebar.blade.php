@@ -202,6 +202,9 @@
                   <li>
                     <a href="{{route('shift.index')}}">Shifts</a>
                   </li>
+                  <li>
+                    <a href="{{route('shift.attendance')}}">Attendance</a>
+                  </li>
                 </ul>
               </div>
             </li>

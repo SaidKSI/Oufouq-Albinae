@@ -67,7 +67,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::post('/products/store', [ProductController::class, 'productStore'])->name('product.store');
     Route::put('/products/{id}', [ProductController::class, 'productUpdate'])->name('product.update');
     Route::delete('/products/{id}', [ProductController::class, 'productDestroy'])->name('product.destroy');
-    
+
     // ? Payment Routes
     Route::post('/payments', [PaymentController::class, 'store'])->name('payment.store');
     // ? Stock
@@ -96,6 +96,12 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::get('/shift/generate', [ShiftController::class, 'index'])->name('shift.generate');
     Route::post('/shifts/generate-weekly', [ShiftController::class, 'generateWeeklyShifts'])->name('shifts.generateWeekly');
     // Assign employees to shift
-    Route::post('/shifts/assign-users', [ShiftController::class, 'assignUsers'])->name('shifts.assignUsers');
- 
+    Route::post('/shifts/assign-users', [ShiftController::class, 'assignUsers'])->name('shift.assignUsers');
+    // Get employees for a shift
+    Route::get('/shifts/{shift}/employees', [ShiftController::class, 'getEmployees'])->name('shifts.getEmployees');
+    // Attendance
+    Route::get('/shift/attendance', [ShiftController::class, 'attendance'])->name('shift.attendance');
+    // Mark attendance
+    Route::post('/shift/mark-attendance', [ShiftController::class, 'markAttendance'])->name('shift.mark-attendance');
+
 });
