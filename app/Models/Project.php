@@ -28,6 +28,15 @@ class Project extends Model
     {
         return $this->hasMany(Order::class);
     }
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class);
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
     protected static function boot()
     {
         parent::boot();

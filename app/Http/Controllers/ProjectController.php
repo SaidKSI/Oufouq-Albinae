@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Expense;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ProjectController extends Controller
@@ -99,6 +101,20 @@ class ProjectController extends Controller
     function show($id)
     {
         $project = Project::find($id);
-        return view('project.show', ['project' => $project]);
+        $expenses = Expense::select(
+            'ref',
+            DB::raw('MAX(id) as id'),
+            DB::raw('MAX(name) as name'),
+            DB::raw('MAX(total_amount) as total_amount'),
+            DB::raw('MAX(type) as type'),
+            DB::raw('MAX(amount) as amount'),
+            DB::raw('MAX(description) as description'),
+            DB::raw('MAX(start_date) as start_date'),
+            DB::raw('MAX(repeat_interval) as repeat_interval')
+        )
+            ->groupBy('ref')
+            ->where('project_id', $id)
+            ->get();
+        return view('project.show', ['project' => $project, 'expenses' => $expenses]);
     }
 }

@@ -10,15 +10,23 @@ class Payment extends Model
     use HasFactory;
     protected $fillable = [
         'order_id',
-        'payment_id',
+        'employee_id',
         'paid_price',
+        'payment_id',
         'remaining',
         'payment_method',
+        'date',
+        'type'
     ];
 
     public function order()
     {
         return $this->belongsTo(Order::class);
+    }
+    
+    public function employee()
+    {
+        return $this->belongsTo(Employer::class);
     }
     public function documents()
     {

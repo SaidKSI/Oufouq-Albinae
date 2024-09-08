@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
 use App\Models\Employer;
+use App\Models\Payment;
 use App\Models\Profession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -13,7 +15,7 @@ class EmployerController extends Controller
     {
         $professions = Profession::all();
         $employers = Employer::all();
-        return view('employer.index', ['professions' => $professions,'employers' => $employers]);
+        return view('employer.index', ['professions' => $professions, 'employers' => $employers]);
     }
 
     function store(Request $request)
@@ -104,4 +106,6 @@ class EmployerController extends Controller
         $profession->delete();
         return redirect()->back()->with('success', 'Profession deleted successfully');
     }
+
+   
 }

@@ -72,7 +72,7 @@
             </div>
         </div>
         <div class="card-body p-2">
-            <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
+            <table id="basic-datatable" class="table table-striped dt-responsive w-100">
                 <thead>
                     <tr>
                         <th>Name</th>

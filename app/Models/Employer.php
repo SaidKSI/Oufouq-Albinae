@@ -25,4 +25,23 @@ class Employer extends Model
     {
         return $this->belongsTo(Profession::class);
     }
+
+    public function employerShifts()
+    {
+        return $this->hasMany(EmployerShift::class);
+    }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+    public function tasks()
+    {
+        return $this->belongsToMany(Task::class, 'employee_task');
+    }
 }

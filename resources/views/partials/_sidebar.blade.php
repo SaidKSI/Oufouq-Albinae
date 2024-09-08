@@ -128,11 +128,9 @@
         </a>
         <div class="collapse" id="sidebarCharges">
           <ul class="side-nav-second-level">
+          
             <li>
-              <a href="{{route('dashboard.maintenance')}}">Fixe</a>
-            </li>
-            <li>
-              <a href="{{route('expenses.variable')}}">Variables</a>
+              <a href="{{route('expenses.index')}}">Les Charges</a>
             </li>
             <li>
               <a href="{{route('expenses.transportation')}}">Transportation</a>
@@ -171,7 +169,7 @@
                     <a href="{{route('employee.index')}}">Employees</a>
                   </li>
                   <li>
-                    <a href="{{route('dashboard.maintenance')}}">Information</a>
+                    <a href="{{route('employee.payment')}}">Payment</a>
                   </li>
                   <li>
                     <a href="{{route('dashboard.maintenance')}}">Absense</a>
@@ -205,6 +203,9 @@
                   <li>
                     <a href="{{route('shift.attendance')}}">Attendance</a>
                   </li>
+                  <li>
+                    <a href="{{route('shift.overview')}}">OverView</a>
+                  </li>
                 </ul>
               </div>
             </li>
@@ -225,7 +226,7 @@
               <a href="{{route('dashboard.maintenance')}}">Les point a regles</a>
             </li>
             <li>
-              <a href="{{route('dashboard.maintenance')}}">Les Taches</a>
+              <a href="{{route('task.index')}}">Les Taches</a>
             </li>
           </ul>
         </div>

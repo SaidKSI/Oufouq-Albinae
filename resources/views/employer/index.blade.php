@@ -84,7 +84,8 @@
                         <th>Address</th>
                         <th>Profession</th>
                         <th>CNSS</th>
-                        <th>Wage Per Hour</th>
+                        <th>Wage Per Hr</th>
+                        <th>Worked Hrs</th>
                         <th>Join At</th>
                         <th>Action</th>
                     </tr>
@@ -105,10 +106,14 @@
                             <i class="bi bi-x text-danger fs-3"></i>
                             @endif
                         </td>
+                       
+                        <td>{{ $employer->wage_per_hr }}</td>
+                        <td>
+                            {{$employer->attendances->sum('hours_worked')}}
+                        </td>
                         <td>
                             {{$employer->created_at->format('d/m/Y')}}
                         </td>
-                        <td>{{ $employer->wage_per_hr }}</td>
                         <td class="nowrap">
                          
                             <a href="#" class="text-danger" onclick="confirmDelete({{$employer->id}})"><i
@@ -196,6 +201,8 @@
                                     </div>
                                 </div>
                             </div>
+
+                            
                         </td>
                     </tr>
                     @endforeach

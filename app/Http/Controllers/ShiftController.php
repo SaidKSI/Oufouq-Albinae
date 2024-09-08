@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
 use App\Models\Employer;
 use App\Models\EmployerShift;
 use App\Models\Shift;
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class ShiftController extends Controller
@@ -86,24 +89,151 @@ class ShiftController extends Controller
 
     public function attendance()
     {
-        $currentDate = Carbon::now();
-        $currentShift = Shift::where('date_begin', '<=', $currentDate)
-            ->where('date_end', '>=', $currentDate)
+        $startDate = Carbon::now()->startOfWeek(); // Start of the current week (Monday)
+        $endDate = $startDate->copy()->endOfWeek(); // End of the current week (Sunday)
+
+        $currentShift = Shift::where('date_begin', '<=', $startDate->toDateString())
+            ->where('date_end', '>=', $endDate->toDateString())
             ->first();
+
         $shifts = Shift::all();
         $workers = Employer::all();
-            if ($currentShift) {
-                $employees = $currentShift->employerShifts->map(function ($employerShift) {
-                    return $employerShift->employer;
-                });
-            } else {
-                $employees = collect(); // Empty collection if no current shift
-            }
-        
-        return view('shift.attendance', compact('currentShift', 'employees','shifts','workers'));
+        if ($currentShift) {
+            $employees = $currentShift->employerShifts->map(function ($employerShift) {
+                return $employerShift->employer;
+            });
+        } else {
+            $employees = collect(); // Empty collection if no current shift
+        }
+        if (!$currentShift) {
+            return view('shift.attendance', compact('currentShift', 'employees', 'shifts', 'workers'));
+        }
+        $attendances = Attendance::where('shift_id', $currentShift->id)
+            ->whereBetween('date', [$currentShift->date_begin, $currentShift->date_end])
+            ->get()
+            ->keyBy(function ($item) {
+                return $item->employer_id . '-' . $item->date;
+            });
+
+        return view('shift.attendance', compact('currentShift', 'employees', 'shifts', 'workers', 'attendances'));
     }
 
-    function markAttendance(Request $request) {
-        dd($request->all());
+
+    public function markAttendance(Request $request)
+    {
+        // Log the request data
+        // Debugbar::info($request->all());
+
+        // Validate the request data
+        $request->validate([
+            'date' => 'required|date',
+            'attendance' => 'required|array',
+            'attendance.*.employer_id' => 'required|exists:employers,id',
+            'attendance.*.hours' => 'required|numeric|min:0',
+        ]);
+
+        // Find the shift for the given date
+        $shift = Shift::where('date_begin', '<=', $request->date)
+            ->where('date_end', '>=', $request->date)
+            ->first();
+
+        if (!$shift) {
+            return response()->json(['success' => false, 'message' => 'Shift not found for the given date'], 404);
+        }
+
+        // Iterate over the attendance data and update or create attendance records
+        foreach ($request->attendance as $attendanceData) {
+            // Debugbar::info($attendanceData['employer_id']);
+            Attendance::updateOrCreate(
+                [
+                    'shift_id' => $shift->id,
+                    'employer_id' => $attendanceData['employer_id'],
+                    'date' => $attendanceData['date'],
+                ],
+                [
+                    'is_present' => $attendanceData['hours'] > 0,
+                    'hours_worked' => $attendanceData['hours'],
+
+                ]
+            );
+        }
+
+        return response()->json(['success' => true, 'message' => 'Attendance marked successfully']);
+    }
+
+    function show()
+    {
+        $startDate = Carbon::now()->startOfWeek(); // Start of the current week (Monday)
+        $endDate = $startDate->copy()->endOfWeek(); // End of the current week (Sunday)
+
+        $currentShift = Shift::where('date_begin', '<=', $startDate->toDateString())
+            ->where('date_end', '>=', $endDate->toDateString())
+            ->first();
+
+        $shifts = Shift::all();
+        $workers = Employer::all();
+        if ($currentShift) {
+            $employees = $currentShift->employerShifts->map(function ($employerShift) {
+                return $employerShift->employer;
+            });
+        } else {
+            $employees = collect(); // Empty collection if no current shift
+        }
+        if (!$currentShift) {
+            return view('shift.attendance', compact('currentShift', 'employees', 'shifts', 'workers'));
+        }
+        $attendances = Attendance::where('shift_id', $currentShift->id)
+            ->whereBetween('date', [$currentShift->date_begin, $currentShift->date_end])
+            ->get()
+            ->keyBy(function ($item) {
+                return $item->employer_id . '-' . $item->date;
+            });
+        return view('shift.overview', ['currentShift' => $currentShift, 'employees' => $employees, 'attendances' => $attendances]);
+    }
+
+    public function previousWeek(Request $request)
+    {
+        $startDate = Carbon::parse($request->query('start_date'))->subWeek();
+        return $this->showShiftsForWeek($startDate);
+    }
+
+    public function nextWeek(Request $request)
+    {
+        $startDate = Carbon::parse($request->query('start_date'))->addWeek();
+        return $this->showShiftsForWeek($startDate);
+    }
+
+    private function showShiftsForWeek($startDate)
+    {
+        $endDate = $startDate->copy()->endOfWeek();
+        $currentShift = Shift::where('date_begin', '<=', $startDate->toDateString())
+            ->where('date_end', '>=', $endDate->toDateString())
+            ->first();
+
+        $shifts = Shift::all();
+        $workers = Employer::all();
+        if ($currentShift) {
+            $employees = $currentShift->employerShifts->map(function ($employerShift) {
+                return $employerShift->employer;
+            });
+        } else {
+            $employees = collect(); // Empty collection if no current shift
+        }
+        if (!$currentShift) {
+            return view('shift.attendance', compact('currentShift', 'employees', 'shifts', 'workers'));
+        }
+        $attendances = Attendance::where('shift_id', $currentShift->id)
+            ->whereBetween('date', [$currentShift->date_begin, $currentShift->date_end])
+            ->get()
+            ->keyBy(function ($item) {
+                return $item->employer_id . '-' . $item->date;
+            });
+
+        return view('shift.overview', [
+            'currentShift' => $currentShift,
+            'employees' => $employees,
+            'attendances' => $attendances,
+            'startDate' => $startDate->toDateString(),
+        ]);
     }
 }

@@ -9,13 +9,17 @@ class CreatePaymentsTable extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('order_id');
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->foreignId('employee_id')->nullable()->constrained('employers')->onDelete('cascade');
+            $table->foreignId('order_id')->nullable()->constrained('orders')->onDelete('cascade');
             $table->string('payment_id');
             $table->decimal('paid_price', 10, 2);
             $table->decimal('remaining', 10, 2);
             $table->string('payment_method');
+            $table->date('date');
             $table->timestamps();
+            $table->enum('type', ['order', 'employer']);
+            // Add a unique constraint to ensure either employee_id or order_id must exist
+            $table->unique(['employee_id', 'order_id'], 'unique_employee_order');
         });
     }
 
