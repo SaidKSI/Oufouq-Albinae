@@ -43,8 +43,8 @@
                                 </div>
                                 <div class="form-check">
                                     <div class="form-check form-switch">
-                                        <input type="checkbox" class="form-check-input" id="cnss">
-                                        <label class="form-check-label" for="cnss" name="cnss">CNSS</label>
+                                        <input type="checkbox" class="form-check-input" id="cnss" name="cnss">
+                                        <label class="form-check-label" for="cnss">CNSS</label>
                                     </div>
                                 </div>
 
@@ -106,7 +106,7 @@
                             <i class="bi bi-x text-danger fs-3"></i>
                             @endif
                         </td>
-                       
+
                         <td>{{ $employer->wage_per_hr }}</td>
                         <td>
                             {{$employer->attendances->sum('hours_worked')}}
@@ -115,18 +115,18 @@
                             {{$employer->created_at->format('d/m/Y')}}
                         </td>
                         <td class="nowrap">
-                         
+
                             <a href="#" class="text-danger" onclick="confirmDelete({{$employer->id}})"><i
-                                class="ri-delete-bin-2-fill"></i></a>
-              
+                                    class="ri-delete-bin-2-fill"></i></a>
+
                             <form id="delete-form-{{$employer->id}}"
                                 action="{{ route('employee.destroy', $employer->id) }}" method="POST"
                                 style="display: none;">
                                 @csrf
                                 @method('DELETE')
                             </form>
-                            <a href="#" class="text-primary"data-bs-toggle="modal"
-                            data-bs-target="#editEmployerModal{{ $employer->id }}"><i class="ri-edit-fill"></i></a>
+                            <a href="#" class="text-primary" data-bs-toggle="modal"
+                                data-bs-target="#editEmployerModal{{ $employer->id }}"><i class="ri-edit-fill"></i></a>
 
                             <!-- Modal for editing an employer -->
                             <div class="modal fade
@@ -173,19 +173,22 @@
                                                         required>
                                                         <option disabled selected>Select a Profession</option>
                                                         @foreach($professions as $profession)
-                                                        <option value="{{ $profession->id }}" {{$employer->profession_id == $profession->id ? 'selected' : ''}} >{{ $profession->name }}
+                                                        <option value="{{ $profession->id }}" {{$employer->profession_id
+                                                            == $profession->id ? 'selected' : ''}} >{{ $profession->name
+                                                            }}
                                                         </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                                 <div class="mb-3">
-                                                <div class="form-check">
-                                                    <div class="form-check form-switch">
-                                                        <input type="checkbox" class="form-check-input" id="cnss" {{$employer->cnss ? 'checked' : ''}}>
-                                                        <label class="form-check-label" for="cnss" name="cnss" >CNSS</label>
+                                                    <div class="form-check">
+                                                        <div class="form-check form-switch">
+                                                            <input type="checkbox" class="form-check-input" id="cnss"
+                                                                {{$employer->cnss ? 'checked' : ''}} name="cnss">
+                                                            <label class="form-check-label" for="cnss">CNSS</label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
                                                 <div class="mb-3">
                                                     <label for="wage_per_hr" class="form-label
                                                         ">Wage per Hour</label>
@@ -202,7 +205,7 @@
                                 </div>
                             </div>
 
-                            
+
                         </td>
                     </tr>
                     @endforeach

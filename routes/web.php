@@ -51,6 +51,8 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::put('/project/{id}', [ProjectController::class, 'update'])->name('project.update');
     Route::delete('/project/{id}', [ProjectController::class, 'destroy'])->name('project.destroy');
     Route::get('/project/{id}', [ProjectController::class, 'show'])->name('project.show');
+    // project estimate invoice
+    Route::get('/projects/{id}/invoice', [ProjectController::class, 'estimateInvoice'])->name('projects.invoice');
     // ? Order Routes
     Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
     Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');

@@ -14,36 +14,28 @@ use Illuminate\Support\Facades\Validator;
 
 class ShiftController extends Controller
 {
-    function index()
+    public function index()
     {
-        $shifts = Shift::all();
+        $shifts = Shift::whereYear('date_begin', Carbon::now()->year)->get();
         $employers = Employer::all();
         return view('shift.index', ['shifts' => $shifts, 'employers' => $employers]);
     }
-    public function generateWeeklyShifts(Request $request)
+    public function generateWeeklyShifts()
     {
-        $startDate = Carbon::now()->startOfWeek(); // Start of the current week (Monday)
-        $endDate = $startDate->copy()->endOfWeek(); // End of the current week (Sunday)
-        $currentMonth = $startDate->format('Y-m');
+        $startDate = Carbon::now()->startOfYear()->startOfWeek(); // Start of the first week of the current year (Monday)
+        $endDate = $startDate->copy()->endOfWeek(); // End of the first week of the current year (Sunday)
+        $currentYear = $startDate->year;
 
-        // Check if shifts for the current month already exist
-        $existingShifts = Shift::whereYear('date_begin', $startDate->year)
-            ->whereMonth('date_begin', $startDate->month)
-            ->count();
+        // Check if shifts for the current year already exist
+        $existingShifts = Shift::whereYear('date_begin', $currentYear)->count();
 
-        if ($existingShifts >= 4) {
-            // generate 4 weekly shifts for the next month
-            $startDate->addMonth();
-            $endDate->addMonth();
-
+        if ($existingShifts > 0) {
+            return redirect()->back()->with('error', 'Shifts for the current year have already been generated.');
         }
-        $shiftCount = Shift::count();
-        if ($shiftCount >= 8) {
-            return redirect()->back()->with('error', 'You have already generated shifts for the next 2 month.');
-        }
-        for ($i = 0; $i < 4; $i++) {
+
+        while ($startDate->year == $currentYear) {
             Shift::create([
-                'name' => date('F', strtotime($startDate)) . '-Shift-' . ($i + 1),
+                'name' => $startDate->format('F') . '-Shift-' . $startDate->weekOfYear,
                 'date_begin' => $startDate->toDateString(),
                 'date_end' => $endDate->toDateString(),
             ]);
@@ -53,7 +45,7 @@ class ShiftController extends Controller
             $endDate->addWeek();
         }
 
-        return redirect()->back()->with('success', 'Next 4 weekly shifts generated successfully.');
+        return redirect()->back()->with('success', 'Weekly shifts for the current year generated successfully.');
     }
     public function assignUsers(Request $request)
     {

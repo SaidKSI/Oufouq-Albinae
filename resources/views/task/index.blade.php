@@ -91,7 +91,7 @@
                                 data-bs-title="{{ $task->description }}"></i>
                         </td>
                         <td>
-                            <a href="{{route('project.show',['id'=>$project->id])}}">{{ $task->project->name }}</a>
+                            <a href="{{route('project.show',['id'=>$task->project_id])}}">{{ $task->project->name }}</a>
 
                         </td>
                         <td>
@@ -197,7 +197,8 @@
                                                 <div class="form-group">
                                                     <label for="description">Progress</label>
                                                     <input type="text" id="range_02" data-plugin="range-slider"
-                                                        data-min="0" data-max="100" name="progress" data-from="{{$task->description}}" />
+                                                        data-min="0" data-max="100" name="progress"
+                                                        data-from="{{$task->description}}" />
                                                 </div>
                                             </div>
                                             <div class="modal-footer">

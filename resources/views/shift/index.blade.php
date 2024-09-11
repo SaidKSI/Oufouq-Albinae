@@ -94,11 +94,15 @@
             </div>
         </div>
         <div class="card-body p-2">
-            <table class="table table-bordered">
+            @php
+            $currentMonthName = \Carbon\Carbon::now()->format('F');
+            @endphp
+
+            <table class="table text-black table-bordered">
                 <thead>
                     <tr>
                         <th>Month</th>
-                        <th>Name</th>
+                        <th>Shift Name</th>
                         <th>Start Date</th>
                         <th>End Date</th>
                     </tr>
@@ -123,15 +127,14 @@
                     $currentMonth = $month;
                     $shiftCount = 1;
                     @endphp
-                    <tr>
+                    <tr class="{{ $currentMonth == $currentMonthName ? 'bg-success' : '' }}">
                         <td rowspan="4">{{ $currentMonth }}</td>
                         <td>{{ $shift->name }}</td>
                         <td>{{ $shift->date_begin }}</td>
                         <td>{{ $shift->date_end }}</td>
-
                     </tr>
                     @else
-                    <tr>
+                    <tr class="{{ $currentMonth == $currentMonthName ? 'bg-success' : '' }}">
                         @if ($shiftCount <= 4) <td>{{ $shift->name }}</td>
                             <td>{{ $shift->date_begin }}</td>
                             <td>{{ $shift->date_end }}</td>

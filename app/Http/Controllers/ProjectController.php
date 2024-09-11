@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Employer;
 use App\Models\Expense;
 use App\Models\Project;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -115,6 +117,40 @@ class ProjectController extends Controller
             ->groupBy('ref')
             ->where('project_id', $id)
             ->get();
-        return view('project.show', ['project' => $project, 'expenses' => $expenses]);
+        $projects = Project::all();
+        $employers = Employer::all();
+        $supplier = Supplier::all();
+        return view('project.show', ['project' => $project, 'expenses' => $expenses,'projects' => $projects,'employers' => $employers,'suppliers' => $supplier]);
+    }
+
+    public function estimateInvoice($id)
+    {
+        $project = Project::find($id);
+
+        // Get all orders related to the project
+        $orders = $project->orders;
+
+        // Get all expenses related to the project
+        $expenses = $project->expenses;
+
+        // Calculate total hours lost by employees
+        $tasks = $project->tasks;
+        $totalHoursLost = 0;
+        foreach ($tasks as $task) {
+            $totalHoursLost += $task->duration;
+        }
+
+        // Calculate total cost
+        $totalOrderCost = $orders->sum('total_price');
+        $totalExpenseCost = $expenses->sum('total_amount');
+        $totalCost = $totalOrderCost + $totalExpenseCost;
+
+        return view('project.invoice', [
+            'project' => $project,
+            'orders' => $orders,
+            'expenses' => $expenses,
+            'totalHoursLost' => $totalHoursLost,
+            'totalCost' => $totalCost
+        ]);
     }
 }

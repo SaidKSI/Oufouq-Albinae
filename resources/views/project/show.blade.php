@@ -6,8 +6,172 @@
     <div class="col-xl-5 col-lg-5">
         <div class="card text-center">
             <div class="card-body">
-                <h4 class="mb-1 mt-2">Project N°:{{$project->ref}}</h4>
+                <div>
+                    <i class="ri-add-box-fill btn btn-outline-primary mx-1" data-bs-toggle="modal"
+                        data-bs-target="#add"></i>
 
+                    <!-- Add Modal -->
+                    <div class="modal fade" id="add" tabindex="-1" aria-labelledby="addLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addLabel">Add Item</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group mb-3">
+                                        <label for="addType">Select Type</label>
+                                        <select class="form-select" id="addType" onchange="showForm()">
+                                            <option selected disabled>Select what to add</option>
+                                            <option value="task">Task</option>
+                                            <option value="expense">Expense</option>
+                                            <option value="order">Order</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Add Task Form -->
+                                    <form id="addTaskForm" action="{{ route('task.store') }}" method="POST"
+                                        style="display: none;">
+                                        @csrf
+                                        <input type="hidden" name="project_id" value="{{ $project->id }}">
+                                        <div class="form-group mb-2">
+                                            <label for="employer_id">Select Employees</label>
+                                            <select name="employer_ids[]" id="employer_id"
+                                                class="select2 form-control select2-multiple" data-toggle="select2"
+                                                multiple="multiple" data-placeholder="Choose ...">
+                                                @foreach ($employers as $employer)
+                                                <option value="{{ $employer->id }}">{{ $employer->full_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="name">Task Name</label>
+                                            <input type="text" class="form-control" id="name" name="name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="date">Date</label>
+                                            <input type="date" class="form-control" id="date" name="date" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="duration">Duration (hours)</label>
+                                            <input type="number" class="form-control" id="duration" name="duration"
+                                                required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="priority">Priority</label>
+                                            <input type="number" class="form-control" id="priority" name="priority"
+                                                required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="description">Description</label>
+                                            <textarea class="form-control" id="description"
+                                                name="description"></textarea>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+
+                                    <!-- Add Expense Form -->
+                                    <form id="addExpenseForm" action="{{ route('expense.store') }}" method="POST"
+                                        style="display: none;">
+                                        @csrf
+                                        <input type="hidden" name="project_id" value="{{ $project->id }}">
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">Name</label>
+                                            <input type="text" class="form-control" id="name" name="name" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="start_date" class="form-label">Start Date</label>
+                                            <input type="date" class="form-control" id="start_date" name="start_date"
+                                                required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="expense-type" class="form-label">Type</label>
+                                            <select class="form-select" id="expense-type" name="type" required>
+                                                <option selected disabled>Select the Expense Type</option>
+                                                <option value="fix">Fix</option>
+                                                <option value="variable">Variable</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3" id="fix-inputs" style="display: none">
+                                            <label class="form-label">Repeat</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" placeholder="repeat interval"
+                                                    name="repeat_interval">
+                                                <select class="form-select" id="duration" name="duration" required>
+                                                    <option selected disabled>Select the Duration</option>
+                                                    <option value="daily">Every Day</option>
+                                                    <option value="weekly">Every Week</option>
+                                                    <option value="monthly">Every Month</option>
+                                                    <option value="yearly">Every Year</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="amount" class="form-label">Amount</label>
+                                            <input type="number" class="form-control" id="amount" name="amount"
+                                                required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="description" class="form-label">Description</label>
+                                            <textarea class="form-control" id="description" name="description"
+                                                rows="3"></textarea>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+
+                                    <!-- Add Order Form -->
+                                    <form id="addOrderForm" action="{{ route('order.store') }}" method="POST"
+                                        style="display: none;">
+                                        @csrf
+                                        <input type="hidden" name="project_id" value="{{ $project->id }}">
+                                        <div class="mb-3">
+                                            <label for="supplier_id" class="form-label">Supplier</label>
+                                            <select class="form-select" id="supplier_id" name="supplier_id" required>
+                                                <option selected disabled>Select a Supplier</option>
+                                                @foreach($suppliers as $supplier)
+                                                <option value="{{ $supplier->id }}">{{ $supplier->full_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Order Items</label>
+                                            <table class="table table-bordered" id="orderItemsTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Product</th>
+                                                        <th>Quantity</th>
+                                                        <th>Price per Unit</th>
+                                                        <th>Total Price</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Order items will be added here dynamically -->
+                                                </tbody>
+                                            </table>
+                                            <button type="button" class="btn btn-secondary" id="addOrderItemBtn">Add
+                                                Item</button>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="description" class="form-label">Description</label>
+                                            <textarea class="form-control" id="description"
+                                                name="description"></textarea>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="mb-1 mt-2">Project N°:{{$project->ref}}</h4>
                 <p class="text-muted mt-3">
                     @switch($project->status)
                     @case('pending')
@@ -41,12 +205,16 @@
                             class="ms-2">{{$project->created_at->format('d-m-Y')}}</span></p>
 
                 </div>
-                <div class="progress mt-2">
+                <div class="progress my-2">
                     <div class="progress-bar progress-bar-striped" role="progressbar"
                         style="width: {{ $project->progress_percentage }}%"
                         aria-valuenow="{{ $project->progress_percentage }}" aria-valuemin="0" aria-valuemax="100">
                         {{ $project->progress_percentage }}%
                     </div>
+                </div>
+                <div class="d-flex justify-content-center align-items-center fs-3">
+                    Estimate Cost : <a href="{{ route('projects.invoice', $project->id) }}" target="_blank"><i
+                            class="ri-file-list-fill"></i></a>
                 </div>
             </div>
         </div>
@@ -74,7 +242,7 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane show active" id="Orders">
-                        <h5 class="text-uppercase mb-3"><i class="ri-briefcase-line me-1"></i>Orders
+                        <h5 class="text-uppercase mb-3">Orders
                             {{$project->orders->count()}} </h5>
                         <div class="table-responsive">
                             <table class="table table-striped dt-responsive">
@@ -186,7 +354,7 @@
                         <div class="table-responsive">
                             <h5 class="text-uppercase mb-3"><i class="ri-briefcase-line me-1"></i>Hours
                                 {{$project->expenses->count()}} </h5>
-                                <table class="table table-striped dt-responsive">
+                            <table class="table table-striped dt-responsive">
                                 <thead>
                                     <tr>
                                         <th>#</th>
@@ -304,8 +472,8 @@
                     <div class="tab-pane task" id="task">
                         <div class="table-responsive">
                             <h5 class="text-uppercase mb-3"><i class="ri-briefcase-line me-1"></i>expenses
-                                {{$project->tasks->count()}} </h5>
-                                <table class="table table-striped dt-responsive">
+                                {{$project->tasks->count()}}</h5>
+                            <table class="table table-striped dt-responsive">
                                 <thead>
                                     <tr>
                                         <th>#</th>
@@ -318,29 +486,27 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if($project->tasks->count() == 0)
-                                    <tr>
-                                        <td colspan="7" class="text-center">No Task found</td>
-                                    </tr>
-                                    @else
                                     @foreach ($project->tasks as $task)
                                     <tr>
                                         <td>
                                             {{ $loop->iteration }}
                                         </td>
                                         <td>
-                                            {{ $task->name }}<i class="ri-eye-line" data-bs-toggle="tooltip" data-bs-html="true"
-                                                data-bs-title="{{ $task->description }}"></i>
+                                            {{ $task->name }}<i class="ri-eye-line" data-bs-toggle="tooltip"
+                                                data-bs-html="true" data-bs-title="{{ $task->description }}"></i>
+                                        </td>
+                                        <td>
+                                            <a href="{{route('project.show',['id'=>$task->project_id])}}">{{
+                                                $task->project->name }}</a>
+
                                         </td>
                                         <td>
                                             @foreach ($task->employees as $employer)
                                             <span class="badge bg-primary">{{ $employer->full_name }}</span>
                                             @endforeach
                                         </td>
-                                       
-                                        <td>
-                                            {{ $task->progress }}%
-                                        </td>
+
+
                                         <td>
                                             {{ $task->date }}
                                         </td>
@@ -348,103 +514,33 @@
                                             {{ $task->duration }} hours
                                         </td>
                                         <td>
+                                            <div class="progress ">
+                                                <div class="progress-bar" role="progressbar"
+                                                    style="width: {{ $task->progress }}%;"
+                                                    aria-valuenow="{{ $task->progress }}" aria-valuemin="0"
+                                                    aria-valuemax="100">
+                                                    {{$task->progress }}%</div>
+                                            </div>
+                                        </td>
+                                        <td>
                                             <a href="#" class="text-danger" onclick="confirmDelete({{$task->id}})"><i
                                                     class="ri-delete-bin-2-fill"></i></a>
-                
-                                            <form id="delete-form-{{$task->id}}" action="{{ route('task.destroy', $task->id) }}"
-                                                method="POST" style="display: none;">
+
+                                            <form id="delete-form-{{$task->id}}"
+                                                action="{{ route('task.destroy', $task->id) }}" method="POST"
+                                                style="display: none;">
                                                 @csrf
                                                 @method('DELETE')
                                             </form>
-                                            <a href="#" class="text-primary" data-bs-toggle="modal"
-                                                data-bs-target="#editTask{{ $employer->id }}"><i class="ri-edit-fill"></i></a>
-                
-                                            <!-- Modal for editing an employer -->
-                                            <div class="modal fade" id="editTask{{ $employer->id }}" tabindex="-1"
-                                                aria-labelledby="editTaskLabel{{ $employer->id }}" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="editTaskLabel{{ $employer->id }}">
-                                                                Edit Employer</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                        </div>
-                                                        <form id="editEmployerForm{{ $employer->id }}"
-                                                            action="{{ route('employee.update', $employer->id) }}" method="POST">
-                                                            @csrf
-                                                            @method('PUT')
-                                                            <div class="modal-body">
-                                                                <div class="form-group">
-                                                                    <label for="project_id">Project</label>
-                                                                    <select class="form-control" id="project_id" name="project_id"
-                                                                        required>
-                                                                        <option disabled selected>Select a Project</option>
-                                                                        @foreach($projects as $project)
-                                                                        <option value="{{ $project->id }}" {{$project->id ==
-                                                                            $task->project_id ? 'selected' : ''}} >{{ $project->name }}
-                                                                        </option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                                <div class="form-group mb-2">
-                                                                    <label for="employer_id">Select Employees</label>
-                                                                    <select name="employer_ids[]" id="employer_id"
-                                                                        class="select2 form-control select2-multiple"
-                                                                        data-toggle="select2" multiple="multiple"
-                                                                        data-placeholder="Choose ...">
-                                                                        @foreach ($employers as $employer)
-                                                                        <option value="{{ $employer->id }}" @foreach ($task->employees
-                                                                            as $taskEmployee)
-                                                                            {{ $taskEmployee->id == $employer->id ? 'selected' : '' }}
-                                                                            @endforeach
-                                                                            >{{ $employer->full_name }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="name">Task Name</label>
-                                                                    <input type="text" class="form-control" id="name" name="name"
-                                                                        value="{{$task->name}}" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="date">Date</label>
-                                                                    <input type="date" class="form-control" id="date" name="date"
-                                                                        value="{{$task->date}}" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="duration">Duration (hours)</label>
-                                                                    <input type="number" class="form-control" id="duration"
-                                                                        value="{{$task->duration}}" name="duration" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="priority">Priority</label>
-                                                                    <input type="number" class="form-control" id="priority"
-                                                                        value="{{$task->number}}" name="priority" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="description">Description</label>
-                                                                    <textarea class="form-control" id="description"
-                                                                        name="description">{{$task->description}}</textarea>
-                                                                </div>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="submit" class="btn btn-primary">Update</button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
+
                                         </td>
                                     </tr>
                                     @endforeach
-                                    @endif
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="7" class="text-center">
-                                            Total Hours : {{$project->tasks->sum('total_amount')}} Hr
-                                        </td>
+                                        <td colspan="7" class="text-center">Total Hours :
+                                            {{$project->tasks->sum('duration')}} Hr</td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -456,3 +552,94 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="{{asset('assets/vendor/ion-rangeslider/js/ion.rangeSlider.min.js')}}"></script>
+<script src="{{asset('assets/js/pages/component.range-slider.js')}}"></script>
+<script>
+    $(document).ready(function() {
+        $('#add').on('shown.bs.modal', function () {
+            $('.select2').select2({
+                dropdownParent: $('#add'),
+                allowClear: true
+            });
+        });
+
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+          const expenseTypeSelect = document.getElementById('expense-type');
+          const fixInputsDiv = document.getElementById('fix-inputs');
+  
+          expenseTypeSelect.addEventListener('change', function() {
+              if (this.value === 'fix') {
+                  fixInputsDiv.style.display = 'block';
+              } else {
+                  fixInputsDiv.style.display = 'none';
+              }
+          });
+      });
+  </script>
+<script>
+    function showForm() {
+        var selectedType = document.getElementById('addType').value;
+        document.getElementById('addTaskForm').style.display = 'none';
+        document.getElementById('addExpenseForm').style.display = 'none';
+        document.getElementById('addOrderForm').style.display = 'none';
+
+        if (selectedType === 'task') {
+            document.getElementById('addTaskForm').style.display = 'block';
+        } else if (selectedType === 'expense') {
+            document.getElementById('addExpenseForm').style.display = 'block';
+        } else if (selectedType === 'order') {
+            document.getElementById('addOrderForm').style.display = 'block';
+        }
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Show/hide repeat interval fields based on expense type
+    document.getElementById('expense-type').addEventListener('change', function () {
+        const fixInputs = document.getElementById('fix-inputs');
+        if (this.value === 'fix') {
+            fixInputs.style.display = 'block';
+        } else {
+            fixInputs.style.display = 'none';
+        }
+    });
+
+    // Add order item dynamically
+    document.getElementById('addOrderItemBtn').addEventListener('click', function () {
+        const tableBody = document.querySelector('#orderItemsTable tbody');
+        const newRow = document.createElement('tr');
+
+        newRow.innerHTML = `
+            <td><input type="text" name="products[]" class="form-control" required></td>
+            <td><input type="number" name="quantities[]" class="form-control" required></td>
+            <td><input type="number" name="prices[]" class="form-control" required></td>
+            <td><input type="number" name="total_prices[]" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-danger remove-order-item-btn">Remove</button></td>
+        `;
+
+        tableBody.appendChild(newRow);
+
+        // Add event listener to remove button
+        newRow.querySelector('.remove-order-item-btn').addEventListener('click', function () {
+            newRow.remove();
+        });
+
+        // Calculate total price
+        newRow.querySelector('input[name="quantities[]"]').addEventListener('input', calculateTotalPrice);
+        newRow.querySelector('input[name="prices[]"]').addEventListener('input', calculateTotalPrice);
+
+        function calculateTotalPrice() {
+            const quantity = newRow.querySelector('input[name="quantities[]"]').value;
+            const price = newRow.querySelector('input[name="prices[]"]').value;
+            const totalPrice = newRow.querySelector('input[name="total_prices[]"]');
+            totalPrice.value = quantity * price;
+        }
+    });
+});
+</script>
+@endpush

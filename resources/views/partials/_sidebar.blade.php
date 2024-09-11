@@ -51,7 +51,7 @@
         <div class="collapse" id="sidebarTasks">
           <ul class="side-nav-second-level">
             <li>
-              <a href="{{route('supplier.index')}}">Bon de Livraison</a>
+              <a href="{{route('supplier.index')}}">Suppliers</a>
             </li>
             <li>
               <a href="{{route('product.index')}}">Product</a>

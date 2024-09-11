@@ -20,6 +20,7 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'project_id' => 'required|exists:projects,id',
             'name' => 'required|string|max:255',

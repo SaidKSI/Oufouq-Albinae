@@ -32,6 +32,7 @@ class OrderController extends Controller
             'order_items.*.product_id' => 'nullable|exists:products,id',
             'order_items.*.quantity' => 'required|integer',
             'order_items.*.price_unit' => 'required|numeric',
+            'order_items.*.total_price' => 'required|numeric',
         ]);
 
         if ($validator->fails()) {

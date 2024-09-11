@@ -20,13 +20,14 @@ class EmployerController extends Controller
 
     function store(Request $request)
     {
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'full_name' => 'required|string',
             'phone' => 'required|string',
             'city' => 'required|string',
             'cine' => 'required|string',
             'address' => 'required|string',
-            'cnss' => 'required|boolean',
+            'cnss' => 'nullable|string',
             'wage_per_hr' => 'required|numeric',
             'profession_id' => 'required|exists:professions,id',
 
@@ -44,7 +45,7 @@ class EmployerController extends Controller
         $employer->city = $request->city;
         $employer->cine = $request->cine;
         $employer->address = $request->address;
-        $employer->cnss = $request->cnss;
+        $employer->cnss = $request->cnss ? true : false;
         $employer->wage_per_hr = $request->wage_per_hr;
         $employer->profession_id = $request->profession_id;
         $employer->save();
