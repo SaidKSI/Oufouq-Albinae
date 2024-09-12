@@ -26,6 +26,7 @@ class User extends Authenticatable
         'is_block',
         'is_suspended',
         'password',
+        'is_supervisor',
     ];
 
     /**

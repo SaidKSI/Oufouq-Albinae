@@ -128,7 +128,7 @@
         </a>
         <div class="collapse" id="sidebarCharges">
           <ul class="side-nav-second-level">
-          
+
             <li>
               <a href="{{route('expenses.index')}}">Les Charges</a>
             </li>
@@ -139,28 +139,18 @@
         </div>
       </li>
       <li class="side-nav-item">
-        <a
-          data-bs-toggle="collapse"
-          href="#sidebarMultiLevel"
-          aria-expanded="false"
-          aria-controls="sidebarMultiLevel"
-          class="side-nav-link"
-        >
-        <i class="bi bi-person-badge"></i>
+        <a data-bs-toggle="collapse" href="#sidebarMultiLevel" aria-expanded="false" aria-controls="sidebarMultiLevel"
+          class="side-nav-link">
+          <i class="bi bi-person-badge"></i>
           <span> Personnel </span>
           <span class="menu-arrow"></span>
         </a>
         <div class="collapse" id="sidebarMultiLevel">
           <ul class="side-nav-second-level">
             <li class="side-nav-item">
-              <a
-                data-bs-toggle="collapse"
-                href="#personnel"
-                aria-expanded="false"
-                aria-controls="personnel"
-              >
-             
-              <span><i class="ri-map-pin-user-fill"></i> Employee </span>
+              <a data-bs-toggle="collapse" href="#personnel" aria-expanded="false" aria-controls="personnel">
+
+                <span><i class="ri-map-pin-user-fill"></i> Employee </span>
                 <span class="menu-arrow"></span>
               </a>
               <div class="collapse" id="personnel">
@@ -177,7 +167,7 @@
                   <li>
                     <a href="{{route('dashboard.maintenance')}}">Regelement</a>
                   </li>
-      
+
                   <li>
                     <a href="{{route('profession')}}">Employees Profession</a>
                   </li>
@@ -185,14 +175,9 @@
               </div>
             </li>
             <li class="side-nav-item">
-              <a
-                data-bs-toggle="collapse"
-                href="#shift"
-                aria-expanded="false"
-                aria-controls="shift"
-              >
-             
-              <span><i class="ri-time-fill"></i> Shift </span>
+              <a data-bs-toggle="collapse" href="#shift" aria-expanded="false" aria-controls="shift">
+
+                <span><i class="ri-time-fill"></i> Shift </span>
                 <span class="menu-arrow"></span>
               </a>
               <div class="collapse" id="shift">
@@ -232,8 +217,6 @@
         </div>
       </li>
     </ul>
-    <!--- End Sidemenu -->
-
     <div class="clearfix"></div>
   </div>
 </div>

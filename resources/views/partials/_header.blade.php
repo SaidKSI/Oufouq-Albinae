@@ -268,8 +268,8 @@
             <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="user-image" width="32" class="rounded-circle">
           </span>
           <span class="d-lg-flex flex-column gap-1 d-none">
-            <h5 class="my-0">Tosha Minner</h5>
-            <h6 class="my-0 fw-normal">Founder</h6>
+            <h5 class="my-0">{{auth()->user()->user_name}}</h5>
+            <h6 class="my-0 fw-normal">{{auth()->user()->is_supervisor ?  'Supervisor' : 'Admin'}} </h6>
           </span>
         </a>
         <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
@@ -285,7 +285,7 @@
           </a>
 
 
-          <a href="pages-profile.php" class="dropdown-item">
+          <a href="{{route('settings')}}" class="dropdown-item">
             <i class="ri-settings-4-line fs-18 align-middle me-1"></i>
             <span>Settings</span>
           </a>

@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             'last_name' => 'admin',
             'email' => 'admin@admin.com',
             'phone' => '+12345678',
+            'is_supervisor' => false,
             'password' => Hash::make('admin'),
             'created_at' => now(),
             'updated_at' => now(),
@@ -31,6 +32,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             ProfessionSeeder::class,
             EmployerSeeder::class,
+            CompanySeeder::class,
         ]);
     }
 }

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('phone')->unique();
             $table->boolean('is_block')->default(false);
             $table->boolean('is_suspended')->default(false);
+            $table->boolean('is_supervisor')->default(true);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
