@@ -212,10 +212,10 @@
                         {{ $project->progress_percentage }}%
                     </div>
                 </div>
-                <div class="d-flex justify-content-center align-items-center fs-3">
+                {{-- <div class="d-flex justify-content-center align-items-center fs-3">
                     Estimate Cost : <a href="{{ route('projects.invoice', $project->id) }}" target="_blank"><i
                             class="ri-file-list-fill"></i></a>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

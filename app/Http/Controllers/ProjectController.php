@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\CompanySetting;
 use App\Models\Employer;
+use App\Models\Estimate;
 use App\Models\Expense;
 use App\Models\Project;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-
+use NumberToWords\NumberToWords;
 class ProjectController extends Controller
 {
     function index()
@@ -120,37 +122,96 @@ class ProjectController extends Controller
         $projects = Project::all();
         $employers = Employer::all();
         $supplier = Supplier::all();
-        return view('project.show', ['project' => $project, 'expenses' => $expenses,'projects' => $projects,'employers' => $employers,'suppliers' => $supplier]);
+        return view('project.show', ['project' => $project, 'expenses' => $expenses, 'projects' => $projects, 'employers' => $employers, 'suppliers' => $supplier]);
     }
 
-    public function estimateInvoice($id)
+  
+    function estimate()
     {
-        $project = Project::find($id);
+        $projects = Project::all();
+        $clients = Client::all();
+        $estimates = Estimate::all();
+        return view('estimate.index', compact('projects', 'clients', 'estimates'));
+    }
+    function storeEstimate(Request $request)
+    {
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'project_id' => 'required|exists:projects,id',
+            'reference' => 'required|string',
+            'quantity' => 'required|integer',
+            'total_price' => 'required|numeric',
+            'tax' => 'required|numeric',
+        ]);
 
-        // Get all orders related to the project
-        $orders = $project->orders;
-
-        // Get all expenses related to the project
-        $expenses = $project->expenses;
-
-        // Calculate total hours lost by employees
-        $tasks = $project->tasks;
-        $totalHoursLost = 0;
-        foreach ($tasks as $task) {
-            $totalHoursLost += $task->duration;
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $errorMessage = implode('<br>', $errors);
+            toastr()->error($errorMessage);
+            return back()->withErrors($validator->errors())->withInput();
         }
 
-        // Calculate total cost
-        $totalOrderCost = $orders->sum('total_price');
-        $totalExpenseCost = $expenses->sum('total_amount');
-        $totalCost = $totalOrderCost + $totalExpenseCost;
+        $estimate = new Estimate();
+        $estimate->project_id = $request->project_id;
+        $estimate->reference = $request->reference;
+        $estimate->quantity = $request->quantity;
+        $estimate->total_price = $request->total_price;
+        $estimate->tax = $request->tax;
+        $estimate->type = 'estimate';
+        $estimate->number = 'EST-' . rand(1000, 9999);
+        $estimate->save();
 
+        return redirect()->back()->with('success', 'Project added successfully.');
+
+    }
+    public function numberToFrenchWords($number)
+    {
+        $number = (int) round(floatval($number)); // Convert to float, round the number, and then cast to int
+        $numberToWords = new NumberToWords();
+        $numberTransformer = $numberToWords->getNumberTransformer('fr'); // 'fr' for French
+
+        return $numberTransformer->toWords($number);
+    }
+    public function estimateInvoice($id)
+    {
+        $estimate = Estimate::findOrFail($id);
+        $company = CompanySetting::first();
+        $totalWithoutTax = $estimate->total_price / (1 + $estimate->tax / 100);
+        $taxAmount = $estimate->total_price - $totalWithoutTax;
+        $total = ($estimate->total_price * $estimate->quantity) + $taxAmount;
+        $total_in_alphabetic = $this->numberToFrenchWords($total);
         return view('project.invoice', [
-            'project' => $project,
-            'orders' => $orders,
-            'expenses' => $expenses,
-            'totalHoursLost' => $totalHoursLost,
-            'totalCost' => $totalCost
+            'estimate' => $estimate,
+            'company' => $company,
+            'total' => $total,
+            'taxAmount' => $taxAmount,
+            'totalWithoutTax' => $totalWithoutTax,
+            'total_in_alphabetic' => $total_in_alphabetic
+            
         ]);
+    }
+    function paymentEstimateInvoice($id)
+    {
+        $estimate = Estimate::findOrFail($id);
+        $company = CompanySetting::first();
+        $totalWithoutTax = $estimate->total_price / (1 + $estimate->tax / 100);
+        $taxAmount = $estimate->total_price - $totalWithoutTax;
+        $total = ($estimate->total_price * $estimate->quantity) + $taxAmount;
+     
+        $total_in_alphabetic = $this->numberToFrenchWords($total);
+        return view('project.payment-invoice', [
+            'estimate' => $estimate,
+            'company' => $company,
+            'total' => $total,
+            'taxAmount' => $taxAmount,
+            'totalWithoutTax' => $totalWithoutTax,
+            'total_in_alphabetic' => $total_in_alphabetic
+        ]);
+    }
+    function destroyEstimate($id)
+    {
+        $estimate = Estimate::find($id);
+        $estimate->delete();
+        return redirect()->back()->with('success', 'Estimate deleted successfully.');
     }
 }

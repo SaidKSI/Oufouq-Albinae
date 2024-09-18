@@ -91,4 +91,13 @@ class TaskController extends Controller
 
         return redirect()->back()->with('success', 'Task updated successfully.');
     }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $task = Task::findOrFail($id);
+        $task->status = $request->status;
+        $task->save();
+
+        return response()->json(['success' => true]);
+    }
 }

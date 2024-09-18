@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Estimate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -102,5 +103,13 @@ class ClientController extends Controller
         $client = Client::findOrFail($id);
         $client->delete();
         return redirect()->back()->with('success', 'Client deleted successfully.');
+    }
+
+    function getClientProjects($id)
+    {
+        $client = Client::findOrFail($id);
+        $projects = $client->projects;
+        
+        return response()->json($projects);
     }
 }

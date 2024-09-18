@@ -1,231 +1,145 @@
 <!DOCTYPE html>
-<html>
+<html data-bs-theme="light" lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <title>Employer invoice - {{$project->ref}}</title>
-    <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
-
-    <style>
-        .invoice-box {
-            max-width: 800px;
-            margin: auto;
-            padding: 30px;
-            border: 1px solid #eee;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-            font-size: 16px;
-            line-height: 24px;
-            font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-            color: #555;
-        }
-
-        .invoice-box table {
-            width: 100%;
-            line-height: inherit;
-            text-align: left;
-        }
-
-        .invoice-box table td {
-            padding: 5px;
-            vertical-align: top;
-        }
-
-        .invoice-box table tr td:nth-child(2) {
-            text-align: right;
-        }
-
-        .invoice-box table tr.top table td {
-            padding-bottom: 20px;
-        }
-
-        .invoice-box table tr.top table td.title {
-            font-size: 45px;
-            line-height: 45px;
-            color: #333;
-        }
-
-        .invoice-box table tr.information table td {
-            padding-bottom: 40px;
-        }
-
-        .invoice-box table tr.heading td {
-            background: #eee;
-            border-bottom: 1px solid #ddd;
-            font-weight: bold;
-        }
-
-        .invoice-box table tr.details td {
-            padding-bottom: 20px;
-        }
-
-        .invoice-box table tr.item td {
-            border-bottom: 1px solid #eee;
-        }
-
-        .invoice-box table tr.item.last td {
-            border-bottom: none;
-        }
-
-        .invoice-box table tr.total td:nth-child(2) {
-            border-top: 2px solid #eee;
-            font-weight: bold;
-        }
-
-        @media only screen and (max-width: 600px) {
-            .invoice-box table tr.top table td {
-                width: 100%;
-                display: block;
-                text-align: center;
-            }
-
-            .invoice-box table tr.information table td {
-                width: 100%;
-                display: block;
-                text-align: center;
-            }
-        }
-
-        /** RTL **/
-        .invoice-box.rtl {
-            direction: rtl;
-            font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-        }
-
-        .invoice-box.rtl table {
-            text-align: right;
-        }
-
-        .invoice-box.rtl table tr td:nth-child(2) {
-            text-align: left;
-        }
-
-        th,
-        td {
-            text-align: center;
-            vertical-align: middle;
-            font-size: 1rem;
-        }
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Oufoq Albinae</title>
+    <link rel="icon" type="image/png" sizes="118x118" href="/assets/invoice_asset/img/Circel%20logo.png">
+    <link rel="icon" type="image/png" sizes="118x118" href="/assets/invoice_asset/img/Circel%20logo.png">
+    <link rel="icon" type="image/png" sizes="118x118" href="/assets/invoice_asset/img/Circel%20logo.png"
+        media="(prefers-color-scheme: dark)">
+    <link rel="icon" type="image/png" sizes="118x118" href="/assets/invoice_asset/img/Circel%20logo.png">
+    <link rel="icon" type="image/png" sizes="118x118" href="/assets/invoice_asset/img/Circel%20logo.png">
+    <link rel="icon" type="image/png" sizes="118x118" href="/assets/invoice_asset/img/Circel%20logo.png">
+    <link rel="stylesheet" href="/assets/invoice_asset/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;display=swap">
+    {{--
+    <link rel="stylesheet" href="/assets/invoice_asset/css/bs-theme-overrides.css"> --}}
+    <link rel="stylesheet" href="/assets/invoice_asset/css/Login-Form-Basic-icons.css">
 </head>
 
-<body class="m-3">
-    <div class="invoice-box">
-        <div class="container">
-            <table cellpadding="0" cellspacing="0">
-                <tr class="top">
-                    <td colspan="2">
-                        <table>
-                            <tr>
-                                <td class="title">
-                                    <img src="{{asset('assets/images/logo-dark.png')}}"
-                                        style="width: 100%; max-width: 300px" />
-                                </td>
+<body>
 
-                                <td>
-                                    Invoice #: {{$project->ref}}<br />
-                                    Created: {{$project->created_at->format('d M Y')}}<br />
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr class="top">
-                    <td colspan="2">
-                        <table>
-                            <tr>
-                                <td>
-                                    Invoice for Project: {{ $project->name }}<br />
-                                    Client: {{ $project->client->name }}<br />
-                                </td>
-
-                                <td>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-            <div class="row">
-                <div class="col-md-12 my-2">
-                    <h3>Orders </h3>
-                    <div class="table-responsive-sm">
-                        <table class="table table-bordered table-striped table-centered mb-0">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Ref</th>
-                                    <th>Product Count</th>
-                                    <th>Total Price</th>
-
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($orders as $order)
-                                <tr>
-                                    <td> {{ $loop->iteration }}</td>
-                                    <td>{{ $order->Ref }}</td>
-                                    <td>{{$order->items->count()}}</td>
-                                    <td>{{ $order->total_price }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="3">Total</td>
-                                    <td>{{ $orders->sum('total_price') }}</td>
-                                </tr>
-                            </tfoot>
-                        </table>
+    <div class="container-fluid"
+        style="margin-top: 46px;background: url(&quot;/assets/invoice_asset/img/Oufoq%20albinae%20BIG.png&quot;) center / cover no-repeat;">
+        <nav class="navbar fixed-top">
+            <div class="container-fluid">
+                <div class="vstack"><img src="/assets/invoice_asset/img/BG_FD.png"
+                        style="width: 100%;height: 44.5938px;margin-bottom: 8px;">
+                    <div class="row d-flex d-xl-flex align-items-center align-items-xl-center">
+                        <div class="col"><img src="/assets/invoice_asset/img/logo%20big.png"
+                                style="width: 150px;background: rgba(255,255,255,0);"></div>
+                        <div class="col">
+                            <h4 class="text-capitalize text-center">Devis N°#{{$estimate->number}}</h4>
+                        </div>
+                        <div class="col text-center"><span class="fw-bold"
+                                style="margin-right: 22px;">Salé</span><span>Le
+                                {{$estimate->created_at->format('d/m/Y')}}</span></div>
                     </div>
-                </div>
-                <div class="col-md-12 my-2">
-                    <h3>Expenses </h3>
-                    <div class="table-responsive-sm">
-                        <table class="table table-bordered table-striped table-centered mb-0">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Ref</th>
-                                    <th>Name</th>
-                                    <th>Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($expenses as $expense)
-                                <tr>
-                                    <td> {{ $loop->iteration }}</td>
-                                    <td>{{ $expense->ref }}</td>
-                                    <td class="text-center">{{ $expense->name }}</td>
-                                    <td>{{ $expense->amount }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="3">Total</td>
-                                    <td>{{ $expenses->sum('amount') }}</td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </div>
-                <div class="col-md-12 text-center my-2">
-                    <h3>Total Hours Lost by Employees: {{ $totalHoursLost }} hours</h3>
-
-                    <h3>Total Cost: ${{ $totalCost }}</h3>
                 </div>
             </div>
+        </nav>
+
+        <div style="margin-top: 210px;">
+            <table class="table table-sm table-borderless">
+                <thead>
+                    <tr class="text-uppercase text-start">
+                        <th
+                            style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-bottom-style: none;width: 105px;">
+                            N° Client</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="text-uppercase text-start">
+                        <td
+                            style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
+                            0003</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="text-center" style="margin-bottom: 20px;">
+            <table class="table table-sm table-borderless">
+                <thead>
+                    <tr class="text-uppercase">
+                        <th class="border-2 border-dark">Référence</th>
+                        <th class="border-2 border-dark">Désignation</th>
+                        <th class="border-2 border-dark">Qté</th>
+                        <th class="border-2 border-dark">Prix unitaire</th>
+                        <th class="border-2 border-dark">montant</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);height: 500px;">
+                            {{$estimate->reference}}</th>
+                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);height: 500px;">
+                            {{$estimate->project->name}}</th>
+                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);height: 500px;">
+                            {{$estimate->quantity}}</th>
+                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);height: 500px;">
+                            {{number_format($estimate->total_price, 2)}}</th>
+                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);height: 500px;">{{
+                            number_format($total,2)}}</th>
+                    </tr>
+                    <tr>
+                        <th class="text-capitalize border-2 border-dark" style="background: rgba(255,255,255,0);"
+                            colspan="2" rowspan="2">Arreté La présente facture à la somme de :<br>#...
+                            {{$total_in_alphabetic}} Dirhams...#</th>
+                        <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">total
+                            ht</th>
+                        <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">tva
+                        </th>
+                        <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">total
+                        </th>
+                    </tr>
+                    <tr>
+
+                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">{{
+                            number_format($totalWithoutTax, 2) }}</th>
+                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">{{
+                            number_format($taxAmount, 2) }}</th>
+                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">{{
+                            number_format($estimate->total_price + $taxAmount, 2) }}</th>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
+        <nav class="navbar fixed-bottom">
+            <div class="container-fluid">
+                <div class="vstack">
+                    <div style="width: 100%;height: 3px;background: #ed961c;border-radius: 26px;margin-bottom: 5px;">
+                    </div>
+                    <p class="fw-bold text-center" style="font-size: 13px;">Adresse : {{$company->address}} / IF :
+                        {{$company->if}} / ICE :&nbsp; {{$company->ice}}/ RC : {{$company->ice}} CNSS :
+                        {{$company->cnss}}&nbsp;<br>Patente : {{$company->patente}} / Capitale : {{
+                        number_format($company->capital, 2) }} Gsm : {{$company->phone1}} -
+                        {{$company->phone2}}<br>E-mail :&nbsp;{{$company->email}}</p>
+                    <p class="text-capitalize text-center text-muted">Merci de Votre Confiance</p>
+                </div>
+            </div>
+        </nav>
     </div>
-    <div class="p-2" style="text-align: center; margin: 1rem">
-        <button onclick="printInvoice()" type="button" class="btn btn-dark">Print</button>
-    </div>
+    <script src="/assets/invoice_asset/js/jquery.min.js"></script>
+    <script src="/assets/invoice_asset/bootstrap/js/bootstrap.min.js"></script>
+    {{-- <script src="/assets/invoice_asset/js/bs-init.js"></script> --}}
+    <script>
+        function printInvoice() {
+            var printButton = document.getElementById('printButton');
+            if (printButton) {
+                printButton.style.display = 'none';
+            }
+            window.print();
+            if (printButton) {
+                printButton.style.display = 'block';
+            }
+        }
+
+        document.body.ondblclick = printInvoice;
+    </script>
 </body>
-<script>
-    function printInvoice() {
-        window.print();
-    }
-</script>
 
 </html>

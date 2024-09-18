@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
             ProfessionSeeder::class,
             EmployerSeeder::class,
             CompanySeeder::class,
+            // CapitalTransactionSeeder::class,
         ]);
     }
 }

@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\EmployerPaid;
 use App\Models\Attendance;
 use App\Models\Employer;
 use App\Models\Order;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Events\OrderPaid;
+use App\Models\Estimate;
+use App\Models\Project;
 
 class PaymentController extends Controller
 {
@@ -58,6 +62,8 @@ class PaymentController extends Controller
                 'path' => $path,
             ]);
         }
+        event(new OrderPaid($request->paid_price));
+
         return redirect()->route('order.index')->with('success', 'Payment added successfully.');
     }
     function payment()
@@ -66,7 +72,7 @@ class PaymentController extends Controller
         $payments = Payment::where('type', 'employer')->get();
         return view('employer.payment', ['employees' => $employees, 'payments' => $payments]);
     }
-    function submit_payment(Request $request)
+    function employer_payment(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'employee_id' => 'required|exists:employers,id',
@@ -87,7 +93,7 @@ class PaymentController extends Controller
 
         $totalWage -= Payment::where('employee_id', $request->employee_id, )
             ->sum('paid_price');
-        $remaining = $totalWage - number_format((float)$request->paid_price, 2, '.', '');
+        $remaining = $totalWage - number_format((float) $request->paid_price, 2, '.', '');
         // dd($remaining , $totalWage , $request->paid_price);
         if ($totalWage < $request->paid_price) {
             return back()->with('error', 'Amount is greater than the total wage.');
@@ -103,6 +109,7 @@ class PaymentController extends Controller
             'date' => now()->toDateString(),
             'type' => 'employer',
         ]);
+        event(new EmployerPaid($request->paid_price));
 
         return redirect()->back()->with('success', 'Payment added successfully.');
     }
@@ -125,4 +132,44 @@ class PaymentController extends Controller
         $payment = Payment::findOrFail($id);
         return view('employer.invoice', ['payment' => $payment]);
     }
+    function estimatePayment()
+    {
+        $projects = Project::whereHas('estimate', function ($query) {
+            $query->where('type', 'estimate');
+        })->whereDoesntHave('estimate', function ($query) {
+            $query->where('type', 'invoice');
+        })->get();
+        $invoices = Estimate::where('type', 'invoice')->get();
+        return view('estimate.payment', ['projects' => $projects,'invoices' => $invoices]);
+    }
+
+    function storeEstimatePayment(Request $request)
+    {
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'project_id' => 'required|exists:projects,id',
+            'payment_method' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $errorMessage = implode('<br>', $errors);
+            toastr()->error($errorMessage);
+            return back()->withErrors($validator->errors())->withInput();
+        }
+        $oldEstimate = Estimate::where('project_id', $request->project_id)->first();
+        $estimate = new Estimate();
+        $estimate->project_id = $request->project_id;
+        $estimate->reference = $oldEstimate->reference;
+        $estimate->quantity = $oldEstimate->quantity;
+        $estimate->total_price = $oldEstimate->total_price;
+        $estimate->tax = $oldEstimate->tax;
+        $estimate->type = 'invoice';
+        $estimate->number = 'INV-' . rand(1000, 9999);
+        $estimate->payment_method = $request->payment_method;
+        $estimate->save();
+
+        return redirect()->back()->with('success', 'Payment added successfully.');
+    }
+
 }

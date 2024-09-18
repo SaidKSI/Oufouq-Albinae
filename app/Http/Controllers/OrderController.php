@@ -155,9 +155,9 @@ class OrderController extends Controller
 
     function changeStatus(Request $request, $id)
     {
-        
+
         $validator = Validator::make($request->all(), [
-            'status' => 'required|string|in:pending,processing,completed',  
+            'status' => 'required|string|in:pending,processing,completed',
             'document' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpeg,png,jpg,gif|max:2048',
         ]);
         if ($validator->fails()) {
@@ -166,7 +166,7 @@ class OrderController extends Controller
             toastr()->error($errorMessage);
             return back()->withErrors($validator->errors())->withInput();
         }
-        
+
         $order = Order::findOrFail($id);
         //check if the order remaining amount is greater than 0
         if ($order->remaining > 0) {
@@ -185,7 +185,7 @@ class OrderController extends Controller
         if ($request->hasFile('document')) {
             $file = $request->file('document');
             $extension = $file->getClientOriginalExtension();
-            $fileName =  'N°'.$order->Ref . '.' . $extension;
+            $fileName = 'N°' . $order->Ref . '.' . $extension;
             $path = $file->storeAs('order-documents', $fileName, 'public');
             $order->documents()->create([
                 'path' => $path,

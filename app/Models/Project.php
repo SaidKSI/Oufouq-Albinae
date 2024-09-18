@@ -24,10 +24,22 @@ class Project extends Model
     {
         return $this->belongsTo(Client::class);
     }
+
+    public function estimate()
+    {
+        return $this->hasOne(Estimate::class);
+    }
+
     public function orders()
     {
         return $this->hasMany(Order::class);
     }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
     public function expenses()
     {
         return $this->hasMany(Expense::class);
@@ -37,6 +49,7 @@ class Project extends Model
     {
         return $this->hasMany(Task::class);
     }
+
     protected static function boot()
     {
         parent::boot();
@@ -47,6 +60,4 @@ class Project extends Model
             }
         });
     }
-   
-   
 }

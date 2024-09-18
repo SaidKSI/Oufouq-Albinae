@@ -5,7 +5,11 @@ namespace App\Providers;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
+use App\Events\OrderPaid;
+use App\Events\ExpensesPaid;
+use App\Events\EmployerPaid;
+use App\Listeners\ReduceCapital;
+
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -17,6 +21,15 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        OrderPaid::class => [
+            ReduceCapital::class,
+        ],
+        ExpensesPaid::class => [
+            ReduceCapital::class,
+        ],
+        EmployerPaid::class => [
+            ReduceCapital::class,
         ],
     ];
 

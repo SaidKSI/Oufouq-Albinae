@@ -1,6 +1,6 @@
 <div class="leftside-menu">
   <!-- Brand Logo Light -->
-  <a href="index.php" class="logo logo-light">
+  <a href="{{route('dashboard.index')}}" class="logo logo-light">
     <span class="logo-lg">
       <img src="{{ asset('assets/images/logo.png')}}" alt="logo" />
     </span>
@@ -10,7 +10,7 @@
   </a>
 
   <!-- Brand Logo Dark -->
-  <a href="index.php" class="logo logo-dark">
+  <a href="{{route('dashboard.index')}}" class="logo logo-dark">
     <span class="logo-lg">
       <img src="{{ asset('assets/images/logo-dark.png')}}" alt="dark logo" />
     </span>
@@ -33,7 +33,6 @@
   <div class="h-100" id="leftside-menu-container" data-simplebar>
     <!--- Sidemenu -->
     <ul class="side-nav">
-      <li class="side-nav-title">Navigation</li>
 
       <li class="side-nav-item">
         <a href="{{route('dashboard.index')}}" class="side-nav-link">
@@ -59,12 +58,7 @@
             <li>
               <a href="{{route('purchase')}}">Les Achats</a>
             </li>
-            <li>
-              <a href="{{route('dashboard.maintenance')}}">Relegement</a>
-            </li>
-            <li>
-              <a href="{{route('dashboard.maintenance')}}">Etat</a>
-            </li>
+      
           </ul>
         </div>
       </li>
@@ -83,15 +77,7 @@
             <li>
               <a href="{{route('project.index')}}">Projet</a>
             </li>
-            <li>
-              <a href="{{route('dashboard.maintenance')}}">Les Charge de Projet</a>
-            </li>
-            <li>
-              <a href="{{route('dashboard.maintenance')}}">Travaux</a>
-            </li>
-            <li>
-              <a href="{{route('dashboard.maintenance')}}">Regelement</a>
-            </li>
+          
           </ul>
         </div>
       </li>
@@ -102,13 +88,13 @@
         </a>
       </li>
       <li class="side-nav-item">
-        <a href="{{route('dashboard.maintenance')}}" class="side-nav-link">
+        <a href="{{route('estimates')}}" class="side-nav-link">
           <i class="bi bi-file-earmark-text-fill"></i>
           <span> Devis </span>
         </a>
       </li>
       <li class="side-nav-item">
-        <a href="{{route('dashboard.maintenance')}}" class="side-nav-link">
+        <a href="{{route('estimate.payment')}}" class="side-nav-link">
           <i class="bi bi-file-earmark-text-fill"></i>
           <span> Facteur </span>
         </a>
@@ -161,13 +147,7 @@
                   <li>
                     <a href="{{route('employee.payment')}}">Payment</a>
                   </li>
-                  <li>
-                    <a href="{{route('dashboard.maintenance')}}">Absense</a>
-                  </li>
-                  <li>
-                    <a href="{{route('dashboard.maintenance')}}">Regelement</a>
-                  </li>
-
+                
                   <li>
                     <a href="{{route('profession')}}">Employees Profession</a>
                   </li>
@@ -207,9 +187,7 @@
         </a>
         <div class="collapse" id="sidebarDeveloper">
           <ul class="side-nav-second-level">
-            <li>
-              <a href="{{route('dashboard.maintenance')}}">Les point a regles</a>
-            </li>
+        
             <li>
               <a href="{{route('task.index')}}">Les Taches</a>
             </li>

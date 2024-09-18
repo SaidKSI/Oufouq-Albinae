@@ -53,7 +53,19 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::delete('/project/{id}', [ProjectController::class, 'destroy'])->name('project.destroy');
     Route::get('/project/{id}', [ProjectController::class, 'show'])->name('project.show');
     // project estimate invoice
-    Route::get('/projects/{id}/invoice', [ProjectController::class, 'estimateInvoice'])->name('projects.invoice');
+    Route::get('/projects/{id}/invoice', [ProjectController::class, 'estimateInvoice'])->name('estimate.invoice');
+    Route::get('/projects/payment/{id}/invoice', [ProjectController::class, 'paymentEstimateInvoice'])->name('estimate.payment.invoice');
+    // ? Project Estimate
+    Route::get('/projects/estimate', [ProjectController::class, 'estimate'])->name('estimates');
+    Route::post('/projects/estimate/store', [ProjectController::class, 'storeEstimate'])->name('estimate.store');
+    Route::put('/projects/estimate/{id}', [ProjectController::class, 'updateEstimate'])->name('estimate.update');
+    Route::delete('/projects/estimate/{id}', [ProjectController::class, 'destroyEstimate'])->name('estimate.destroy');
+    // get client projects
+    Route::get('/client/{client}/projects', [ClientController::class, 'getClientProjects'])->name('client.projects');
+    // * Estimate Payment 
+    Route::get('projects/estimate/payment', [PaymentController::class, 'estimatePayment'])->name('estimate.payment');
+    Route::post('projects/estimate/payment/store', [PaymentController::class, 'storeEstimatePayment'])->name('estimatePayment.store');
+    
     // ? Order Routes
     Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
     Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
@@ -96,11 +108,11 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::delete('/employee/{id}', [EmployerController::class, 'destroy'])->name('employee.destroy');
     // Employee Payments
     Route::get('/employee/payments', [PaymentController::class, 'payment'])->name('employee.payment');
-    Route::post('/employee/add-payment', [PaymentController::class, 'submit_payment'])->name('employee.storePayment');
+    Route::post('/employee/add-payment', [PaymentController::class, 'employer_payment'])->name('employee.storePayment');
     // Get the Employer total remaining wage 
     Route::get('/employees/{employee}/total-wage', [PaymentController::class, 'getTotalWage']);
     // Employer Payment invoices
-    Route::get('/employee/invoice/{id}', [PaymentController::class, 'invoice'])->name('employee.invoice');
+    Route::get('/employee/invoice/{id}', [PaymentController::class, 'invoice'])->name('employee.invoice'); 
     // Profession
     Route::get('/profession', [EmployerController::class, 'profession'])->name('profession');
     Route::post('/profession/store', [EmployerController::class, 'storeProfession'])->name('profession.store');
@@ -126,10 +138,12 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::post('/tasks/store', [TaskController::class, 'store'])->name('task.store');
     Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('task.update');
     Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('task.destroy');
-
+    Route::post('/tasks/{id}/update-status', [TaskController::class, 'updateStatus']);
     // ? Settings
     Route::get('/settings', [DashboardController::class, 'settings'])->name('settings');
     // Capital Transactions
     Route::post('/capital/transactions', [DashboardController::class, 'storeTransaction'])->name('capital.transactions.store');
-
+    Route::get('/company/capital', [DashboardController::class, 'getCapital'])->name('company.capital');
+    // capital history over time line chart
+    Route::get('/company/capital-history', [DashboardController::class, 'getCapitalHistory'])->name('company.capital.history');
 });

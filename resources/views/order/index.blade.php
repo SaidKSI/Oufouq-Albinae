@@ -102,7 +102,8 @@
                     <tr>
                         <td><a href="{{route('order.show',['id'=>$order->id])}}">{{$order->Ref}}</a></td>
                         <td>{{$order->supplier->full_name}}</td>
-                        <td><a href="{{route('project.show',['id'=>$order->project_id])}}">{{$order->project->name}} </a> </td>
+                        <td><a href="{{route('project.show',['id'=>$order->project_id])}}">{{$order->project->name}}
+                            </a> </td>
                         <td>
                             <i class="ri-file-list-3-line" data-bs-toggle="modal"
                                 data-bs-target="#OrderDetails{{$order->id}}" style="cursor: pointer;"></i>
