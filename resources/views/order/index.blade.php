@@ -18,6 +18,7 @@
             </div>
         </div>
         <div class="col-md-2 mx-3 my-1">
+           
             <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addOrderModal">Add</button>
             <!-- Add Order Modal -->
             <div class="modal fade" id="addOrderModal" tabindex="-1" aria-labelledby="addOrderModalLabel"

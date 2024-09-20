@@ -106,6 +106,12 @@
         </a>
       </li>
       <li class="side-nav-item">
+        <a href="{{route('delivery')}}" class="side-nav-link">
+          <i class="bi bi-file-earmark-text-fill"></i>
+          <span> Bon de Livraison </span>
+        </a>
+      </li>
+      <li class="side-nav-item">
         <a data-bs-toggle="collapse" href="#sidebarCharges" aria-expanded="false" aria-controls="sidebarCharges"
           class="side-nav-link">
           <i class="bi bi-clipboard-check "></i>

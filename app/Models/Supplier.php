@@ -28,5 +28,10 @@ class Supplier extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function delivery()
+    {
+        return $this->hasMany(Delivery::class);
+    }
     
 }

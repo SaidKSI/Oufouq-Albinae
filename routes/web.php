@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\OrderController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TaskController;
+use App\Models\Delivery;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -55,6 +57,10 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     // project estimate invoice
     Route::get('/projects/{id}/invoice', [ProjectController::class, 'estimateInvoice'])->name('estimate.invoice');
     Route::get('/projects/payment/{id}/invoice', [ProjectController::class, 'paymentEstimateInvoice'])->name('estimate.payment.invoice');
+    // * Delivery invoice
+    Route::get('/projects/delivery/create', [DeliveryController::class, 'deliveryInvoice'])->name('delivery.invoice');
+    Route::get('/order/delivery', [DeliveryController::class, 'index'])->name('delivery');
+    Route::post('/order/delivery/store', [DeliveryController::class, 'store'])->name('delivery.store');
     // ? Project Estimate
     Route::get('/projects/estimate', [ProjectController::class, 'estimate'])->name('estimates');
     Route::post('/projects/estimate/store', [ProjectController::class, 'storeEstimate'])->name('estimate.store');

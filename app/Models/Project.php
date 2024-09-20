@@ -35,6 +35,11 @@ class Project extends Model
         return $this->hasMany(Order::class);
     }
 
+    public function deliveries()
+    {
+        return $this->hasMany(Delivery::class);
+    }
+
     public function payments()
     {
         return $this->hasMany(Payment::class);
