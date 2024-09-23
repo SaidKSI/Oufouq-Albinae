@@ -61,11 +61,15 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::get('/projects/delivery/create', [DeliveryController::class, 'deliveryInvoice'])->name('delivery.invoice');
     Route::get('/order/delivery', [DeliveryController::class, 'index'])->name('delivery');
     Route::post('/order/delivery/store', [DeliveryController::class, 'store'])->name('delivery.store');
+    Route::get('/order/delivery/{id}', [DeliveryController::class, 'show'])->name('delivery.show');
+    Route::delete('/order/delivery/delete/{id}', [DeliveryController::class, 'destroy'])->name('delivery.destroy');
+    Route::get('/order/delivery/print/{id}', [DeliveryController::class, 'print'])->name('delivery.print');
+    Route::get('/order/delivery/{number}/to-number', [DeliveryController::class, 'numberToFrenchWords'])->name('numberToWords');
     // ? Project Estimate
     Route::get('/projects/estimate', [ProjectController::class, 'estimate'])->name('estimates');
     Route::post('/projects/estimate/store', [ProjectController::class, 'storeEstimate'])->name('estimate.store');
     Route::put('/projects/estimate/{id}', [ProjectController::class, 'updateEstimate'])->name('estimate.update');
-    Route::delete('/projects/estimate/{id}', [ProjectController::class, 'destroyEstimate'])->name('estimate.destroy');
+    Route::delete('/projects/estimate/delete/{id}', [ProjectController::class, 'destroyEstimate'])->name('estimate.destroy');
     // get client projects
     Route::get('/client/{client}/projects', [ClientController::class, 'getClientProjects'])->name('client.projects');
     // * Estimate Payment 

@@ -14,8 +14,8 @@
               <div class="col"><img src="{{asset('assets/invoice_asset/img/logo%20big.png')}}"
                   style="width: 150px;background: rgba(255,255,255,0);"></div>
               <div class="col">
-                <h4 class="text-capitalize text-center">bon de livraison N°# <input
-                    type="text" name="number" id="number" readonly> </h4>
+                <h4 class="text-capitalize text-center">bon de livraison N°# <input type="text" name="number"
+                    id="number" readonly> </h4>
               </div>
               <div class="col text-center"><span class="fw-bold" style="margin-right: 22px;">Salé</span><span>Le <input
                     class="border-0 focus-ring form-control-sm" type="date" style="width: 120px;" name="date"></span>
@@ -43,7 +43,8 @@
                 <tr class="text-uppercase text-center">
                   <td style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
                     <div class="input-group">
-                      <select class="bg-transparent border-0 focus-ring form-select" id="supplier_id" name="supplier_id">
+                      <select class="bg-transparent border-0 focus-ring form-select" id="supplier_id"
+                        name="supplier_id">
                         @foreach($suppliers as $supplier)
                         <option value="{{ $supplier->id }}">{{ $supplier->full_name }}</option>
                         @endforeach
@@ -108,7 +109,8 @@
             <table class="table table-sm table-borderless">
               <tr>
                 <th class="text-capitalize border-2 border-dark" style="background: rgba(255,255,255,0);" colspan="3"
-                  rowspan="2">Arreté La présente facture à la somme de :<br>#...Trente mille six cents Dirhams...#</th>
+                  rowspan="2">Arreté La présente facture à la somme de :<br>#... <span id="numberToWord"></span> ...#
+                </th>
                 <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">total ht</th>
                 <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">tva</th>
                 <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">total</th>
@@ -281,7 +283,7 @@
           
           tableBody.appendChild(newRow);
           index ++ ;
-          console.log(index);
+          // console.log(index);
           const quantityInput = newRow.querySelector(`input[name="qte[${index - 1}]"]`);
           const unitPriceInput = newRow.querySelector(`input[name="prix_unite[${index - 1}]"]`);
           const totalPriceSpan = newRow.querySelector(`input[name="total_price_unite[${index - 1}]"]`);
@@ -309,7 +311,16 @@
         function calculateTotalWithTax(totalWithoutTax) {
             const tax = parseFloat(taxInput.value) || 0;
             const totalWithTax = totalWithoutTax + (totalWithoutTax * (tax / 100));
+            const numberToWordSpan = document.getElementById('numberToWord');
             document.getElementById('total_with_tax').value = totalWithTax.toFixed(2);
+            if (totalWithTax) {
+                    fetch(`/dashboard/order/delivery/${totalWithTax}/to-number`)
+                        .then(response => response.json())
+                        .then(data => {
+                            numberToWordSpan.textContent = data;
+                        })
+                        .catch(error => console.error('Error:', error));
+                }
         }
               quantityInput.addEventListener('input', function () {
                   calculateTotalPrice(newRow);

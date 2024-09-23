@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\CompanySetting;
 use App\Models\Delivery;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use NumberToWords\NumberToWords;
 
 class DeliveryController extends Controller
 {
@@ -33,7 +35,7 @@ class DeliveryController extends Controller
     {
         $clients = Client::all();
         $suppliers = Supplier::all();
-        return view('delivery.invoice', ['clients' => $clients,'suppliers' => $suppliers]);
+        return view('delivery.invoice', ['clients' => $clients, 'suppliers' => $suppliers]);
     }
 
     function store(Request $request)
@@ -96,5 +98,51 @@ class DeliveryController extends Controller
         }
 
         return redirect()->route('delivery')->with('success', 'Delivery created successfully.');
+    }
+
+    function show($id)
+    {
+        $delivery = Delivery::findOrFail($id);
+        $number = (int) round(floatval($delivery->total_with_tax));
+        // dd($number);
+        $numberToWords = new NumberToWords();
+        $numberTransformer = $numberToWords->getNumberTransformer('fr'); // 'fr' for French
+
+        $totalInAlphabet = $numberTransformer->toWords($number);
+        $company = CompanySetting::first();
+        
+        return view('delivery.show', ['delivery' => $delivery, 'totalInAlphabet' => $totalInAlphabet,'company' => $company]);
+    }
+
+    public function numberToFrenchWords($number)
+    {
+        $number = (int) round(floatval($number)); // Convert to float, round the number, and then cast to int
+        $numberToWords = new NumberToWords();
+        $numberTransformer = $numberToWords->getNumberTransformer('fr'); // 'fr' for French
+
+        return response()->json($numberTransformer->toWords($number));
+    }
+    function destroy($id)
+    {
+        $delivery = Delivery::find($id);
+        if ($delivery) {
+            $delivery->delete();
+            return redirect()->route('delivery')->with('success', 'Delivery deleted successfully.');
+        }
+        return redirect()->route('delivery')->with('error', 'Delivery not found.');
+    }
+
+    function print($id)
+    {
+        $delivery = Delivery::findOrFail($id);
+        $number = (int) round(floatval($delivery->total_with_tax));
+        // dd($number);
+        $numberToWords = new NumberToWords();
+        $numberTransformer = $numberToWords->getNumberTransformer('fr'); // 'fr' for French
+
+        $totalInAlphabet = $numberTransformer->toWords($number);
+        $company = CompanySetting::first();
+
+        return view('delivery.print', ['delivery' => $delivery, 'totalInAlphabet' => $totalInAlphabet,'company' => $company]);
     }
 }

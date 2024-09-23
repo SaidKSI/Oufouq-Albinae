@@ -32,7 +32,7 @@
                         <div class="col"><img src="/assets/invoice_asset/img/logo%20big.png"
                                 style="width: 150px;background: rgba(255,255,255,0);"></div>
                         <div class="col">
-                            <h4 class="text-capitalize text-center">Devis N°#{{$estimate->number}}</h4>
+                            <h4 class="text-capitalize text-center">Facture N°#{{$estimate->number}}</h4>
                         </div>
                         <div class="col text-center"><span class="fw-bold"
                                 style="margin-right: 22px;">Salé</span><span>Le
@@ -55,7 +55,7 @@
                     <tr class="text-uppercase text-start">
                         <td
                             style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
-                            0003</td>
+                            00{{$estimate->project->client_id}}</td>
                     </tr>
                 </tbody>
             </table>
