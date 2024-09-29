@@ -15,7 +15,7 @@
                   style="width: 150px;background: rgba(255,255,255,0);"></div>
               <div class="col">
                 <h4 class="text-capitalize text-center">bon de livraison N°# <input type="text" name="number"
-                    id="number" readonly> </h4>
+                    id="number"> </h4>
               </div>
               <div class="col text-center"><span class="fw-bold" style="margin-right: 22px;">Salé</span><span>Le <input
                     class="border-0 focus-ring form-control-sm" type="date" style="width: 120px;" name="date"></span>
@@ -220,6 +220,21 @@
 </script>
 
 <script>
+  $(document).ready(function() {
+      $('#supplier_id').select2({
+          placeholder: 'Select a supplier',
+          allowClear: true
+      });
+  
+      $('#client_id').select2({
+          placeholder: 'Select a client',
+          allowClear: true
+      });
+      $('#project_id').select2({
+          placeholder: 'Select a client',
+          allowClear: true
+      });
+  });
   document.addEventListener('DOMContentLoaded', function () {
     let index = 0;
 
