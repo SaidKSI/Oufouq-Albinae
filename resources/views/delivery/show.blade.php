@@ -14,7 +14,8 @@
             <div class="col">
               <h4 class="text-capitalize text-center">bon de livraison N°# {{$delivery->number}}</h4>
             </div>
-            <div class="col text-center"><span class="fw-bold" style="margin-right: 22px;">Salé</span><span>Le  {{$delivery->date}}</span>
+            <div class="col text-center"><span class="fw-bold" style="margin-right: 22px;">Salé</span><span>Le
+                {{$delivery->date}}</span>
             </div>
           </div>
         </div>
@@ -29,6 +30,9 @@
                 <th
                   style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-bottom-style: none;width: 155px;">
                   N° Client</th>
+                  <th
+                  style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-bottom-style: none;width: 175px;">
+                  Projet</th>
                 <th
                   style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-bottom-style: none;width: 175px;">
                   Mode Reglement</th>
@@ -47,6 +51,9 @@
                 </td>
                 <td style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
                   <div class="input-group"> {{$delivery->project->name}}</div>
+                </td>
+                <td style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
+                  <div class="input-group"> {{$delivery->payment_method}}</div>
                 </td>
               </tr>
             </tbody>
@@ -105,14 +112,15 @@
         </div>
         @if($delivery->doc)
         <p class="fw-bold">Pièces Jointes :</p>
-        {{$delivery->doc}}
+        <a href="{{ asset('storage/' . $delivery->doc) }}" target="_blank"><i class="ri-attachment-fill fs-1 mx-5"></i></a>
         @endif
         <input type="file" name="doc" id="doc" style="display: none" multiple>
         <div id="file-list"></div>
         <div class="text-center" style="margin-bottom: 20px;">
           <h3>Remarques</h3>
           <div class="input-group"><textarea class="shadow-sm form-control" rows="12" style="height: auto"
-              style="margin-bottom: 30px;border-radius: 10px;" name="note" readonly> {{$delivery->note}}</textarea></div>
+              style="margin-bottom: 30px;border-radius: 10px;" name="note" readonly> {{$delivery->note}}</textarea>
+          </div>
         </div>
         <div class="text-center" style="margin-bottom: 20px;">
           <button class="btn btn-outline-success btn-sm fw-bold border rounded-pill border-1 border-success"
@@ -135,5 +143,5 @@
 @endsection
 
 @push('scripts')
-    
+
 @endpush

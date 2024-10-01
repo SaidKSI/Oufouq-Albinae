@@ -56,7 +56,7 @@ class DeliveryController extends Controller
             'total_without_tax' => 'required|numeric',
             'tax' => 'required|numeric',
             'total_with_tax' => 'required|numeric',
-            'doc' => 'nullable|file|mimes:jpeg,png,bmp,gif,svg,webp',
+            'doc' => 'nullable',
             'note' => 'nullable|string',
             'payment_method' => 'required|string',
         ]);
@@ -69,6 +69,7 @@ class DeliveryController extends Controller
         // Handle file upload
         $docPath = null;
         if ($request->hasFile('doc')) {
+            // dd($request->file('doc'));
             $docPath = $request->file('doc')->store('delivery-docs', 'public');
         }
 

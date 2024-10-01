@@ -4,7 +4,7 @@
 <x-Breadcrumb title="Create Invoice" />
 <div class="row bg-secondary">
   <div class="card">
-    <form action="{{route('delivery.store')}}" method="POST">
+    <form action="{{route('delivery.store')}}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="card-body">
         <div class="container shadow"

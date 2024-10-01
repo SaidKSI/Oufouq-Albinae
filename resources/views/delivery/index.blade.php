@@ -27,6 +27,7 @@
           <th>Supplier</th>
           <th>Project Name</th>
           <th>Product</th>
+          <th>Payment Method</th>
           <th>Total Price <small>without tax</small></th>
           <th>Total Price <small>with tax</small></th>
           <th>Action</th>
@@ -81,6 +82,7 @@
               </div>
             </div>
           </td>
+          <td>{{$delivery->payment_method}}</td>
           <td>
             {{$delivery->total_without_tax}}
           </td>
