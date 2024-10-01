@@ -19,6 +19,7 @@ class Delivery extends Model
         'total_with_tax',
         'doc',
         'note',
+        'payment_method'
     ];
 
     public function items()

@@ -56,8 +56,9 @@ class DeliveryController extends Controller
             'total_without_tax' => 'required|numeric',
             'tax' => 'required|numeric',
             'total_with_tax' => 'required|numeric',
-            'doc' => 'nullable|file',
+            'doc' => 'nullable|file|mimes:jpeg,png,bmp,gif,svg,webp',
             'note' => 'nullable|string',
+            'payment_method' => 'required|string',
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
@@ -83,6 +84,7 @@ class DeliveryController extends Controller
             'total_with_tax' => $request['total_with_tax'],
             'doc' => $docPath,
             'note' => $request['note'],
+            'payment_method' => $request['payment_method'],
         ]);
 
         // Store delivery items

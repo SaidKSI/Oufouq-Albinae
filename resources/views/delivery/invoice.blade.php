@@ -35,6 +35,9 @@
                     N° Client</th>
                   <th
                     style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-bottom-style: none;width: 175px;">
+                    Projet</th>
+                  <th
+                    style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-bottom-style: none;width: 175px;">
                     Mode Reglement</th>
                   <th></th>
                 </tr>
@@ -67,6 +70,19 @@
                       <select class="bg-transparent border-0 focus-ring form-select" id="project_id" name="project_id"
                         disabled>
                         <option disabled selected>Select a Project</option>
+                      </select>
+                    </div>
+                  </td>
+                  <td style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
+                    <div class="input-group">
+                      <select class="bg-transparent border-0 focus-ring form-select" id="payment_method"
+                        name="payment_method">
+                        <option disabled selected>Mode Reglement</option>
+                        <option value="bank_transfer">Bank Transfer</option>
+                        <option value="cheque">Chèque</option>
+                        <option value="credit">Credit</option>
+                        <option value="cash">Cash</option>
+                        <option value="traita">Traita</option>
                       </select>
                     </div>
                   </td>
@@ -128,7 +144,8 @@
               </tr>
             </table>
           </div>
-          <p class="fw-bold">Pièces Jointes :</p><button id="upload-button"
+          <p class="fw-bold">Pièces Jointes :</p>
+          <button id="upload-button"
             class="btn btn-outline-success btn-sm text-nowrap fw-bold border rounded-pill border-1 border-success"
             type="button" style="width: 30%;padding: 0px;margin-bottom: 15px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16"
@@ -138,7 +155,7 @@
               </path>
             </svg>&nbsp;Ajouter des Pièces Jointes
           </button>
-          <input type="file" name="doc" id="doc" style="display: none" multiple>
+          <input type="file" name="doc" id="doc" style="display: none" multiple accept="image/*">
           <div id="file-list"></div>
           <div class="text-center" style="margin-bottom: 20px;">
             <h3>Remarques</h3>

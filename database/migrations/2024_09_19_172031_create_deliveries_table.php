@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('total_with_tax', 10, 2);
             $table->string('doc')->nullable();
             $table->text('note')->nullable();
-            
+            $table->string('payment_method');
             $table->unsignedBigInteger('client_id');
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('supplier_id');

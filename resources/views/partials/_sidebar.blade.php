@@ -52,12 +52,12 @@
             <li>
               <a href="{{route('supplier.index')}}">Suppliers</a>
             </li>
-            <li>
+            {{-- <li>
               <a href="{{route('product.index')}}">Product</a>
-            </li>
-            <li>
+            </li> --}}
+            {{-- <li>
               <a href="{{route('purchase')}}">Les Achats</a>
-            </li>
+            </li> --}}
       
           </ul>
         </div>
@@ -81,12 +81,12 @@
           </ul>
         </div>
       </li>
-      <li class="side-nav-item">
+      {{-- <li class="side-nav-item">
         <a href="{{route('stock')}}" class="side-nav-link">
           <i class="bi bi-boxes"></i>
           <span> Stock </span>
         </a>
-      </li>
+      </li> --}}
       <li class="side-nav-item">
         <a href="{{route('estimates')}}" class="side-nav-link">
           <i class="bi bi-file-earmark-text-fill"></i>
@@ -99,12 +99,12 @@
           <span> Facteur </span>
         </a>
       </li>
-      <li class="side-nav-item">
+      {{-- <li class="side-nav-item">
         <a href="{{route('order.index')}}" class="side-nav-link">
           <i class="bi bi-file-earmark-text-fill"></i>
           <span> Bon de Commande </span>
         </a>
-      </li>
+      </li> --}}
       <li class="side-nav-item">
         <a href="{{route('delivery')}}" class="side-nav-link">
           <i class="bi bi-file-earmark-text-fill"></i>
