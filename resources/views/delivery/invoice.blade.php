@@ -254,42 +254,80 @@
   });
   document.addEventListener('DOMContentLoaded', function () {
     let index = 0;
+    const addRowButton = document.getElementById('add-row');
+    const tableBody = document.getElementById('invoice-table-body');
+    const uploadButton = document.getElementById('upload-button');
+    const fileInput = document.getElementById('doc');
+    const fileList = document.getElementById('file-list');
+    const totalWithoutTaxInput = document.getElementById('total_without_tax');
+    const taxInput = document.getElementById('tax');
+    const totalWithTaxInput = document.getElementById('total_with_tax');
 
-      const addRowButton = document.getElementById('add-row');
-      const tableBody = document.getElementById('invoice-table-body');
-      const uploadButton = document.getElementById('upload-button');
-      const fileInput = document.getElementById('doc');
-      const fileList = document.getElementById('file-list');
-      const totalWithoutTaxSpan = document.getElementById('total_without_tax');
-      const taxInput = document.getElementById('tax');
-      uploadButton.addEventListener('click', function () {
-                fileInput.click();
-            });
-      
-      fileInput.addEventListener('change', function () {
-          fileList.innerHTML = ''; // Clear the file list
-          for (let i = 0; i < fileInput.files.length; i++) {
-              const fileBox = document.createElement('div');
-              fileBox.className = 'file-box';
-              fileBox.textContent = fileInput.files[i].name;
-              fileList.appendChild(fileBox);
-          }
-      });
-
-      // generate number and appand it to the span with number id
-      const number = Math.floor(Math.random() * 1000000);
-      document.getElementById('number').value = number;
-
-      // Calculate the total price of the row
-      
-
+    // File upload handling
+    uploadButton.addEventListener('click', function () {
+        fileInput.click();
+    });
     
+    fileInput.addEventListener('change', function () {
+        fileList.innerHTML = '';
+        for (let i = 0; i < fileInput.files.length; i++) {
+            const fileBox = document.createElement('div');
+            fileBox.className = 'file-box';
+            fileBox.textContent = fileInput.files[i].name;
+            fileList.appendChild(fileBox);
+        }
+    });
 
-      addRowButton.addEventListener('click', function () {
+    // Generate random number
+    const number = Math.floor(Math.random() * 1000000);
+    document.getElementById('number').value = number;
+
+    function calculateRowTotal(row) {
+        const quantityInput = row.querySelector('input[type="number"][name^="qte"]');
+        const unitPriceInput = row.querySelector('input[type="number"][name^="prix_unite"]');
+        const totalPriceInput = row.querySelector('input[type="number"][name^="total_price_unite"]');
+        
+        const quantity = parseFloat(quantityInput.value) || 0;
+        const unitPrice = parseFloat(unitPriceInput.value) || 0;
+        const totalPrice = quantity * unitPrice;
+        
+        totalPriceInput.value = totalPrice.toFixed(2);
+        return totalPrice;
+    }
+
+    function calculateTotalOrderPrice() {
+        let totalWithoutTax = 0;
+        const rows = tableBody.getElementsByTagName('tr');
+        
+        for (let row of rows) {
+            totalWithoutTax += calculateRowTotal(row);
+        }
+        
+        totalWithoutTaxInput.value = totalWithoutTax.toFixed(2);
+        calculateTotalWithTax(totalWithoutTax);
+    }
+
+    function calculateTotalWithTax(totalWithoutTax) {
+        const tax = parseFloat(taxInput.value) || 0;
+        const totalWithTax = totalWithoutTax + (totalWithoutTax * (tax / 100));
+        totalWithTaxInput.value = totalWithTax.toFixed(2);
+        
+        // Update number to words
+        if (totalWithTax) {
+            fetch(`/dashboard/order/delivery/${totalWithTax}/to-number`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('numberToWord').textContent = data;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    }
+
+    addRowButton.addEventListener('click', function () {
         const ref = Math.floor(Math.random() * 1000000);
-          const newRow = document.createElement('tr');
-          newRow.innerHTML = `
-             <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">
                 <div class="input-group"><input class="form-control" type="text" name="ref[${index}]" value="${ref}"></div>
             </th>
             <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">
@@ -299,84 +337,48 @@
                 <div class="input-group"><input class="form-control" type="number" name="qte[${index}]"></div>
             </th>
             <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                <div class="input-group"><input class="form-control" type="number"  name="prix_unite[${index}]"></div>
+                <div class="input-group"><input class="form-control" type="number" name="prix_unite[${index}]"></div>
             </th>
             <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">
                 <div class="input-group"><textarea class="form-control" rows="3" name="category[${index}]"></textarea></div>
             </th>
-            <th class="border-2 border-dark" style="background: rgba(255,255,255,0);"><input class="form-control" type="number" name="total_price_unite[${index}]"></th>
-            <th style="background: rgba(255,255,255,0);"><button class="btn btn-outline-danger delete-row" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-trash-fill">
-            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"></path>
-            </svg></button></th>
-          `;
-
-         
-       
-          
-          tableBody.appendChild(newRow);
-          index ++ ;
-          // console.log(index);
-          const quantityInput = newRow.querySelector(`input[name="qte[${index - 1}]"]`);
-          const unitPriceInput = newRow.querySelector(`input[name="prix_unite[${index - 1}]"]`);
-          const totalPriceSpan = newRow.querySelector(`input[name="total_price_unite[${index - 1}]"]`);
-          
-          function calculateTotalPrice(row) {
-        const quantity = parseFloat(quantityInput.value) || 0;
-        const unitPrice = parseFloat(unitPriceInput.value) || 0;
-        const totalPrice = quantity * unitPrice;
-        totalPriceSpan.value = totalPrice.toFixed(2);
-        calculateTotalOrderPrice();
-        }
-        function calculateTotalOrderPrice() {
-        let totalWithoutTax = 0;
-        const totalPriceSpans = tableBody.querySelectorAll(`input[name="total_price_unite[${index - 1}]"]`);
-
-        totalPriceSpans.forEach(span => {
-            totalWithoutTax += parseFloat(span.value) || 0;
-        });
-        // console.log(totalWithoutTax,totalPriceSpans);
+            <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                <input class="form-control" type="number" name="total_price_unite[${index}]" readonly>
+            </th>
+            <th style="background: rgba(255,255,255,0);">
+                <button class="btn btn-outline-danger delete-row" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-trash-fill">
+                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"></path>
+                    </svg>
+                </button>
+            </th>
+        `;
         
-        totalWithoutTaxSpan.value = totalWithoutTax.toFixed(2);
-        calculateTotalWithTax(totalWithoutTax);
-    }
+        tableBody.appendChild(newRow);
+        index++;
 
-        function calculateTotalWithTax(totalWithoutTax) {
-            const tax = parseFloat(taxInput.value) || 0;
-            const totalWithTax = totalWithoutTax + (totalWithoutTax * (tax / 100));
-            const numberToWordSpan = document.getElementById('numberToWord');
-            document.getElementById('total_with_tax').value = totalWithTax.toFixed(2);
-            if (totalWithTax) {
-                    fetch(`/dashboard/order/delivery/${totalWithTax}/to-number`)
-                        .then(response => response.json())
-                        .then(data => {
-                            numberToWordSpan.textContent = data;
-                        })
-                        .catch(error => console.error('Error:', error));
-                }
+        // Add event listeners to new row
+        const quantityInput = newRow.querySelector(`input[name="qte[${index - 1}]"]`);
+        const unitPriceInput = newRow.querySelector(`input[name="prix_unite[${index - 1}]"]`);
+        
+        quantityInput.addEventListener('input', calculateTotalOrderPrice);
+        unitPriceInput.addEventListener('input', calculateTotalOrderPrice);
+    });
+
+    // Event delegation for delete buttons
+    tableBody.addEventListener('click', function (event) {
+        if (event.target.closest('.delete-row')) {
+            const row = event.target.closest('tr');
+            row.remove();
+            calculateTotalOrderPrice();
         }
-              quantityInput.addEventListener('input', function () {
-                  calculateTotalPrice(newRow);
-              });
+    });
 
-              unitPriceInput.addEventListener('input', function () {
-                  calculateTotalPrice(newRow);
-              });
-              taxInput.addEventListener('input', function () {
-        const totalWithoutTax = parseFloat(totalWithoutTaxSpan.value) || 0;
+    // Tax input event listener
+    taxInput.addEventListener('input', function () {
+        const totalWithoutTax = parseFloat(totalWithoutTaxInput.value) || 0;
         calculateTotalWithTax(totalWithoutTax);
     });
-      });
-
-      tableBody.addEventListener('click', function (event) {
-          if (event.target.classList.contains('delete-row')) {
-              const row = event.target.closest('tr');
-              row.remove();
-              calculateTotalOrderPrice();
-          }
-      });
-      
-      
-    
-  });
+});
 </script>
 @endpush
