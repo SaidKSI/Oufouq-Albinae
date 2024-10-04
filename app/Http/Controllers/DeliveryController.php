@@ -40,23 +40,27 @@ class DeliveryController extends Controller
 
     function store(Request $request)
     {
-        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'number' => 'nullable|string',
             'date' => 'required|date',
-            'client_id' => 'required|integer|exists:clients,id',
-            'project_id' => 'required|integer|exists:projects,id',
-            'supplier_id' => 'required|integer|exists:suppliers,id',
+            'client_id' => 'required|exists:clients,id',
+            'project_id' => 'required|exists:projects,id',
+            'supplier_id' => 'required|exists:suppliers,id',
             'ref' => 'required|array',
+            'ref.*' => 'required|string',
             'name' => 'required|array',
+            'name.*' => 'required|string',
             'qte' => 'required|array',
+            'qte.*' => 'required|numeric',
             'prix_unite' => 'required|array',
+            'prix_unite.*' => 'required|numeric',
             'category' => 'required|array',
+            'category.*' => 'required|string',
             'total_price_unite' => 'required|array',
             'total_without_tax' => 'required|numeric',
             'tax' => 'required|numeric',
             'total_with_tax' => 'required|numeric',
-            'doc' => 'nullable',
+            'doc' => 'nullable|file',
             'note' => 'nullable|string',
             'payment_method' => 'required|string',
         ]);
@@ -66,14 +70,11 @@ class DeliveryController extends Controller
             toastr()->error($errorMessage);
             return back()->withErrors($validator->errors())->withInput();
         }
-        // Handle file upload
         $docPath = null;
         if ($request->hasFile('doc')) {
-            // dd($request->file('doc'));
             $docPath = $request->file('doc')->store('delivery-docs', 'public');
         }
 
-        // Create a new delivery record
         $delivery = Delivery::create([
             'number' => $request['number'],
             'date' => $request['date'],
@@ -88,7 +89,6 @@ class DeliveryController extends Controller
             'payment_method' => $request['payment_method'],
         ]);
 
-        // Store delivery items
         foreach ($request['ref'] as $index => $ref) {
             $delivery->items()->create([
                 'ref' => $ref,
@@ -100,7 +100,7 @@ class DeliveryController extends Controller
             ]);
         }
 
-        return redirect()->route('delivery')->with('success', 'Delivery created successfully.');
+        return redirect()->route('delivery')->with('success', 'Invoice created successfully.');
     }
 
     function show($id)
@@ -113,8 +113,8 @@ class DeliveryController extends Controller
 
         $totalInAlphabet = $numberTransformer->toWords($number);
         $company = CompanySetting::first();
-        
-        return view('delivery.show', ['delivery' => $delivery, 'totalInAlphabet' => $totalInAlphabet,'company' => $company]);
+
+        return view('delivery.show', ['delivery' => $delivery, 'totalInAlphabet' => $totalInAlphabet, 'company' => $company]);
     }
 
     public function numberToFrenchWords($number)
@@ -146,6 +146,6 @@ class DeliveryController extends Controller
         $totalInAlphabet = $numberTransformer->toWords($number);
         $company = CompanySetting::first();
 
-        return view('delivery.print', ['delivery' => $delivery, 'totalInAlphabet' => $totalInAlphabet,'company' => $company]);
+        return view('delivery.print', ['delivery' => $delivery, 'totalInAlphabet' => $totalInAlphabet, 'company' => $company]);
     }
 }
