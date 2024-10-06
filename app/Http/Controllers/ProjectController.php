@@ -128,7 +128,9 @@ class ProjectController extends Controller
   
     function estimate()
     {
-        $projects = Project::all();
+        $projects = Project::whereDoesntHave('estimates', function ($query) {
+            $query->where('type', 'estimate');
+        })->get();
         $clients = Client::all();
         $estimates = Estimate::all();
         return view('estimate.index', compact('projects', 'clients', 'estimates'));
@@ -158,7 +160,7 @@ class ProjectController extends Controller
         $estimate->total_price = $request->total_price;
         $estimate->tax = $request->tax;
         $estimate->type = 'estimate';
-        $estimate->number = 'EST-' . rand(1000, 9999);
+        $estimate->number = rand(10000, 99999);
         $estimate->save();
 
         return redirect()->back()->with('success', 'Project added successfully.');

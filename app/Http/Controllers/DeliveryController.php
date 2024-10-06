@@ -31,11 +31,19 @@ class DeliveryController extends Controller
     }
 
 
-    function deliveryInvoice()
+    public function deliveryInvoice(Request $request)
     {
         $clients = Client::all();
         $suppliers = Supplier::all();
-        return view('delivery.invoice', ['clients' => $clients, 'suppliers' => $suppliers]);
+        $selectedClientId = $request->input('client_id');
+        $selectedProjectId = $request->input('project_id');
+
+        return view('delivery.invoice', [
+            'clients' => $clients,
+            'suppliers' => $suppliers,
+            'selectedClientId' => $selectedClientId,
+            'selectedProjectId' => $selectedProjectId
+        ]);
     }
 
     function store(Request $request)

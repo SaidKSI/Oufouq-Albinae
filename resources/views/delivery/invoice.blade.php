@@ -59,7 +59,9 @@
                     <div class="input-group">
                       <select class="bg-transparent border-0 focus-ring form-select" id="client_id" name="client_id">
                         @foreach($clients as $client)
-                        <option value="{{ $client->id }}">{{ $client->name }}</option>
+                        <option value="{{ $client->id }}" {{ $client->id == $selectedClientId ? 'selected' : '' }}>
+                          {{ $client->name }}
+                        </option>
                         @endforeach
                       </select>
                     </div>
@@ -67,9 +69,14 @@
                   </td>
                   <td style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
                     <div class="input-group">
-                      <select class="bg-transparent border-0 focus-ring form-select" id="project_id" name="project_id"
-                        disabled>
+                      <select class="bg-transparent border-0 focus-ring form-select" id="project_id" name="project_id">
+                        @if($selectedProjectId)
+                        <option value="{{ $selectedProjectId }}" selected>
+                          {{ App\Models\Project::find($selectedProjectId)->name }}
+                        </option>
+                        @else
                         <option disabled selected>Select a Project</option>
+                        @endif
                       </select>
                     </div>
                   </td>
@@ -219,7 +226,8 @@
                   success: function(data) {
                       $('#project_id').empty().append('<option disabled selected>Select a Project</option>');
                       $.each(data, function(key, project) {
-                          $('#project_id').append('<option value="' + project.id + '">' + project.name + '</option>');
+                          var selected = (project.id == {{ $selectedProjectId ?? 'null' }}) ? 'selected' : '';
+                          $('#project_id').append('<option value="' + project.id + '" ' + selected + '>' + project.name + '</option>');
                       });
                       $('#project_id').prop('disabled', false);
                   },

@@ -22,7 +22,7 @@
                                 <div class="modal-body">
                                     <div class="form-group mb-3">
                                         <label for="addType">Select Type</label>
-                                        <select class="form-select" id="addType" onchange="showForm()">
+                                        <select class="form-select" id="addType" onchange="handleTypeSelection()">
                                             <option selected disabled>Select what to add</option>
                                             <option value="task">Task</option>
                                             <option value="expense">Expense</option>
@@ -124,48 +124,7 @@
                                         </div>
                                     </form>
 
-                                    <!-- Add Order Form -->
-                                    <form id="addOrderForm" action="{{ route('order.store') }}" method="POST"
-                                        style="display: none;">
-                                        @csrf
-                                        <input type="hidden" name="project_id" value="{{ $project->id }}">
-                                        <div class="mb-3">
-                                            <label for="supplier_id" class="form-label">Supplier</label>
-                                            <select class="form-select" id="supplier_id" name="supplier_id" required>
-                                                <option selected disabled>Select a Supplier</option>
-                                                @foreach($suppliers as $supplier)
-                                                <option value="{{ $supplier->id }}">{{ $supplier->full_name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Order Items</label>
-                                            <table class="table table-bordered" id="orderItemsTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Product</th>
-                                                        <th>Quantity</th>
-                                                        <th>Price per Unit</th>
-                                                        <th>Total Price</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <!-- Order items will be added here dynamically -->
-                                                </tbody>
-                                            </table>
-                                            <button type="button" class="btn btn-secondary" id="addOrderItemBtn">Add
-                                                Item</button>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="description" class="form-label">Description</label>
-                                            <textarea class="form-control" id="description"
-                                                name="description"></textarea>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                        </div>
-                                    </form>
+
                                 </div>
                             </div>
                         </div>
@@ -220,7 +179,7 @@
         </div>
     </div>
     <div class="col">
-        <div class="card">
+        <div class="card" style="min-height: 512px;max-height: 512px;">
             <div class="card-body">
                 <ul class="nav nav-pills bg-nav-pills nav-justified mb-3">
                     <li class="nav-item">
@@ -242,43 +201,40 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane show active" id="Orders">
-                        <h5 class="text-uppercase mb-3">Orders
-                            {{$project->orders->count()}} </h5>
+                        <h5 class="text-uppercase mb-3">Deliveries
+                            {{$project->deliveries->count()}} </h5>
                         <div class="table-responsive">
-                            <table class="table table-striped dt-responsive">
-                                <thead class="border-top border-bottom bg-light-subtle border-light">
+                            <table id="basic-datatable" class="table table-striped dt-responsive  w-100">
+                                <thead>
                                     <tr>
-                                        <th>#</th>
-                                        <th>Order Ref</th>
+                                        <th>N°</th>
                                         <th>Supplier</th>
-                                        <th>Products</th>
-                                        <th>Total Price</th>
-                                        <th>Status</th>
+                                        <th>Product</th>
+                                        <th>Payment Method</th>
+                                        <th>Total Price <small>without tax</small></th>
+                                        <th>Total Price <small>with tax</small></th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if($project->orders->count() == 0)
+                                    @foreach ($project->deliveries as $delivery)
                                     <tr>
-                                        <td colspan="7" class="text-center">No Order found</td>
-                                    </tr>
-                                    @else
-                                    @foreach ($project->orders as $index => $order)
-                                    <tr>
-                                        <td>{{$index + 1}}</td>
-                                        <td><a href="{{route('order.show',['id'=>$order->id])}}">{{$order->Ref}}</a>
-                                        </td>
-                                        <td>{{$order->supplier->full_name}}</td>
+                                        <td>{{$delivery->number}}</td>
+                                        <td>{{$delivery->supplier->full_name}}</td>
+
                                         <td>
                                             <i class="ri-file-list-3-line" data-bs-toggle="modal"
-                                                data-bs-target="#OrderDetails{{$order->id}}"
+                                                data-bs-target="#deliveryDetails{{$delivery->id}}"
                                                 style="cursor: pointer;"></i>
-                                            <div class="modal fade" id="OrderDetails{{$order->id}}" tabindex="-1"
-                                                aria-labelledby="OrderDetailsLabel{{$order->id}}" aria-hidden="true">
-                                                <div class="modal-dialog modal-lg">
+                                            <div class="modal fade" id="deliveryDetails{{$delivery->id}}" tabindex="-1"
+                                                aria-labelledby="deliveryDetailsLabel{{$delivery->id}}"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog modal-full-width">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title"
-                                                                id="OrderDetailsLabel{{$order->id}}">Order Details
+                                                                id="deliveryDetailsLabel{{$delivery->id}}">Delivery
+                                                                Details
                                                             </h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal" aria-label="Close"></button>
@@ -287,35 +243,23 @@
                                                             <table class="table table-striped">
                                                                 <thead>
                                                                     <tr>
+                                                                        <th>Ref</th>
                                                                         <th>Product Name</th>
-                                                                        <th>Unite</th>
-                                                                        <th>quantity</th>
-                                                                        <th>Prix per Unite</th>
+                                                                        <th>Category</th>
+                                                                        <th>Price per Unit</th>
+                                                                        <th>Quantity</th>
                                                                         <th>Total Price</th>
-                                                                        <th>Status</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody id="articleModalBody">
-                                                                    @foreach ($order->items as $item)
+                                                                    @foreach ($delivery->items as $item)
                                                                     <tr>
-                                                                        <td>{{$item->product->name}}</td>
-                                                                        <td>{{$item->product->unit}}</td>
-                                                                        <td>{{$item->quantity}}</td>
-                                                                        <td>{{$item->price_unit}}</td>
-                                                                        <td>{{$item->total_price}}</td>
-
-                                                                        <td>
-                                                                            @switch($item->status)
-                                                                            @case('pending')
-                                                                            <span
-                                                                                class="badge bg-warning text-dark">Pending</span>
-                                                                            @break
-                                                                            @case('delivered')
-                                                                            <span
-                                                                                class="badge bg-success text-dark">Delivered</span>
-                                                                            @break
-                                                                            @endswitch
-                                                                        </td>
+                                                                        <td>{{$item->ref}}</td>
+                                                                        <td>{{$item->name}}</td>
+                                                                        <td>{{$item->category}}</td>
+                                                                        <td>{{$item->prix_unite}}</td>
+                                                                        <td>{{$item->qte}}</td>
+                                                                        <td>{{$item->total_price_unite}}</td>
                                                                     </tr>
                                                                     @endforeach
                                                                 </tbody>
@@ -325,28 +269,34 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>{{$order->total_price}}</td>
+                                        <td>{{$delivery->payment_method}}</td>
                                         <td>
-                                            @switch($order->status)
-                                            @case('pending')
-                                            <span class="badge bg-warning text-dark">Pending</span>
-                                            @break
-                                            @case('completed')
-                                            <span class="badge bg-success text-dark">Delivered</span>
-                                            @break
-                                            @endswitch
+                                            {{$delivery->total_without_tax}}
+                                        </td>
+                                        <td>
+                                            {{$delivery->total_with_tax}}
+                                        </td>
+                                        <td>
+                                            <a href="{{route('delivery.show',['id'=>$delivery->id])}}"><i
+                                                    class="ri-eye-fill"></i></a>
+
+                                            <a href="#" onclick="printInvoice({{ $delivery->id }})"><i
+                                                    class="ri-file-list-fill"></i></a>
+
+                                            <a href="#" class="text-danger"
+                                                onclick="confirmDelete({{$delivery->id}})"><i
+                                                    class="ri-delete-bin-2-fill"></i></a>
+
+                                            <form id="delete-form-{{$delivery->id}}"
+                                                action="{{ route('delivery.destroy', $delivery->id) }}" method="POST"
+                                                style="display: none;">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
                                         </td>
                                     </tr>
                                     @endforeach
-                                    @endif
                                 </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="7" class="text-center">
-                                            Total Order Cost : {{$project->orders->sum('total_price')}} MAD
-                                        </td>
-                                    </tr>
-                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -551,6 +501,34 @@
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h2>Payment Devis (Estimate)</h2>
+                @if($project->estimate)
+                <iframe src="{{ route('estimate.show', $project->estimate->id) }}" width="100%" height="600px"
+                    frameborder="0"></iframe>
+                @else
+                <p>No estimate available for this project.</p>
+                @endif
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h2>Payment Facture (Invoice)</h2>
+                @if($project->invoice)
+                <iframe src="{{ route('invoice.show', $project->invoice->id) }}" width="100%" height="600px"
+                    frameborder="0"></iframe>
+                @else
+                <p>No invoice available for this project.</p>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -580,20 +558,17 @@
               }
           });
       });
-  </script>
+</script>
 <script>
     function showForm() {
         var selectedType = document.getElementById('addType').value;
         document.getElementById('addTaskForm').style.display = 'none';
         document.getElementById('addExpenseForm').style.display = 'none';
-        document.getElementById('addOrderForm').style.display = 'none';
 
         if (selectedType === 'task') {
             document.getElementById('addTaskForm').style.display = 'block';
         } else if (selectedType === 'expense') {
             document.getElementById('addExpenseForm').style.display = 'block';
-        } else if (selectedType === 'order') {
-            document.getElementById('addOrderForm').style.display = 'block';
         }
     }
 </script>
@@ -608,38 +583,18 @@
             fixInputs.style.display = 'none';
         }
     });
-
-    // Add order item dynamically
-    document.getElementById('addOrderItemBtn').addEventListener('click', function () {
-        const tableBody = document.querySelector('#orderItemsTable tbody');
-        const newRow = document.createElement('tr');
-
-        newRow.innerHTML = `
-            <td><input type="text" name="products[]" class="form-control" required></td>
-            <td><input type="number" name="quantities[]" class="form-control" required></td>
-            <td><input type="number" name="prices[]" class="form-control" required></td>
-            <td><input type="number" name="total_prices[]" class="form-control" readonly></td>
-            <td><button type="button" class="btn btn-danger remove-order-item-btn">Remove</button></td>
-        `;
-
-        tableBody.appendChild(newRow);
-
-        // Add event listener to remove button
-        newRow.querySelector('.remove-order-item-btn').addEventListener('click', function () {
-            newRow.remove();
-        });
-
-        // Calculate total price
-        newRow.querySelector('input[name="quantities[]"]').addEventListener('input', calculateTotalPrice);
-        newRow.querySelector('input[name="prices[]"]').addEventListener('input', calculateTotalPrice);
-
-        function calculateTotalPrice() {
-            const quantity = newRow.querySelector('input[name="quantities[]"]').value;
-            const price = newRow.querySelector('input[name="prices[]"]').value;
-            const totalPrice = newRow.querySelector('input[name="total_prices[]"]');
-            totalPrice.value = quantity * price;
-        }
-    });
 });
+</script>
+<script>
+function handleTypeSelection() {
+    var selectedType = document.getElementById('addType').value;
+    if (selectedType === 'order') {
+        var projectId = {{ $project->id }}; // Assuming you have the project ID available
+        var clientId = {{ $project->client_id }}; // Assuming you have the client ID available
+        window.location.href = "{{ route('delivery.invoice') }}?project_id=" + projectId + "&client_id=" + clientId;
+    } else {
+        showForm(); // Your existing function to handle other types
+    }
+}
 </script>
 @endpush

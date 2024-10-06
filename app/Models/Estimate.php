@@ -26,4 +26,14 @@ class Estimate extends Model
     {
         return $this->belongsTo(Project::class);
     }
+
+    public function scopeEstimate($query)
+    {
+        return $query->where('type', 'estimate');
+    }
+
+    public function scopeInvoice($query)
+    {
+        return $query->where('type', 'invoice');
+    }
 }

@@ -25,9 +25,19 @@ class Project extends Model
         return $this->belongsTo(Client::class);
     }
 
+    public function estimates()
+    {
+        return $this->hasMany(Estimate::class);
+    }
+
     public function estimate()
     {
-        return $this->hasOne(Estimate::class);
+        return $this->hasOne(Estimate::class)->where('type', 'estimate');
+    }
+
+    public function invoice()
+    {
+        return $this->hasOne(Estimate::class)->where('type', 'invoice');
     }
 
     public function orders()

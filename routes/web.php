@@ -5,6 +5,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\EmployerController;
+use App\Http\Controllers\EstimateController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
@@ -75,7 +76,8 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     // * Estimate Payment 
     Route::get('projects/estimate/payment', [PaymentController::class, 'estimatePayment'])->name('estimate.payment');
     Route::post('projects/estimate/payment/store', [PaymentController::class, 'storeEstimatePayment'])->name('estimatePayment.store');
-    
+    Route::get('/estimates/{id}', [EstimateController::class, 'show'])->name('estimate.show');
+    Route::get('/invoices/{id}', [EstimateController::class, 'show'])->name('invoice.show');
     // ? Order Routes
     Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
     Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
@@ -122,7 +124,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     // Get the Employer total remaining wage 
     Route::get('/employees/{employee}/total-wage', [PaymentController::class, 'getTotalWage']);
     // Employer Payment invoices
-    Route::get('/employee/invoice/{id}', [PaymentController::class, 'invoice'])->name('employee.invoice'); 
+    Route::get('/employee/invoice/{id}', [PaymentController::class, 'invoice'])->name('employee.invoice');
     // Profession
     Route::get('/profession', [EmployerController::class, 'profession'])->name('profession');
     Route::post('/profession/store', [EmployerController::class, 'storeProfession'])->name('profession.store');

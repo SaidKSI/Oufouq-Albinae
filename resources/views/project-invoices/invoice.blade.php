@@ -19,11 +19,38 @@
   <link rel="stylesheet" href="/assets/invoice_asset/css/bs-theme-overrides.css"> --}}
   <link rel="stylesheet" href="/assets/invoice_asset/css/Login-Form-Basic-icons.css">
 </head>
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-top: 120px;
+    /* Adjust this value based on your navbar height */
+  }
+
+  .content {
+    flex: 1 0 auto;
+  }
+
+  .footer {
+    flex-shrink: 0;
+  }
+
+  .navbar-fixed-top {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+    background-color: white;
+    /* Add this to ensure the navbar has a background */
+  }
+</style>
 
 <body>
 
   <div class="container-fluid"
-    style="margin-top: 46px;background: url(&quot;/assets/invoice_asset/img/Oufoq%20albinae%20BIG.png&quot;) center / cover no-repeat;">
+    style="background: url(&quot;/assets/invoice_asset/img/Oufoq%20albinae%20BIG.png&quot;) center / cover no-repeat;">
     <nav class="navbar fixed-top">
       <div class="container-fluid">
         <div class="vstack"><img src="/assets/invoice_asset/img/BG_FD.png"
@@ -64,7 +91,7 @@
               @if($estimate->transaction_id)
               {{$estimate->transaction_id}}
               @else
-              ---{{$estimate->payment_method }}---
+              ----{{$estimate->payment_method}}----
               @endif
             </td>
             <td class="text-start"
@@ -122,11 +149,14 @@
       </table>
     </div>
 
-    <nav class="navbar fixed-bottom">
+  </div>
+  </div>
+
+  <footer class="footer">
+    <nav class="navbar" style="margin-bottom: -60px;">
       <div class="container-fluid">
-        <div class="vstack">
-          <div style="width: 100%;height: 3px;background: #ed961c;border-radius: 26px;margin-bottom: 5px;">
-          </div>
+        <div class="vstack w-100">
+          <div style="width: 100%;height: 3px;background: #ed961c;border-radius: 26px;margin-bottom: 5px;"></div>
           <p class="fw-bold text-center" style="font-size: 13px;">Adresse : {{$company->address}} / IF :
             {{$company->if}} / ICE :&nbsp; {{$company->ice}}/ RC : {{$company->ice}} CNSS :
             {{$company->cnss}}&nbsp;<br>Patente : {{$company->patente}} / Capitale : {{
@@ -136,12 +166,13 @@
         </div>
       </div>
     </nav>
-  </div>
-  <script src="/assets/invoice_asset/js/jquery.min.js"></script>
-  <script src="/assets/invoice_asset/bootstrap/js/bootstrap.min.js"></script>
-  {{-- <script src="/assets/invoice_asset/js/bs-init.js"></script> --}}
-  <script>
-    function printInvoice() {
+  </footer>
+  < <script src="/assets/invoice_asset/js/jquery.min.js">
+    </script>
+    <script src="/assets/invoice_asset/bootstrap/js/bootstrap.min.js"></script>
+    {{-- <script src="/assets/invoice_asset/js/bs-init.js"></script> --}}
+    <script>
+      function printInvoice() {
             var printButton = document.getElementById('printButton');
             if (printButton) {
                 printButton.style.display = 'none';
@@ -153,7 +184,7 @@
         }
 
         document.body.ondblclick = printInvoice;
-  </script>
+    </script>
 </body>
 
 </html>

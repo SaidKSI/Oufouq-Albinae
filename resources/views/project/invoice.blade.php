@@ -73,21 +73,21 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);height: 500px;">
+                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);height: 400px;">
                             {{$estimate->reference}}</th>
-                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);height: 500px;">
+                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);height: 400px;">
                             {{$estimate->project->name}}</th>
-                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);height: 500px;">
+                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);height: 400px;">
                             {{$estimate->quantity}}</th>
-                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);height: 500px;">
+                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);height: 400px;">
                             {{number_format($estimate->total_price, 2)}}</th>
-                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);height: 500px;">{{
+                        <th class="border-2 border-dark" style="background: rgba(255,255,255,0);height: 400px;">{{
                             number_format($total,2)}}</th>
                     </tr>
                     <tr>
                         <th class="text-capitalize border-2 border-dark" style="background: rgba(255,255,255,0);"
                             colspan="2" rowspan="2">Arreté La présente facture à la somme de :<br>#...
-                            {{$total_in_alphabetic}} Dirhams...#</th>
+                           <span style="font-size:10px">{{$total_in_alphabetic}}</span>  Dirhams...#</th>
                         <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">total
                             ht</th>
                         <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">tva
