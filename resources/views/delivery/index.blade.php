@@ -138,7 +138,7 @@
                         </tbody>
                         <tfoot>
                           <tr>
-                            <th colspan="2"></th>
+                            <th colspan="2">{{count($delivery->bills)}} Bills</th>
                             <th>Total Amount: {{number_format($delivery->total_with_tax, 2)}}</th>
                             <th>Total Paid: {{number_format($delivery->total_paid, 2)}}</th>
                             <th>Remaining: {{number_format($delivery->remaining_amount, 2)}}</th>
@@ -182,6 +182,11 @@
                         <label for="bill_amount" class="form-label">Bill Amount</label>
                         <input type="number" step="0.01" class="form-control" id="bill_amount" name="bill_amount"
                           value="{{$delivery->total_with_tax}}" readonly>
+                      </div>
+                      <div class="mb-3">
+                        <label for="remaining_amount" class="form-label">Remaining Amount</label>
+                        <input type="number" step="0.01" class="form-control" id="remaining_amount"
+                          name="remaining_amount" value="{{$delivery->remaining_amount}}" readonly>
                       </div>
                       <div class="mb-3">
                         <label for="supplier" class="form-label">Supplier</label>
