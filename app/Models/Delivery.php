@@ -42,4 +42,9 @@ class Delivery extends Model
     {
         return $this->belongsTo(Supplier::class);
     }
+
+    public function bills()
+    {
+        return $this->hasMany(DeliveryBills::class);
+    }
 }

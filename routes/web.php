@@ -66,6 +66,8 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::delete('/order/delivery/delete/{id}', [DeliveryController::class, 'destroy'])->name('delivery.destroy');
     Route::get('/order/delivery/print/{id}', [DeliveryController::class, 'print'])->name('delivery.print');
     Route::get('/order/delivery/{number}/to-number', [DeliveryController::class, 'numberToFrenchWords'])->name('numberToWords');
+    // ? delivery bills
+    Route::post('/delivery/{id}/add-bill', [DeliveryController::class, 'addBill'])->name('delivery.add-bill');
     // ? Project Estimate
     Route::get('/projects/estimate', [ProjectController::class, 'estimate'])->name('estimates');
     Route::post('/projects/estimate/store', [ProjectController::class, 'storeEstimate'])->name('estimate.store');

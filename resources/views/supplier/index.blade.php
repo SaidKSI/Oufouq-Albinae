@@ -100,8 +100,9 @@
             <th>City</th>
             <th>Description</th>
             <th>Address</th>
-            <th>Rating</th>
-            {{-- <th>Date</th> --}}
+            <th>Total Amount</th>
+            <th>Paid Amount</th>
+            <th>Remaining Amount</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -164,8 +165,9 @@
               </div>
             </td>
             <td>{{$supplier->address}}</td>
-            <td>{{$supplier->rating}}</td>
-            {{-- <td>{{$supplier->created_at}}</td> --}}
+            <td>{{ number_format($supplier->total_delivery_amount, 2) }}</td>
+            <td>{{ number_format($supplier->total_paid_amount, 2) }}</td>
+            <td>{{ number_format($supplier->remaining_amount, 2) }}</td>
             <td>
               <a href="#" class="text-danger" onclick="confirmDelete({{$supplier->id}})"><i
                   class="ri-delete-bin-2-fill"></i></a>

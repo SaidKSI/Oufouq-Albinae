@@ -156,4 +156,22 @@ class DeliveryController extends Controller
 
         return view('delivery.print', ['delivery' => $delivery, 'totalInAlphabet' => $totalInAlphabet, 'company' => $company]);
     }
+
+    public function addBill(Request $request, $id)
+    {
+        // dd($request->all());
+        $delivery = Delivery::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'bill_number' => 'required|string',
+            'bill_date' => 'required|date',
+            'amount' => 'required|numeric',
+            'payment_method' => 'required|string',
+            'note' => 'nullable|string',
+        ]);
+
+        $delivery->bills()->create($validatedData);
+
+        return redirect()->route('delivery')->with('success', 'Bill added successfully');
+    }
 }

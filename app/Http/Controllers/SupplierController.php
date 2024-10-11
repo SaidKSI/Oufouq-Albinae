@@ -10,9 +10,9 @@ class SupplierController extends Controller
 {
     function index()
     {
-        $suppliers = Supplier::all();
+        $suppliers = Supplier::with(['delivery', 'delivery.bills'])->get();
         $supplierCount = $suppliers->count();
-        return view('supplier.index', ['suppliers' => $suppliers, 'supplierCount' => $supplierCount]);
+        return view('supplier.index', compact('suppliers', 'supplierCount'));
     }
     public function store(Request $request)
     {

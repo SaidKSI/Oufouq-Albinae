@@ -33,5 +33,20 @@ class Supplier extends Model
     {
         return $this->hasMany(Delivery::class);
     }
+
+    public function getTotalDeliveryAmountAttribute()
+    {
+        return $this->delivery()->sum('total_with_tax');
+    }
+
+    public function getTotalPaidAmountAttribute()
+    {
+        return $this->delivery()->withSum('bills', 'amount')->get()->sum('bills_sum_amount');
+    }
+
+    public function getRemainingAmountAttribute()
+    {
+        return $this->total_delivery_amount - $this->total_paid_amount;
+    }
     
 }
