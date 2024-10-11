@@ -58,8 +58,8 @@
         </div>
       </li>
 
-   
-    
+
+
 
       <li class="d-none d-sm-inline-block">
         <div class="nav-link" id="light-dark-mode" data-bs-toggle="tooltip" data-bs-placement="left" title="Theme Mode">
@@ -78,11 +78,12 @@
         <a class="nav-link dropdown-toggle arrow-none nav-user px-2" data-bs-toggle="dropdown" href="#" role="button"
           aria-haspopup="false" aria-expanded="false">
           <span class="account-user-avatar">
-            <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="user-image" width="32" class="rounded-circle">
+            <img src="{{ asset('assets/images/users/avatar-1.png') }}" alt="user-image" width="32"
+              class="rounded-circle">
           </span>
           <span class="d-lg-flex flex-column gap-1 d-none">
             <h5 class="my-0">{{auth()->user()->user_name}}</h5>
-            <h6 class="my-0 fw-normal">{{auth()->user()->is_supervisor ?  'Supervisor' : 'Admin'}} </h6>
+            <h6 class="my-0 fw-normal">{{auth()->user()->is_supervisor ? 'Supervisor' : 'Admin'}} </h6>
           </span>
         </a>
         <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">

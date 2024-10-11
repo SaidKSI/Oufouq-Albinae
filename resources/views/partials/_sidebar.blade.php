@@ -41,26 +41,10 @@
         </a>
       </li>
       <li class="side-nav-item">
-        <a data-bs-toggle="collapse" href="#sidebarTasks" aria-expanded="false" aria-controls="sidebarTasks"
-          class="side-nav-link">
+        <a href="{{route('supplier.index')}}" class="side-nav-link">
           <i class="bi bi-people-fill"></i>
           <span> Fornaisseur </span>
-          <span class="menu-arrow"></span>
         </a>
-        <div class="collapse" id="sidebarTasks">
-          <ul class="side-nav-second-level">
-            <li>
-              <a href="{{route('supplier.index')}}">Suppliers</a>
-            </li>
-            {{-- <li>
-              <a href="{{route('product.index')}}">Product</a>
-            </li> --}}
-            {{-- <li>
-              <a href="{{route('purchase')}}">Les Achats</a>
-            </li> --}}
-      
-          </ul>
-        </div>
       </li>
       <li class="side-nav-item">
         <a data-bs-toggle="collapse" href="#sidebarClients" aria-expanded="false" aria-controls="sidebarClients"

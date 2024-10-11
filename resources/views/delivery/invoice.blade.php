@@ -18,7 +18,8 @@
                     id="number"> </h4>
               </div>
               <div class="col text-center"><span class="fw-bold" style="margin-right: 22px;">Salé</span><span>Le <input
-                    class="border-0 focus-ring form-control-sm" type="date" style="width: 120px;" name="date"></span>
+                    class="border-0 focus-ring form-control-sm" type="date" style="width: 120px;" name="date"
+                    value="{{now()->format('Y-m-d')}}"></span>
               </div>
             </div>
           </div>
