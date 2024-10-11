@@ -13,7 +13,8 @@
         <select name="supplier_id" id="supplier_id" class="form-control w-25 m-2" onchange="this.form.submit()">
           <option value="">All Suppliers</option>
           @foreach($suppliers as $supplier)
-          <option value="{{ $supplier->id }}" {{ $selectedSupplier && $selectedSupplier->id == $supplier->id ? 'selected' : '' }}>
+          <option value="{{ $supplier->id }}" {{ $selectedSupplier && $selectedSupplier->id == $supplier->id ?
+            'selected' : '' }}>
           <option value="{{ $supplier->id }}" {{ $selectedSupplier==$supplier->id ? 'selected' : '' }}>
             {{ $supplier->full_name }}
           </option>
@@ -31,6 +32,7 @@
           <th>Payment Method</th>
           <th>Total Price <small>without tax</small></th>
           <th>Total Price <small>with tax</small></th>
+          <th>Remaining Amount</th>
           <th>Bills</th>
           <th>Action</th>
         </tr>
@@ -92,6 +94,9 @@
             {{$delivery->total_with_tax}}
           </td>
           <td>
+            {{number_format($delivery->remaining_amount, 2)}}
+          </td>
+          <td>
             <i class="ri-bill-fill" data-bs-toggle="modal" data-bs-target="#billsModal{{$delivery->id}}"
               style="cursor: pointer;"></i>
             <!-- Modal for displaying bills -->
@@ -105,32 +110,42 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <table class="table table-striped">
-                      <thead>
-                        <tr>
-                          <th>Bill Number</th>
-                          <th>Date</th>
-                          <th>Amount</th>
-                          <th>Payment Method</th>
-                          <th>Note</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @forelse($delivery->bills as $bill)
-                        <tr>
-                          <td>{{$bill->bill_number}}</td>
-                          <td>{{$bill->bill_date}}</td>
-                          <td>{{$bill->amount}}</td>
-                          <td>{{$bill->payment_method}}</td>
-                          <td>{{$bill->note}}</td>
-                        </tr>
-                        @empty
-                        <tr>
-                          <td colspan="5" class="text-center">No bills found for this delivery.</td>
-                        </tr>
-                        @endforelse
-                      </tbody>
-                    </table>
+                    <div class="table-responsive">
+                      <table class="table table-striped table-sm">
+                        <thead>
+                          <tr>
+                            <th>Bill Number</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Payment Method</th>
+                            <th>Note</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @forelse($delivery->bills as $bill)
+                          <tr>
+                            <td>{{$bill->bill_number}}</td>
+                            <td>{{$bill->bill_date}}</td>
+                            <td>{{number_format($bill->amount, 2)}}</td>
+                            <td>{{$bill->payment_method}}</td>
+                            <td>{{$bill->note}}</td>
+                          </tr>
+                          @empty
+                          <tr>
+                            <td colspan="5" class="text-center">No bills found for this delivery.</td>
+                          </tr>
+                          @endforelse
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <th colspan="2"></th>
+                            <th>Total Amount: {{number_format($delivery->total_with_tax, 2)}}</th>
+                            <th>Total Paid: {{number_format($delivery->total_paid, 2)}}</th>
+                            <th>Remaining: {{number_format($delivery->remaining_amount, 2)}}</th>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

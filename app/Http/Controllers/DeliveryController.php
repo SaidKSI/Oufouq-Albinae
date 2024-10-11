@@ -159,7 +159,6 @@ class DeliveryController extends Controller
 
     public function addBill(Request $request, $id)
     {
-        // dd($request->all());
         $delivery = Delivery::findOrFail($id);
 
         $validatedData = $request->validate([
@@ -169,6 +168,10 @@ class DeliveryController extends Controller
             'payment_method' => 'required|string',
             'note' => 'nullable|string',
         ]);
+
+        if ($validatedData['amount'] > $delivery->remaining_amount) {
+            return redirect()->back()->with('error', 'The bill amount exceeds the remaining amount for this delivery.');
+        }
 
         $delivery->bills()->create($validatedData);
 

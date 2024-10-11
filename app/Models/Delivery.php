@@ -47,4 +47,14 @@ class Delivery extends Model
     {
         return $this->hasMany(DeliveryBills::class);
     }
+
+    public function getTotalPaidAttribute()
+    {
+        return $this->bills()->sum('amount');
+    }
+
+    public function getRemainingAmountAttribute()
+    {
+        return $this->total_with_tax - $this->total_paid;
+    }
 }
