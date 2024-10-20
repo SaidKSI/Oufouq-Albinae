@@ -24,6 +24,7 @@ return new class extends Migration
             $table->date('due_date')->nullable();
             $table->integer('quantity')->default(1);
             $table->integer('tax')->default(0);
+            $table->text('note')->nullable();
             $table->timestamps();
         });
     }

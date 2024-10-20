@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
             $table->string('path');
+            $table->string('name');
             $table->unsignedBigInteger('documentable_id'); 
             $table->string('documentable_type');
             $table->timestamps();

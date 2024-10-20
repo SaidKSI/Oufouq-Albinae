@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\CompanySetting;
 use App\Models\Estimate;
+use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use NumberToWords\NumberToWords;
 class EstimateController extends Controller
 {
@@ -29,5 +32,63 @@ class EstimateController extends Controller
         } elseif ($estimate->type === 'invoice') {
             return view('project-invoices.invoice', compact('estimate', 'company', 'total', 'taxAmount', 'totalWithoutTax', 'total_in_alphabetic'));
         }
+    }
+
+    public function createInvoice(Request $request)
+    {
+        $clients = Client::all(); 
+        $selectedClientId = $request->input('client_id');
+        $selectedProjectId = $request->input('project_id');
+        return view('estimate.create-invoice', compact('clients', 'selectedClientId', 'selectedProjectId'));
+    }
+
+    function storeInvoice(Request $request)
+    {
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'project_id' => 'required|exists:projects,id',
+            'number' => 'required|unique:estimates,number',
+            'date' => 'required|date',
+            'reference' => 'required|string',
+            'qte' => 'required|numeric|min:0',
+            'total_without_tax' => 'required|numeric|min:0',
+            'tax' => 'required|numeric|min:0|max:100',
+            'total_with_tax' => 'required|numeric|min:0',
+            'note' => 'nullable|string',
+            'doc.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,pdf|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $errorMessage = implode('<br>', $errors);
+            toastr()->error($errorMessage);
+            return back()->withErrors($validator->errors())->withInput();
+        }
+
+
+        $estimate = new Estimate();
+        $estimate->project_id = $request->project_id;
+        $estimate->number = $request->number;
+        $estimate->reference = $request->reference;
+        $estimate->type = 'estimate';
+        $estimate->quantity = $request->qte;
+        $estimate->total_price = $request->total_with_tax;
+        $estimate->tax = $request->tax;
+        $estimate->note = $request->note;
+        $estimate->save();
+
+        // Handle file uploads
+        if ($request->has('doc')) {
+            $file = $request->file('doc');
+            $path = $file->store('invoice_documents', 'public');
+            
+            $estimate->documents()->create([
+                'path' => $path,
+                'name' => $file->getClientOriginalName(),
+            ]);
+        }
+
+        return redirect()->route('estimates')->with('success', 'Invoice created successfully');
+
     }
 }

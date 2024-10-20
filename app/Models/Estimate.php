@@ -13,14 +13,14 @@ class Estimate extends Model
         'project_id',
         'number',
         'type',
-        'payment_method',
-        'transaction_id',
         'total_price',
         'reference',
         'due_date',
         'quantity',
-        'tax'
-    ];	
+        'tax',
+        'payment_method',
+        'transaction_id',
+    ];
 
     public function project()
     {
@@ -35,5 +35,10 @@ class Estimate extends Model
     public function scopeInvoice($query)
     {
         return $query->where('type', 'invoice');
+    }
+
+    public function documents()
+    {
+        return $this->morphMany(Document::class, 'documentable');
     }
 }

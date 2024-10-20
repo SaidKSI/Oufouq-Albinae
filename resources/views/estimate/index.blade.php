@@ -6,7 +6,7 @@
   <div class="card">
     <div class="card-body p-2">
       <div class="col-md-2 m-1">
-        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addestimateModal">Add</button>
+        {{-- <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addestimateModal">Add</button>
         <!-- Add estimate Modal -->
         <div class="modal fade" id="addestimateModal" tabindex="-1" aria-labelledby="addestimateModalLabel"
           aria-hidden="true">
@@ -59,7 +59,10 @@
               </form>
             </div>
           </div>
-        </div>
+        </div> --}}
+
+        <a href="{{route('project-estimate.create-invoice')}}" class="btn btn-outline-primary">Create Estimate Invoice</a>
+
       </div>
       <div class="col-md-12">
         <table id="basic-datatable" class="table table-striped dt-responsive">
@@ -94,6 +97,7 @@
                 {{ number_format($estimate->total_price + $taxAmount, 2) }}
               </td>
               <td>
+                <a href="{{route('project-estimate.invoice',['id'=>$estimate->id])}}" class="text-primary">facture</a>
                 <a href="#" onclick="printInvoice({{ $estimate->id }})"><i class="ri-file-list-fill"></i></a>
 
 

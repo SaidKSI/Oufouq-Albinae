@@ -59,7 +59,11 @@
       </li>
 
 
-
+      <li class="d-none d-sm-inline-block">
+        <a class="nav-link" href="{{route('settings')}}">
+            <i class="ri-settings-3-line fs-22"></i>
+        </a>
+    </li>
 
       <li class="d-none d-sm-inline-block">
         <div class="nav-link" id="light-dark-mode" data-bs-toggle="tooltip" data-bs-placement="left" title="Theme Mode">

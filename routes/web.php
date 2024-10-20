@@ -18,6 +18,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TaskController;
 use App\Models\Delivery;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\InvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,8 +57,9 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::delete('/project/{id}', [ProjectController::class, 'destroy'])->name('project.destroy');
     Route::get('/project/{id}', [ProjectController::class, 'show'])->name('project.show');
     // project estimate invoice
-    Route::get('/projects/{id}/invoice', [ProjectController::class, 'estimateInvoice'])->name('estimate.invoice');
+    // Route::get('/projects/{id}/invoice', [ProjectController::class, 'estimateInvoice'])->name('estimate.invoice');
     Route::get('/projects/payment/{id}/invoice', [ProjectController::class, 'paymentEstimateInvoice'])->name('estimate.payment.invoice');
+    Route::get('/projects/{id}/invoice', [ProjectController::class, 'showInvoice'])->name('project-estimate.invoice');
     // * Delivery invoice
     Route::get('/projects/delivery/create', [DeliveryController::class, 'deliveryInvoice'])->name('delivery.invoice');
     Route::get('/order/delivery', [DeliveryController::class, 'index'])->name('delivery');
@@ -80,6 +82,8 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::post('projects/estimate/payment/store', [PaymentController::class, 'storeEstimatePayment'])->name('estimatePayment.store');
     Route::get('/estimates/{id}', [EstimateController::class, 'show'])->name('estimate.show');
     Route::get('/invoices/{id}', [EstimateController::class, 'show'])->name('invoice.show');
+    Route::get('/project-estimates/create-invoice', [EstimateController::class, 'createInvoice'])->name('project-estimate.create-invoice');
+    Route::post('/project-estimates/store-invoice', [EstimateController::class, 'storeInvoice'])->name('project-estimate.store-invoice');
     // ? Order Routes
     Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
     Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
@@ -97,7 +101,9 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::post('/products/store', [ProductController::class, 'productStore'])->name('product.store');
     Route::put('/products/{id}', [ProductController::class, 'productUpdate'])->name('product.update');
     Route::delete('/products/{id}', [ProductController::class, 'productDestroy'])->name('product.destroy');
-
+    // ? Invoice
+    Route::get('facture/invoices', [ProjectController::class, 'createInvoice'])->name('invoice.create');
+    Route::post('facture/invoices/store', [ProjectController::class, 'storeInvoice'])->name('project.store_invoice');
     // ? Payment Routes
     Route::post('/payments', [PaymentController::class, 'store'])->name('payment.store');
     // ? Stock
@@ -160,4 +166,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::get('/company/capital', [DashboardController::class, 'getCapital'])->name('company.capital');
     // capital history over time line chart
     Route::get('/company/capital-history', [DashboardController::class, 'getCapitalHistory'])->name('company.capital.history');
+
+    Route::get('/invoice/{invoice}', [InvoiceController::class, 'show'])->name('invoice.show');
+    Route::get('/invoice/{invoice}/print', [InvoiceController::class, 'print'])->name('invoice.print');
 });

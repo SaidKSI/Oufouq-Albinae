@@ -35,9 +35,9 @@ class Project extends Model
         return $this->hasOne(Estimate::class)->where('type', 'estimate');
     }
 
-    public function invoice()
+    public function invoices()
     {
-        return $this->hasOne(Estimate::class)->where('type', 'invoice');
+        return $this->hasMany(Estimate::class)->where('type', 'invoice');
     }
 
     public function orders()
@@ -74,5 +74,25 @@ class Project extends Model
                 $project->status = 'completed';
             }
         });
+    }
+
+    public function getTotalEstimateAmount()
+    {
+        return $this->estimate()->sum('total_price');
+    }
+
+    public function getTotalPaidAmount()
+    {
+        return $this->payments()->sum('amount');
+    }
+
+    public function getRemainingAmount()
+    {
+        return $this->getTotalEstimateAmount() - $this->getTotalPaidAmount();
+    }
+
+    public function canAddPayment($amount)
+    {
+        return $amount <= $this->getRemainingAmount();
     }
 }

@@ -10,15 +10,15 @@ class Document extends Model
 {
     use HasFactory;
     protected $table = 'documents';
-    protected $fillable = ['path'];
+    protected $fillable = ['path', 'name', 'documentable_id', 'documentable_type'];
     public function documentable()
     {
         return $this->morphTo();
     }
     protected static function booted()
     {
-        self::deleted(function (Document $song) {
-            Storage::disk('public')->delete($song->path);
+        static::deleting(function (Document $document) {
+            Storage::disk('public')->delete($document->path);
         });
     }
 }

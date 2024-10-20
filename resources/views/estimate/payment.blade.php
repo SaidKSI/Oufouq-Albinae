@@ -7,7 +7,8 @@
     <div class="card-body p-2">
       <div class="card-body p-2">
         <div class="col-md-2 ">
-          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addinvoiceModal">Add</button>
+          <a href="{{route('invoice.create')}}" class="btn btn-outline-primary">Add</a>
+          {{-- <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addinvoiceModal">Add</button>
           <!-- Add invoice Modal -->
           <div class="modal fade" id="addinvoiceModal" tabindex="-1" aria-labelledby="addinvoiceModalLabel"
             aria-hidden="true">
@@ -48,7 +49,7 @@
                 </form>
               </div>
             </div>
-          </div>
+          </div> --}}
         </div>
         <div class="col-md-12">
           <table id="basic-datatable" class="table table-striped dt-responsive">
@@ -83,10 +84,9 @@
                   {{ number_format($invoice->total_price + $taxAmount, 2) }}
                 </td>
                 <td>
-                  <a href="#" onclick="printInvoice({{ $invoice->id }})"><i class="ri-file-list-fill"></i></a>
-
-
-                 {{-- <a href="" class="text-primary" data-bs-toggle="modal"
+                  <a href="{{ route('invoice.show', $invoice->id) }}"><i class="ri-eye-line"></i></a>
+                  <a href="#" onclick="printInvoice({{ $invoice->id }})"><i class="ri-printer-line"></i></a>
+                  {{-- <a href="" class="text-primary" data-bs-toggle="modal"
                     data-bs-target="#invoiceModal{{$invoice->id}}"><i class="ri-edit-fill"></i></a>
 
                   <!-- Add/Edit Invoice Modal -->
@@ -172,15 +172,9 @@
 
 @push('scripts')
 <script>
-  function printInvoice(estimateId) {
-        var iframe = document.getElementById('invoiceFrame');
-        iframe.style.display = 'block';
-        iframe.src = '/dashboard/projects/payment/' + estimateId + '/invoice';
-        iframe.onload = function() {
-            iframe.contentWindow.print();
-            iframe.style.display = 'none';
-        };
-    }
+  function printInvoice(invoiceId) {
+    window.open(`/invoice/${invoiceId}/print`, '_blank');
+  }
 </script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {

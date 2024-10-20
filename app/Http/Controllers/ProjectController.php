@@ -125,7 +125,7 @@ class ProjectController extends Controller
         return view('project.show', ['project' => $project, 'expenses' => $expenses, 'projects' => $projects, 'employers' => $employers, 'suppliers' => $supplier]);
     }
 
-  
+
     function estimate()
     {
         $projects = Project::whereDoesntHave('estimates', function ($query) {
@@ -163,7 +163,7 @@ class ProjectController extends Controller
         $estimate->number = rand(10000, 99999);
         $estimate->save();
 
-        return redirect()->back()->with('success', 'Project added successfully.');
+        return redirect()->route('estimate.payment')->with('success', 'Project added successfully.');
 
     }
     public function numberToFrenchWords($number)
@@ -189,7 +189,7 @@ class ProjectController extends Controller
             'taxAmount' => $taxAmount,
             'totalWithoutTax' => $totalWithoutTax,
             'total_in_alphabetic' => $total_in_alphabetic
-            
+
         ]);
     }
     function paymentEstimateInvoice($id)
@@ -199,7 +199,7 @@ class ProjectController extends Controller
         $totalWithoutTax = $estimate->total_price / (1 + $estimate->tax / 100);
         $taxAmount = $estimate->total_price - $totalWithoutTax;
         $total = ($estimate->total_price * $estimate->quantity) + $taxAmount;
-     
+
         $total_in_alphabetic = $this->numberToFrenchWords($total);
         return view('project.payment-invoice', [
             'estimate' => $estimate,
@@ -215,5 +215,62 @@ class ProjectController extends Controller
         $estimate = Estimate::find($id);
         $estimate->delete();
         return redirect()->back()->with('success', 'Estimate deleted successfully.');
+    }
+
+    public function createInvoice()
+    {
+        $projects = Project::whereHas('estimate', function ($query) {
+            $query->where('type', 'estimate');
+        })->whereDoesntHave('estimate', function ($query) {
+            $query->where('type', 'invoice');
+        })->with('client')->get();
+
+        return view('project.create_invoice', compact('projects'));
+    }
+
+    function storeInvoice(Request $request)
+    {
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'payment_method' => 'required|string',
+            'transaction_id' => 'required|string',
+            'date' => 'required|date',
+            'note' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $errorMessage = implode('<br>', $errors);
+            toastr()->error($errorMessage);
+            return back()->withErrors($validator->errors())->withInput();
+        }
+
+
+        $estimate = Estimate::find($request->estimate_id);
+        $estimate->payment_method = $request->payment_method;
+        $estimate->transaction_id = $request->transaction_id;
+        $estimate->type = 'invoice';
+        $estimate->note = $request->note;
+        $estimate->update();
+
+        return redirect()->back()->with('success', 'Invoice created successfully');
+
+    }
+
+    public function getProjectDetails($id)
+    {
+        $project = Project::findOrFail($id);
+        return response()->json([
+            'name' => $project->name,
+            'description' => $project->description
+        ]);
+    }
+
+    public function showInvoice($id)
+    {
+        $estimate = Estimate::findOrFail($id);
+        $projects = Project::all(); // You might want to adjust this based on your needs
+
+        return view('project.create_invoice', compact('estimate', 'projects'));
     }
 }
