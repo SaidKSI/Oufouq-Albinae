@@ -169,4 +169,6 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
 
     Route::get('/invoice/{invoice}', [InvoiceController::class, 'show'])->name('invoice.show');
     Route::get('/invoice/{invoice}/print', [InvoiceController::class, 'print'])->name('invoice.print');
+    // * Logout
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

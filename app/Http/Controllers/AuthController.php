@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -35,5 +36,16 @@ class AuthController extends Controller
         toastr()->error('Invalid credentials');
         // If the credentials are invalid or the user doesn't exist, return to login with an error message
         return back()->withErrors(['email' => 'Invalid credentials'])->withInput($request->only('email'));
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login');
     }
 }
