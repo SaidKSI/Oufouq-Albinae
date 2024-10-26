@@ -1,22 +1,21 @@
 @extends('layouts.app')
 @section('title', 'Delivery')
 @section('content')
-<x-Breadcrumb title="Delivery" />
+<x-Breadcrumb title="{{ $type === 'supplier' ? 'Bon de Livraison Fournisseur' : 'Bon de Livraison Client' }}" />
 <div class="row">
   <div class="card">
     <div class="col-md-2 mx-3 my-1">
-      <a href="{{route('delivery.invoice')}}" class="btn btn-outline-primary">Create invoice</a>
+      <a href="{{route('delivery.invoice',['type'=>$type])}}" class="btn btn-outline-primary">Create invoice</a>
     </div>
-    <form method="GET" action="{{ route('delivery') }}">
+    <form method="GET" action="{{ route('delivery.index', ['type' => $type]) }}">
       <div class="form-group">
-        <label for="supplier_id">Filter by Supplier</label>
-        <select name="supplier_id" id="supplier_id" class="form-control w-25 m-2" onchange="this.form.submit()">
-          <option value="">All Suppliers</option>
-          @foreach($suppliers as $supplier)
-          <option value="{{ $supplier->id }}" {{ $selectedSupplier && $selectedSupplier->id == $supplier->id ?
-            'selected' : '' }}>
-          <option value="{{ $supplier->id }}" {{ $selectedSupplier==$supplier->id ? 'selected' : '' }}>
-            {{ $supplier->full_name }}
+        <label for="filter_id">Filter by {{ $type === 'supplier' ? 'Supplier' : 'Client' }}</label>
+        <select name="{{ $type === 'supplier' ? 'supplier_id' : 'client_id' }}" id="filter_id"
+          class="form-control w-25 m-2" onchange="this.form.submit()">
+          <option value="">All {{ $type === 'supplier' ? 'Suppliers' : 'Clients' }}</option>
+          @foreach($filterEntity as $entity)
+          <option value="{{ $entity->id }}" {{ $selectedEntity==$entity->id ? 'selected' : '' }}>
+            {{ $type === 'supplier' ? $entity->full_name : $entity->name }}
           </option>
           @endforeach
         </select>
@@ -26,7 +25,7 @@
       <thead>
         <tr>
           <th>N°</th>
-          <th>Supplier</th>
+          <th>{{ $type === 'supplier' ? 'Supplier' : 'Client' }}</th>
           <th>Project Name</th>
           <th>Product</th>
           <th>Payment Method</th>
@@ -41,7 +40,7 @@
         @foreach ($deliveries as $delivery)
         <tr>
           <td>{{$delivery->number}}</td>
-          <td>{{$delivery->supplier->full_name}}</td>
+          <td>{{ $type === 'supplier' ? $delivery->supplier->full_name : $delivery->client->full_name }}</td>
           <td><a href="{{route('project.show',['id'=>$delivery->project_id])}}">{{$delivery->project->name}}
             </a> </td>
           <td>

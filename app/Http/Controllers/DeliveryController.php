@@ -12,26 +12,43 @@ use NumberToWords\NumberToWords;
 
 class DeliveryController extends Controller
 {
-    function index(Request $request)
+    public function index(Request $request, $type)
     {
         $supplierId = $request->input('supplier_id');
-        $suppliers = Supplier::all();
+        $clientId = $request->input('client_id');
 
-        if ($supplierId) {
-            $deliveries = Delivery::where('supplier_id', $supplierId)->get();
+        $query = Delivery::where('type', $type);
+
+        if ($type === 'supplier') {
+            $suppliers = Supplier::all();
+            $filterEntity = $suppliers;
+            $selectedEntity = $supplierId;
+
+            if ($supplierId) {
+                $query->where('supplier_id', $supplierId);
+            }
         } else {
-            $deliveries = Delivery::all();
+            $clients = Client::all();
+            $filterEntity = $clients;
+            $selectedEntity = $clientId;
+
+            if ($clientId) {
+                $query->where('client_id', $clientId);
+            }
         }
+
+        $deliveries = $query->get();
 
         return view('delivery.index', [
             'deliveries' => $deliveries,
-            'suppliers' => $suppliers,
-            'selectedSupplier' => $supplierId
+            'filterEntity' => $filterEntity,
+            'selectedEntity' => $selectedEntity,
+            'type' => $type
         ]);
     }
 
 
-    public function deliveryInvoice(Request $request)
+    public function deliveryInvoice(Request $request, $type)
     {
         $clients = Client::all();
         $suppliers = Supplier::all();
@@ -39,6 +56,7 @@ class DeliveryController extends Controller
         $selectedProjectId = $request->input('project_id');
 
         return view('delivery.invoice', [
+            'type' => $type,
             'clients' => $clients,
             'suppliers' => $suppliers,
             'selectedClientId' => $selectedClientId,
@@ -71,6 +89,7 @@ class DeliveryController extends Controller
             'doc' => 'nullable|file',
             'note' => 'nullable|string',
             'payment_method' => 'required|string',
+            'type' => 'required|string',
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
@@ -95,6 +114,7 @@ class DeliveryController extends Controller
             'doc' => $docPath,
             'note' => $request['note'],
             'payment_method' => $request['payment_method'],
+            'type' => $request['type'],
         ]);
 
         foreach ($request['ref'] as $index => $ref) {
@@ -108,7 +128,7 @@ class DeliveryController extends Controller
             ]);
         }
 
-        return redirect()->route('delivery')->with('success', 'Invoice created successfully.');
+        return redirect()->route('delivery.index', ['type' => $request['type']])->with('success', 'Invoice created successfully.');
     }
 
     function show($id)

@@ -41,10 +41,22 @@
         </a>
       </li>
       <li class="side-nav-item">
-        <a href="{{route('supplier.index')}}" class="side-nav-link">
+        <a data-bs-toggle="collapse" href="#sidebarTasks" aria-expanded="false" aria-controls="sidebarTasks"
+          class="side-nav-link">
           <i class="bi bi-people-fill"></i>
           <span> Fornaisseur </span>
+          <span class="menu-arrow"></span>
         </a>
+        <div class="collapse" id="sidebarTasks">
+          <ul class="side-nav-second-level">
+            <li>
+              <a href="{{route('supplier.index')}}">Suppliers</a>
+            </li>
+            <li>
+              <a href="{{ route('delivery.index', ['type' => 'supplier']) }}">Bon de Livraison</a>
+            </li>
+          </ul>
+        </div>
       </li>
       <li class="side-nav-item">
         <a data-bs-toggle="collapse" href="#sidebarClients" aria-expanded="false" aria-controls="sidebarClients"
@@ -61,7 +73,19 @@
             <li>
               <a href="{{route('project.index')}}">Projet</a>
             </li>
-          
+            <li class="side-nav-item">
+              <a href="{{route('estimates')}}">
+                <span> Devis </span>
+              </a>
+            </li>
+            <li class="side-nav-item">
+              <a href="{{route('estimate.payment')}}">
+                <span> Facteur </span>
+              </a>
+            </li>
+            <li>
+              <a href="{{ route('delivery.index', ['type' => 'client']) }}">Bon de Livraison</a>
+            </li>
           </ul>
         </div>
       </li>
@@ -71,30 +95,14 @@
           <span> Stock </span>
         </a>
       </li> --}}
-      <li class="side-nav-item">
-        <a href="{{route('estimates')}}" class="side-nav-link">
-          <i class="bi bi-file-earmark-text-fill"></i>
-          <span> Devis </span>
-        </a>
-      </li>
-      <li class="side-nav-item">
-        <a href="{{route('estimate.payment')}}" class="side-nav-link">
-          <i class="bi bi-file-earmark-text-fill"></i>
-          <span> Facteur </span>
-        </a>
-      </li>
+
       {{-- <li class="side-nav-item">
         <a href="{{route('order.index')}}" class="side-nav-link">
           <i class="bi bi-file-earmark-text-fill"></i>
           <span> Bon de Commande </span>
         </a>
       </li> --}}
-      <li class="side-nav-item">
-        <a href="{{route('delivery')}}" class="side-nav-link">
-          <i class="bi bi-file-earmark-text-fill"></i>
-          <span> Bon de Livraison </span>
-        </a>
-      </li>
+
       <li class="side-nav-item">
         <a data-bs-toggle="collapse" href="#sidebarCharges" aria-expanded="false" aria-controls="sidebarCharges"
           class="side-nav-link">
@@ -137,7 +145,7 @@
                   <li>
                     <a href="{{route('employee.payment')}}">Payment</a>
                   </li>
-                
+
                   <li>
                     <a href="{{route('profession')}}">Employees Profession</a>
                   </li>
@@ -177,7 +185,7 @@
         </a>
         <div class="collapse" id="sidebarDeveloper">
           <ul class="side-nav-second-level">
-        
+
             <li>
               <a href="{{route('task.index')}}">Les Taches</a>
             </li>

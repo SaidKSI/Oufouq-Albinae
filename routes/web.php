@@ -61,8 +61,8 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::get('/projects/payment/{id}/invoice', [ProjectController::class, 'paymentEstimateInvoice'])->name('estimate.payment.invoice');
     Route::get('/projects/{id}/invoice', [ProjectController::class, 'showInvoice'])->name('project-estimate.invoice');
     // * Delivery invoice
-    Route::get('/projects/delivery/create', [DeliveryController::class, 'deliveryInvoice'])->name('delivery.invoice');
-    Route::get('/order/delivery', [DeliveryController::class, 'index'])->name('delivery');
+    Route::get('/projects/delivery/create/{type}', [DeliveryController::class, 'deliveryInvoice'])->name('delivery.invoice');
+    Route::get('/order/delivery/{type}', [DeliveryController::class, 'index'])->name('delivery.index');
     Route::post('/order/delivery/store', [DeliveryController::class, 'store'])->name('delivery.store');
     Route::get('/order/delivery/{id}', [DeliveryController::class, 'show'])->name('delivery.show');
     Route::delete('/order/delivery/delete/{id}', [DeliveryController::class, 'destroy'])->name('delivery.destroy');

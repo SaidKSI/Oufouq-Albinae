@@ -7,8 +7,8 @@
     <div class="card-body p-2">
       <div class="card-body p-2">
         <div class="col-md-2 ">
-          <a href="{{route('invoice.create')}}" class="btn btn-outline-primary">Add</a>
-          {{-- <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addinvoiceModal">Add</button>
+          {{-- <button class="btn btn-outline-primary" data-bs-toggle="modal"
+            data-bs-target="#addinvoiceModal">Add</button>
           <!-- Add invoice Modal -->
           <div class="modal fade" id="addinvoiceModal" tabindex="-1" aria-labelledby="addinvoiceModalLabel"
             aria-hidden="true">
@@ -90,7 +90,7 @@
                     data-bs-target="#invoiceModal{{$invoice->id}}"><i class="ri-edit-fill"></i></a>
 
                   <!-- Add/Edit Invoice Modal -->
-                   <div class="modal fade" id="invoiceModal{{$invoice->id}}" tabindex="-1"
+                  <div class="modal fade" id="invoiceModal{{$invoice->id}}" tabindex="-1"
                     aria-labelledby="invoiceModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
@@ -146,7 +146,7 @@
                         </form>
                       </div>
                     </div>
-                  </div> 
+                  </div>
                   <a href="#" class="text-danger" onclick="confirmDelete({{$invoice->id}})"><i
                       class="ri-delete-bin-2-fill"></i></a>
 
@@ -166,7 +166,7 @@
     </div>
   </div>
   <!-- Hidden iframe for printing -->
-<iframe id="invoiceFrame" style="display:none;"></iframe>
+  <iframe id="invoiceFrame" style="display:none;"></iframe>
 </div>
 @endsection
 

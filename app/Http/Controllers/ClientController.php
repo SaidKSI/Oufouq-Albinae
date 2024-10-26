@@ -57,6 +57,8 @@ class ClientController extends Controller
 
     }
 
+
+    
     function update(Request $request, $id)
     {
         // dd($request->all());

@@ -6,6 +6,7 @@
   <div class="card">
     <form action="{{route('delivery.store')}}" method="POST" enctype="multipart/form-data">
       @csrf
+      <input type="hidden" name="type" value="{{$type}}">
       <div class="card-body">
         <div class="container shadow"
           style="margin-top: 46px;background: url(&quot;{{asset('assets/invoice_asset/img/Oufoq%20albinae%20BIG.png')}}&quot;) center / cover no-repeat;border-radius: 12px;min-height: 1000px;">

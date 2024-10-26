@@ -14,7 +14,7 @@
                             <div class="col"><img src="{{asset('assets/invoice_asset/img/logo%20big.png')}}"
                                     style="width: 150px;background: rgba(255,255,255,0);"></div>
                             <div class="col">
-                                <h4 class="text-capitalize text-center">Facture N°# <input type="text" name="number"
+                                <h4 class="text-capitalize text-center">Devis N°# <input type="text" name="number"
                                         id="number"> </h4>
                             </div>
                             <div class="col text-center"><span class="fw-bold"
@@ -96,7 +96,8 @@
                                         <input class="form-control quantity" type="number" name="qte" value="1">
                                     </td>
                                     <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                                        <input type="number" step="0.01" class="form-control" name="total_without_tax" id="total_without_tax">
+                                        <input type="number" step="0.01" class="form-control" name="total_without_tax"
+                                            id="total_without_tax">
                                     </td>
                                     <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
                                         <div class="input-group">
