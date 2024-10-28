@@ -54,7 +54,6 @@ class DeliveryController extends Controller
         $suppliers = Supplier::all();
         $selectedClientId = $request->input('client_id');
         $selectedProjectId = $request->input('project_id');
-
         return view('delivery.invoice', [
             'type' => $type,
             'clients' => $clients,
@@ -71,7 +70,7 @@ class DeliveryController extends Controller
             'date' => 'required|date',
             'client_id' => 'required|exists:clients,id',
             'project_id' => 'required|exists:projects,id',
-            'supplier_id' => 'required|exists:suppliers,id',
+            'supplier_id' => 'required_if:type,supplier|exists:suppliers,id',
             'ref' => 'required|array',
             'ref.*' => 'required|string',
             'name' => 'required|array',
@@ -195,6 +194,6 @@ class DeliveryController extends Controller
 
         $delivery->bills()->create($validatedData);
 
-        return redirect()->route('delivery')->with('success', 'Bill added successfully');
+        return redirect()->back()->with('success', 'Bill added successfully');
     }
 }

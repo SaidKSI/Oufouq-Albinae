@@ -29,9 +29,11 @@
             <table class="table table-sm table-borderless">
               <thead>
                 <tr class="text-uppercase text-center">
+                  @if($type != 'client')
                   <th
                     style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-bottom-style: none;width: 155px;">
                     Supplier</th>
+                  @endif
                   <th
                     style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-bottom-style: none;width: 155px;">
                     N° Client</th>
@@ -46,6 +48,7 @@
               </thead>
               <tbody>
                 <tr class="text-uppercase text-center">
+                  @if($type != 'client')
                   <td style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
                     <div class="input-group">
                       <select class="bg-transparent border-0 focus-ring form-select" id="supplier_id"
@@ -57,6 +60,7 @@
                     </div>
                     <div class="input-group"></div>
                   </td>
+                  @endif
                   <td style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
                     <div class="input-group">
                       <select class="bg-transparent border-0 focus-ring form-select" id="client_id" name="client_id">

@@ -24,13 +24,15 @@
           <table class="table table-sm table-borderless">
             <thead>
               <tr class="text-uppercase text-center">
+                @if($delivery->type == 'supplier')
                 <th
                   style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-bottom-style: none;width: 155px;">
                   Supplier</th>
+                @endif
                 <th
                   style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-bottom-style: none;width: 155px;">
                   N° Client</th>
-                  <th
+                <th
                   style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-bottom-style: none;width: 175px;">
                   Projet</th>
                 <th
@@ -40,10 +42,12 @@
             </thead>
             <tbody>
               <tr class="text-uppercase text-center">
+                @if($delivery->type == 'supplier')
                 <td style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
                   <div class="input-group">
                     {{$delivery->supplier->full_name}}</div>
                 </td>
+                @endif
                 <td style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
                   <div class="input-group">
                     {{$delivery->client->name}}
@@ -112,7 +116,8 @@
         </div>
         @if($delivery->doc)
         <p class="fw-bold">Pièces Jointes :</p>
-        <a href="{{ asset('storage/' . $delivery->doc) }}" target="_blank"><i class="ri-attachment-fill fs-1 mx-5"></i></a>
+        <a href="{{ asset('storage/' . $delivery->doc) }}" target="_blank"><i
+            class="ri-attachment-fill fs-1 mx-5"></i></a>
         @endif
         <input type="file" name="doc" id="doc" style="display: none" multiple>
         <div id="file-list"></div>

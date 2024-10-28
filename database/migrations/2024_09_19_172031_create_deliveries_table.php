@@ -23,7 +23,7 @@ return new class extends Migration {
             $table->string('type');
             $table->unsignedBigInteger('client_id');
             $table->unsignedBigInteger('project_id');
-            $table->unsignedBigInteger('supplier_id');
+            $table->unsignedBigInteger('supplier_id')->nullable();
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
             $table->foreign('supplier_id')->references('id')->on('suppliers')->onDelete('cascade');

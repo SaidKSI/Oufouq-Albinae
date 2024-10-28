@@ -21,7 +21,7 @@
         </select>
       </div>
     </form>
-    <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
+    <table id="basic-datatable" class="table table-striped dt-responsive w-100">
       <thead>
         <tr>
           <th>N°</th>
@@ -40,8 +40,10 @@
         @foreach ($deliveries as $delivery)
         <tr>
           <td>{{$delivery->number}}</td>
-          <td>{{ $type === 'supplier' ? $delivery->supplier->full_name : $delivery->client->full_name }}</td>
-          <td><a href="{{route('project.show',['id'=>$delivery->project_id])}}">{{$delivery->project->name}}
+          <td style="font-size: 0.8rem">{{ $type === 'supplier' ? $delivery->supplier->full_name :
+            $delivery->project->client->name }}</td>
+          <td style="font-size: 0.8rem"><a
+              href="{{route('project.show',['id'=>$delivery->project_id])}}">{{$delivery->project->name}}
             </a> </td>
           <td>
             <i class="ri-file-list-3-line" data-bs-toggle="modal" data-bs-target="#deliveryDetails{{$delivery->id}}"
@@ -190,7 +192,7 @@
                       <div class="mb-3">
                         <label for="supplier" class="form-label">Supplier</label>
                         <input type="text" class="form-control" id="supplier" name="supplier"
-                          value="{{$delivery->supplier->full_name}}" readonly>
+                          value="{{ $type === 'supplier' ?  $delivery->supplier->full_name : 'Nous' }}" readonly>
                       </div>
                       <div class="mb-3">
                         <label for="bill_date" class="form-label">Bill Date</label>

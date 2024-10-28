@@ -40,9 +40,9 @@
       </button>
 
 
-      <div class="app-search dropdown d-none d-lg-block">
+      {{-- <div class="app-search dropdown d-none d-lg-block">
         <x-company-capital />
-      </div>
+      </div> --}}
     </div>
 
     <ul class="topbar-menu d-flex align-items-center gap-3">

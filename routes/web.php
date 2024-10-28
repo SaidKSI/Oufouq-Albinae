@@ -64,7 +64,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::get('/projects/delivery/create/{type}', [DeliveryController::class, 'deliveryInvoice'])->name('delivery.invoice');
     Route::get('/order/delivery/{type}', [DeliveryController::class, 'index'])->name('delivery.index');
     Route::post('/order/delivery/store', [DeliveryController::class, 'store'])->name('delivery.store');
-    Route::get('/order/delivery/{id}', [DeliveryController::class, 'show'])->name('delivery.show');
+    Route::get('/order/delivery/show/{id}', [DeliveryController::class, 'show'])->name('delivery.show');
     Route::delete('/order/delivery/delete/{id}', [DeliveryController::class, 'destroy'])->name('delivery.destroy');
     Route::get('/order/delivery/print/{id}', [DeliveryController::class, 'print'])->name('delivery.print');
     Route::get('/order/delivery/{number}/to-number', [DeliveryController::class, 'numberToFrenchWords'])->name('numberToWords');
