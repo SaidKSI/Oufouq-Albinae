@@ -55,6 +55,9 @@
             <li>
               <a href="{{ route('delivery.index', ['type' => 'supplier']) }}">Bon de Livraison</a>
             </li>
+            <li>
+              <a href="{{ route('regulation.index', ['type' => 'supplier']) }}">Regulation</a>
+            </li>
           </ul>
         </div>
       </li>
@@ -86,22 +89,12 @@
             <li>
               <a href="{{ route('delivery.index', ['type' => 'client']) }}">Bon de Livraison</a>
             </li>
+            <li>
+              <a href="{{ route('regulation.index', ['type' => 'client']) }}">Regulation</a>
+            </li>
           </ul>
         </div>
       </li>
-      {{-- <li class="side-nav-item">
-        <a href="{{route('stock')}}" class="side-nav-link">
-          <i class="bi bi-boxes"></i>
-          <span> Stock </span>
-        </a>
-      </li> --}}
-
-      {{-- <li class="side-nav-item">
-        <a href="{{route('order.index')}}" class="side-nav-link">
-          <i class="bi bi-file-earmark-text-fill"></i>
-          <span> Bon de Commande </span>
-        </a>
-      </li> --}}
 
       <li class="side-nav-item">
         <a data-bs-toggle="collapse" href="#sidebarCharges" aria-expanded="false" aria-controls="sidebarCharges"

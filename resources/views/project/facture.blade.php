@@ -6,7 +6,6 @@
   <div class="card">
     <form action="{{ route('project.store_invoice') }}" method="POST" enctype="multipart/form-data">
       @csrf
-      <input type="hidden" name="estimate_id" value="{{ $estimate->id }}">
       <div class="card-body">
         <div class="container shadow"
           style="margin-top: 46px;background: url(&quot;{{asset('assets/invoice_asset/img/Oufoq%20albinae%20BIG.png')}}&quot;) center / cover no-repeat;border-radius: 12px;min-height: 1000px;">
@@ -15,11 +14,12 @@
               <div class="col"><img src="{{asset('assets/invoice_asset/img/logo%20big.png')}}"
                   style="width: 150px;background: rgba(255,255,255,0);"></div>
               <div class="col">
-                <h4 class="text-capitalize text-center">Facture N°# <input type="text" name="number" id="number" value="{{ $estimate->number }}"> </h4>
+                <h4 class="text-capitalize text-center">Facture N°# <input type="text" name="number" id="number"
+                    value=""> </h4>
               </div>
               <div class="col text-center"><span class="fw-bold" style="margin-right: 22px;">Salé</span><span>Le <input
                     class="border-0 focus-ring form-control-sm" type="date" style="width: 120px;" name="date"
-                    value="{{ $estimate->date ?? now()->format('Y-m-d') }}"></span></div>
+                    value="{{ date('Y-m-d') }}"></span></div>
             </div>
           </div>
           <hr>
@@ -29,10 +29,7 @@
                 <tr class="text-uppercase text-center">
                   <th
                     style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-bottom-style: none;width: 155px;">
-                    Client</th>
-                  <th
-                    style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-bottom-style: none;width: 175px;">
-                    Projet</th>
+                    Estimate</th>
                   <th
                     style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-bottom-style: none;width: 175px;">
                     Payment Method</th>
@@ -45,13 +42,14 @@
                 <tr class="text-uppercase text-center">
                   <td style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
                     <div class="input-group">
-                      
-                       <input type="text" value="{{ $estimate->project->client->name }}" class="form-control" readonly>
-                    </div>
-                  </td>
-                  <td style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
-                    <div class="input-group">
-                      <input type="text" value="{{ $estimate->project->name }}" class="form-control" readonly>
+                      <select class="bg-transparent border-0 focus-ring form-select select2" id="estimate"
+                        name="estimate">
+                        <option disabled selected>Choisir un estimate</option>
+                        @foreach ($estimates as $estimate)
+                        <option value="{{ $estimate->id }}">{{ $estimate->project->name }} - {{ $estimate->number }}
+                        </option>
+                        @endforeach
+                      </select>
                     </div>
                   </td>
                   <td style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
@@ -82,40 +80,48 @@
                 <tr class="text-uppercase">
                   <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Reference</th>
                   <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Quantity</th>
-                  <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Total HT</th>
-                  <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">TVA</th>
-                  <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Total</th>
                 </tr>
               </thead>
               <tbody id="invoice-table-body">
                 <tr>
                   <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                    <input class="form-control" type="text" name="ref" value="{{ $estimate->reference }}">
+                    <input class="form-control" type="text" name="ref" value="">
                   </td>
                   <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                    <input class="form-control quantity" type="number" name="qte" value="{{ $estimate->quantity }}">
-                  </td>
-                  <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                    <input type="text" class="form-control" name="total_without_tax" id="total_without_tax" value="{{ $estimate->total_price }}" readonly>
-                  </td>
-                  <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                    <div class="input-group">
-                      <input class="form-control" type="number" value="{{ $estimate->tax }}" id="tax" name="tax" readonly>
-                      <span class="input-group-text">%</span>
-                    </div>
-                  </td>
-                  <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                    <input type="text" class="form-control" name="total_with_tax" id="total_with_tax" value="{{ $estimate->total_price + ($estimate->total_price * $estimate->tax / 100) }}" readonly>
+                    <input class="form-control quantity" type="number" name="qte" value="">
                   </td>
                 </tr>
               </tbody>
-              <tfoot>
-                <tr>
-                  <th class="text-capitalize border-2 border-dark" style="background: rgba(255,255,255,0);" colspan="5">
-                    Arreté La présente facture à la somme de :<br>#... <span id="numberToWord"></span> ...#
-                  </th>
-                </tr>
-              </tfoot>
+            </table>
+          </div>
+          <div class="text-center" style="margin-bottom: 20px;">
+            <table class="table table-sm table-borderless">
+              <tr>
+                <th class="text-capitalize border-2 border-dark" style="background: rgba(255,255,255,0);" colspan="3"
+                  rowspan="2">Arreté La présente
+                  facture à la somme de :<br>#... <span id="numberToWord"></span> ...#
+                </th>
+                <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">total ht</th>
+                <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">tva</th>
+                <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">total</th>
+              </tr>
+
+              <tr>
+                <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                  <input type="number" name="total_without_tax" id="total_without_tax" class="form-control" step="0.01"
+                    placeholder="0.00">
+                </td>
+                <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                  <div class="input-group">
+                    <input class="form-control" type="number" value="20" id="tax" name="tax" min="0" max="100"
+                      step="0.01">
+                    <span class="input-group-text">%</span>
+                  </div>
+                </td>
+                <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                  <input type="text" name="total_with_tax" id="total_with_tax" class="form-control" readonly>
+                </td>
+              </tr>
             </table>
           </div>
           <p class="fw-bold">Pièces Jointes :</p>
@@ -129,18 +135,15 @@
               </path>
             </svg>&nbsp;Ajouter des Pièces Jointes
           </button>
-          @if ($estimate->documents->count() > 0)
-          <p class="fw-bold">Pièces Jointes :</p>
-          @foreach ($estimate->documents as $document)
-          <a href="{{ asset('storage/' . $document->path) }}" target="_blank"><p>{{ $document->name }}</p></a>
-          @endforeach
-          @endif
+          <span id="doc-name">
+
+          </span>
           <input type="file" name="doc" id="doc" style="display: none" multiple accept="image/*">
           <div id="file-list"></div>
           <div class="text-center" style="margin-bottom: 20px;">
             <h3>Remarques</h3>
             <div class="input-group"><textarea class="shadow-sm form-control" rows="12" style="height: auto"
-                style="margin-bottom: 30px;border-radius: 10px;" name="note">{{ $estimate->note }}</textarea></div>
+                style="margin-bottom: 30px;border-radius: 10px;" name="note"></textarea></div>
           </div>
           <div class="text-center" style="margin-bottom: 20px;">
             <button class="btn btn-outline-success btn-sm fw-bold border rounded-pill border-1 border-success"
@@ -177,6 +180,18 @@
     background: transparent;
     height: 10px;
   }
+
+  input[readonly] {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    cursor: not-allowed;
+  }
+
+  .file-item {
+    margin: 5px 0;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
 </style>
 <link rel="stylesheet"
   href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;display=swap">
@@ -184,18 +199,111 @@
 
 @push('scripts')
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-     function updateNumberToWord() {
-      const totalWithTax = document.getElementById('total_with_tax').value;
-        fetch(`/dashboard/order/delivery/${totalWithTax}/to-number`)
+  $(document).ready(function() {
+    $('.select2').select2();
+
+    // Generate random invoice number
+    $('#number').val(Math.floor(Math.random() * 900000) + 100000);
+
+    // Handle estimate selection
+    $('#estimate').on('change', function() {
+        const estimateId = $(this).val();
+        if (estimateId) {
+            fetch(`/dashboard/estimates/${estimateId}/details`)
+                .then(response => response.json())
+                .then(data => {
+                    // Update form fields with estimate data
+                    updateFormWithEstimateData(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    toastr.error('Error fetching estimate details');
+                });
+        }
+    });
+
+    function updateFormWithEstimateData(data) {
+        // Update totals and tax
+        $('#total_without_tax').val(data.total_price).prop('readonly', true);
+        $('#tax').val(data.tax).prop('readonly', true);
+        
+        // Calculate and set total with tax
+        const totalWithoutTax = parseFloat(data.total_price) || 0;
+        const tax = parseFloat(data.tax) || 0;
+        const totalWithTax = totalWithoutTax + (totalWithoutTax * (tax / 100));
+        const note = data.note;
+        const doc = data.doc;
+        $('#total_with_tax').val(totalWithTax.toFixed(2));
+        $('textarea[name="note"]').val(note);
+        $('#doc-name').val(doc);
+        // Update items table
+        const tableBody = $('#invoice-table-body');
+        tableBody.empty();
+
+        data.items.forEach(item => {
+            const row = `
+                <tr>
+                    <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                        <input class="form-control" type="text" name="ref[]" value="${item.reference}" readonly>
+                    </td>
+                    <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                        <input class="form-control quantity" type="number" name="qte[]" value="${item.quantity}" readonly>
+                    </td>
+                </tr>
+            `;
+            tableBody.append(row);
+        });
+
+        // Update number to word
+        updateNumberToWord(totalWithTax);
+
+        // Update documents display
+        const docContainer = $('#doc-name');
+        docContainer.empty(); // Clear existing content
+
+        if (data.documents && data.documents.length > 0) {
+            data.documents.forEach(doc => {
+                const docLink = `
+                    <div class="doc-item mb-2">
+                        <a href="${doc.url}" target="_blank" class="text-primary">
+                            <i class="ri-file-text-line me-1"></i>
+                            ${doc.name}
+                        </a>
+                    </div>
+                `;
+                docContainer.append(docLink);
+            });
+        } else {
+            docContainer.html('<span class="text-muted">No documents attached</span>');
+        }
+    }
+
+    function updateNumberToWord(amount) {
+        fetch(`/dashboard/order/delivery/${amount}/to-number`)
             .then(response => response.json())
             .then(data => {
-                document.getElementById('numberToWord').textContent = data;
+                $('#numberToWord').text(data);
             })
             .catch(error => console.error('Error:', error));
     }
-    updateNumberToWord();
-  });
+
+    // Keep your existing file upload code
+    const uploadButton = document.getElementById('upload-button');
+    const fileInput = document.getElementById('doc');
+    const fileList = document.getElementById('file-list');
+    uploadButton.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', () => {
+        fileList.innerHTML = '';
+        Array.from(fileInput.files).forEach(file => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.textContent = file.name;
+            fileList.appendChild(fileItem);
+        });
+    });
+});
 </script>
 @endpush
-

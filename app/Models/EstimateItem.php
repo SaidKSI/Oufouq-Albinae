@@ -5,17 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class EstimateItem extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'unit'
+        'estimate_id',
+        'reference',
+        'quantity',
     ];
 
-    public function orderItems()
+    public function estimate()
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->belongsTo(Estimate::class);
     }
+
+    
 }

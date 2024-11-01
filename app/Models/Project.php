@@ -40,10 +40,7 @@ class Project extends Model
         return $this->hasMany(Estimate::class)->where('type', 'invoice');
     }
 
-    public function orders()
-    {
-        return $this->hasMany(Order::class);
-    }
+
 
     public function deliveries()
     {

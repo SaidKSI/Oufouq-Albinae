@@ -4,64 +4,58 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Delivery;
-use App\Models\Estimate;
-use App\Models\Facture;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 
-class InvoiceController extends Controller
+class RegulationController extends Controller
 {
-    public function facturePrint(Facture $invoice)
+    public function index(Request $request, $type)
     {
-        return view('invoice.facture', compact('invoice'));
-    }
-
-    public function estimatePrint(Estimate $estimate)
-    {
-        return view('invoice.estimate', compact('estimate'));
-    }
-
-    public function deliveryPrint(Delivery $delivery)
-    {
-        return view('invoice.delivery', compact('delivery'));
-    }
-
-    public function print(Request $request, $type)
-    {
-        // Reuse the same logic as index
         $supplierId = $request->input('supplier_id');
         $clientId = $request->input('client_id');
 
         $query = Delivery::where('type', $type);
 
         if ($type === 'supplier') {
+            $suppliers = Supplier::all();
+            $filterEntity = $suppliers;
+            $selectedEntity = $supplierId;
             $entity = $supplierId ? Supplier::find($supplierId) : null;
+
             if ($supplierId) {
                 $query->where('supplier_id', $supplierId);
             }
         } else {
+            $clients = Client::all();
+            $filterEntity = $clients;
+            $selectedEntity = $clientId;
             $entity = $clientId ? Client::find($clientId) : null;
+
             if ($clientId) {
                 $query->where('client_id', $clientId);
             }
         }
 
         $deliveries = $query->get();
-
+        
+        // Calculate totals
         $totalAmount = $deliveries->sum('total_with_tax');
-        $totalPaid = $deliveries->sum(function ($delivery) {
+        $totalPaid = $deliveries->sum(function($delivery) {
             return $delivery->total_paid;
         });
         $remainingAmount = $totalAmount - $totalPaid;
 
-        return view('invoice.regulation', [
+        return view('regulation.index', [
             'deliveries' => $deliveries,
+            'filterEntity' => $filterEntity,
+            'selectedEntity' => $selectedEntity,
             'type' => $type,
             'entity' => $entity,
             'totalAmount' => $totalAmount,
             'totalPaid' => $totalPaid,
-            'remainingAmount' => $remainingAmount,
-            'date' => now()
+            'remainingAmount' => $remainingAmount
         ]);
     }
+
+    
 }

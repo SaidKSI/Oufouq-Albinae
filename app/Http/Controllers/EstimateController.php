@@ -9,6 +9,9 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use NumberToWords\NumberToWords;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
 class EstimateController extends Controller
 {
     public function numberToFrenchWords($number)
@@ -36,7 +39,7 @@ class EstimateController extends Controller
 
     public function createInvoice(Request $request)
     {
-        $clients = Client::all(); 
+        $clients = Client::all();
         $selectedClientId = $request->input('client_id');
         $selectedProjectId = $request->input('project_id');
         return view('estimate.create-invoice', compact('clients', 'selectedClientId', 'selectedProjectId'));
@@ -44,13 +47,14 @@ class EstimateController extends Controller
 
     function storeInvoice(Request $request)
     {
-        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'project_id' => 'required|exists:projects,id',
             'number' => 'required|unique:estimates,number',
             'date' => 'required|date',
-            'reference' => 'required|string',
-            'qte' => 'required|numeric|min:0',
+            'reference' => 'required|array',
+            'reference.*' => 'required|string',
+            'quantity' => 'required|array',
+            'quantity.*' => 'required|numeric|min:0',
             'total_without_tax' => 'required|numeric|min:0',
             'tax' => 'required|numeric|min:0|max:100',
             'total_with_tax' => 'required|numeric|min:0',
@@ -65,30 +69,65 @@ class EstimateController extends Controller
             return back()->withErrors($validator->errors())->withInput();
         }
 
+        try {
+            DB::beginTransaction();
 
-        $estimate = new Estimate();
-        $estimate->project_id = $request->project_id;
-        $estimate->number = $request->number;
-        $estimate->reference = $request->reference;
-        $estimate->type = 'estimate';
-        $estimate->quantity = $request->qte;
-        $estimate->total_price = $request->total_with_tax;
-        $estimate->tax = $request->tax;
-        $estimate->note = $request->note;
-        $estimate->save();
-
-        // Handle file uploads
-        if ($request->has('doc')) {
-            $file = $request->file('doc');
-            $path = $file->store('invoice_documents', 'public');
-            
-            $estimate->documents()->create([
-                'path' => $path,
-                'name' => $file->getClientOriginalName(),
+            // Create the main estimate
+            $estimate = Estimate::create([
+                'project_id' => $request->project_id,
+                'number' => $request->number,
+                'type' => 'estimate',
+                'total_price' => $request->total_with_tax,
+                'due_date' => $request->date,
+                'quantity' => array_sum($request->quantity), // Sum of all items quantities
+                'tax' => $request->tax,
+                'note' => $request->note,
             ]);
+
+            // Create estimate items
+            foreach ($request->reference as $index => $reference) {
+                $estimate->items()->create([
+                    'reference' => $reference,
+                    'quantity' => $request->quantity[$index],
+                ]);
+            }
+
+            // Handle file uploads
+            if ($request->hasFile('doc')) {
+                foreach ($request->file('doc') as $file) {
+                    $path = $file->store('invoice_documents', 'public');
+
+                    $estimate->documents()->create([
+                        'path' => $path,
+                        'name' => $file->getClientOriginalName(),
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('estimates')->with('success', 'Estimate created successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            toastr()->error('An error occurred while creating the estimate');
+            return back()->withInput();
         }
-
-        return redirect()->route('estimates')->with('success', 'Invoice created successfully');
-
+    }
+    public function getEstimateDetails(Estimate $estimate)
+    {
+        return response()->json([
+            'total_price' => $estimate->total_price,
+            'tax' => $estimate->tax,
+            'items' => $estimate->items,
+            'note' => $estimate->note,
+            'project' => $estimate->project,
+            'documents' => $estimate->documents->map(function ($doc) {
+                return [
+                    'name' => $doc->name,
+                    'url' => Storage::url($doc->path), // Get public URL
+                    'path' => $doc->path
+                ];
+            })
+        ]);
     }
 }

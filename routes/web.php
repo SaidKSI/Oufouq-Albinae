@@ -7,18 +7,14 @@ use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\EstimateController;
 use App\Http\Controllers\ExpenseController;
-use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ShiftController;
-use App\Http\Controllers\StockController;
-use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TaskController;
-use App\Models\Delivery;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\RegulationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,7 +55,8 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     // project estimate invoice
     // Route::get('/projects/{id}/invoice', [ProjectController::class, 'estimateInvoice'])->name('estimate.invoice');
     Route::get('/projects/payment/{id}/invoice', [ProjectController::class, 'paymentEstimateInvoice'])->name('estimate.payment.invoice');
-    Route::get('/projects/{id}/invoice', [ProjectController::class, 'showInvoice'])->name('project-estimate.invoice');
+    Route::get('/projects/invoice', [ProjectController::class, 'showInvoice'])->name('project-estimate.invoice');
+    Route::get('/estimates/{estimate}/details', [EstimateController::class, 'getEstimateDetails'])->name('estimate.details');
     // * Delivery invoice
     Route::get('/projects/delivery/create/{type}', [DeliveryController::class, 'deliveryInvoice'])->name('delivery.invoice');
     Route::get('/order/delivery/{type}', [DeliveryController::class, 'index'])->name('delivery.index');
@@ -72,46 +69,24 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::post('/delivery/{id}/add-bill', [DeliveryController::class, 'addBill'])->name('delivery.add-bill');
     // ? Project Estimate
     Route::get('/projects/estimate', [ProjectController::class, 'estimate'])->name('estimates');
-    Route::post('/projects/estimate/store', [ProjectController::class, 'storeEstimate'])->name('estimate.store');
-    Route::put('/projects/estimate/{id}', [ProjectController::class, 'updateEstimate'])->name('estimate.update');
     Route::delete('/projects/estimate/delete/{id}', [ProjectController::class, 'destroyEstimate'])->name('estimate.destroy');
     // get client projects
     Route::get('/client/{client}/projects', [ClientController::class, 'getClientProjects'])->name('client.projects');
     // * Estimate Payment 
     Route::get('projects/estimate/payment', [PaymentController::class, 'estimatePayment'])->name('estimate.payment');
-    Route::post('projects/estimate/payment/store', [PaymentController::class, 'storeEstimatePayment'])->name('estimatePayment.store');
+    Route::post('facture/invoices/store', [ProjectController::class, 'storeEstimateFacture'])->name('project.store_invoice');
+
     Route::get('/estimates/{id}', [EstimateController::class, 'show'])->name('estimate.show');
     Route::get('/invoices/{id}', [EstimateController::class, 'show'])->name('invoice.show');
     Route::get('/project-estimates/create-invoice', [EstimateController::class, 'createInvoice'])->name('project-estimate.create-invoice');
     Route::post('/project-estimates/store-invoice', [EstimateController::class, 'storeInvoice'])->name('project-estimate.store-invoice');
-    // ? Order Routes
-    Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
-    Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
-    Route::put('/order/{id}', [OrderController::class, 'update'])->name('order.update');
-    Route::delete('/order/{id}', [OrderController::class, 'destroy'])->name('order.destroy');
-    Route::get('/order/{id}', [OrderController::class, 'edit'])->name('order.edit');
-    Route::get('/order/show/{id}', [OrderController::class, 'show'])->name('order.show');
-    Route::post('/order/status/{id}', [OrderController::class, 'changeStatus'])->name('order.changeStatus');
-    // Print Label
-    Route::get('/order/print/{id}', [OrderController::class, 'print'])->name('order.print');
-    //  ?  Products
-    Route::get('/products', [ProductController::class, 'index'])->name('product.index');
-    Route::get('/get-products', [ProductController::class, 'getProducts'])->name('products.index');
-    Route::get('/search-products', [ProductController::class, 'search'])->name('products.search');
-    Route::post('/products/store', [ProductController::class, 'productStore'])->name('product.store');
-    Route::put('/products/{id}', [ProductController::class, 'productUpdate'])->name('product.update');
-    Route::delete('/products/{id}', [ProductController::class, 'productDestroy'])->name('product.destroy');
+
     // ? Invoice
     Route::get('facture/invoices', [ProjectController::class, 'createInvoice'])->name('invoice.create');
-    Route::post('facture/invoices/store', [ProjectController::class, 'storeInvoice'])->name('project.store_invoice');
     // ? Payment Routes
     Route::post('/payments', [PaymentController::class, 'store'])->name('payment.store');
-    // ? Stock
-    Route::get('/stock', [StockController::class, 'index'])->name('stock');
-    Route::get('/purchase', [SupplierController::class, 'purchase'])->name('purchase');
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-    Route::get('/maintenance', [DashboardController::class, 'maintenance'])->name('dashboard.maintenance');
-
+    // ? regulation
+    Route::get('/regulation/{type}', [RegulationController::class, 'index'])->name('regulation.index');
     // ? Expenses
     // Transportation Expenses
     Route::get('/expenses/index', [ExpenseController::class, 'index'])->name('expenses.index');
@@ -167,8 +142,10 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     // capital history over time line chart
     Route::get('/company/capital-history', [DashboardController::class, 'getCapitalHistory'])->name('company.capital.history');
 
-    Route::get('/invoice/{invoice}', [InvoiceController::class, 'show'])->name('invoice.show');
-    Route::get('/invoice/{invoice}/print', [InvoiceController::class, 'print'])->name('invoice.print');
+    Route::get('/facture/{invoice}/print', [InvoiceController::class, 'facturePrint'])->name('facture.print');
+    Route::get('/estimate/{estimate}/print', [InvoiceController::class, 'estimatePrint'])->name('estimate.print');
+    Route::get('/delivery/{delivery}/print', [InvoiceController::class, 'deliveryPrint'])->name('delivery.print');
+    Route::get('/regulation/{type}/print', [InvoiceController::class, 'print'])->name('regulation.print');
     // * Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

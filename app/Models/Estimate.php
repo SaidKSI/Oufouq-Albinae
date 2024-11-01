@@ -14,13 +14,19 @@ class Estimate extends Model
         'number',
         'type',
         'total_price',
-        'reference',
         'due_date',
         'quantity',
         'tax',
         'payment_method',
         'transaction_id',
+        'note',
     ];
+
+
+    public function items()
+    {
+        return $this->hasMany(EstimateItem::class);
+    }
 
     public function project()
     {
@@ -36,7 +42,15 @@ class Estimate extends Model
     {
         return $query->where('type', 'invoice');
     }
+    public function facture()
+    {
+        return $this->hasOne(Facture::class);
+    }
 
+    public function hasFacture()
+    {
+        return !is_null($this->facture);
+    }
     public function documents()
     {
         return $this->morphMany(Document::class, 'documentable');

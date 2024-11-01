@@ -24,10 +24,6 @@ class Supplier extends Model
         'twitter_handle',
     ];
    
-    public function order()
-    {
-        return $this->hasMany(Order::class);
-    }
 
     public function delivery()
     {

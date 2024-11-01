@@ -7,10 +7,12 @@ use App\Models\CompanySetting;
 use App\Models\Employer;
 use App\Models\Estimate;
 use App\Models\Expense;
+use App\Models\Facture;
 use App\Models\Project;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use NumberToWords\NumberToWords;
 class ProjectController extends Controller
@@ -135,37 +137,6 @@ class ProjectController extends Controller
         $estimates = Estimate::all();
         return view('estimate.index', compact('projects', 'clients', 'estimates'));
     }
-    function storeEstimate(Request $request)
-    {
-        // dd($request->all());
-        $validator = Validator::make($request->all(), [
-            'project_id' => 'required|exists:projects,id',
-            'reference' => 'required|string',
-            'quantity' => 'required|integer',
-            'total_price' => 'required|numeric',
-            'tax' => 'required|numeric',
-        ]);
-
-        if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            $errorMessage = implode('<br>', $errors);
-            toastr()->error($errorMessage);
-            return back()->withErrors($validator->errors())->withInput();
-        }
-
-        $estimate = new Estimate();
-        $estimate->project_id = $request->project_id;
-        $estimate->reference = $request->reference;
-        $estimate->quantity = $request->quantity;
-        $estimate->total_price = $request->total_price;
-        $estimate->tax = $request->tax;
-        $estimate->type = 'estimate';
-        $estimate->number = rand(10000, 99999);
-        $estimate->save();
-
-        return redirect()->route('estimate.payment')->with('success', 'Project added successfully.');
-
-    }
     public function numberToFrenchWords($number)
     {
         $number = (int) round(floatval($number)); // Convert to float, round the number, and then cast to int
@@ -216,26 +187,51 @@ class ProjectController extends Controller
         $estimate->delete();
         return redirect()->back()->with('success', 'Estimate deleted successfully.');
     }
-
-    public function createInvoice()
+    protected function handleDocumentUpload($facture, $request)
     {
-        $projects = Project::whereHas('estimate', function ($query) {
-            $query->where('type', 'estimate');
-        })->whereDoesntHave('estimate', function ($query) {
-            $query->where('type', 'invoice');
-        })->with('client')->get();
+        if ($request->hasFile('doc')) {
+            $files = $request->file('doc');
+            // Ensure $files is always an array
+            if (!is_array($files)) {
+                $files = [$files];
+            }
 
-        return view('project.create_invoice', compact('projects'));
+            foreach ($files as $file) {
+                if ($file->isValid()) {
+                    try {
+                        // Store file in public storage
+                        $path = $file->store('facture_documents', 'public');
+
+                        // Create document record
+                        $facture->documents()->create([
+                            'path' => $path,
+                            'name' => $file->getClientOriginalName(),
+                            'documentable_type' => Facture::class,
+                            'documentable_id' => $facture->id
+                        ]);
+                    } catch (\Exception $e) {
+                        Log::error('Document upload failed: ' . $e->getMessage());
+                        throw new \Exception('Failed to upload document: ' . $e->getMessage());
+                    }
+                }
+            }
+        }
     }
 
-    function storeInvoice(Request $request)
+    public function storeEstimateFacture(Request $request)
     {
         // dd($request->all());
         $validator = Validator::make($request->all(), [
-            'payment_method' => 'required|string',
-            'transaction_id' => 'required|string',
+            'estimate' => 'required|exists:estimates,id',
+            'number' => 'required|unique:factures,number',
             'date' => 'required|date',
+            'payment_method' => 'required|in:bank_transfer,cheque,credit,cash,traita',
+            'transaction_id' => 'nullable|string',
+            'total_without_tax' => 'required|numeric|min:0',
+            'tax' => 'required|numeric|between:0,100',
+            'total_with_tax' => 'required|numeric|min:0',
             'note' => 'nullable|string',
+            'doc.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,pdf|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -245,16 +241,33 @@ class ProjectController extends Controller
             return back()->withErrors($validator->errors())->withInput();
         }
 
+        try {
+            DB::beginTransaction();
 
-        $estimate = Estimate::find($request->estimate_id);
-        $estimate->payment_method = $request->payment_method;
-        $estimate->transaction_id = $request->transaction_id;
-        $estimate->type = 'invoice';
-        $estimate->note = $request->note;
-        $estimate->update();
+            $estimate = Estimate::findOrFail($request->estimate);
 
-        return redirect()->back()->with('success', 'Invoice created successfully');
+            // Create facture
+            $facture = $estimate->facture()->create([
+                'number' => $request->number,
+                'date' => $request->date,
+                'payment_method' => $request->payment_method,
+                'transaction_id' => $request->transaction_id,
+                'total_without_tax' => $request->total_without_tax,
+                'tax' => $request->tax,
+                'total_with_tax' => $request->total_with_tax,
+                'note' => $request->note,
+            ]);
 
+            // Handle document uploads
+            $this->handleDocumentUpload($facture, $request);
+
+            DB::commit();
+            return redirect()->route('estimate.payment')->with('success', 'Facture created successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to create facture: ' . $e->getMessage())->withInput();
+        }
     }
 
     public function getProjectDetails($id)
@@ -266,11 +279,9 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function showInvoice($id)
+    public function showInvoice()
     {
-        $estimate = Estimate::findOrFail($id);
-        $projects = Project::all(); // You might want to adjust this based on your needs
-
-        return view('project.create_invoice', compact('estimate', 'projects'));
+        $estimates = Estimate::where('type', 'estimate')->get();
+        return view('project.facture', compact('estimates'));
     }
 }

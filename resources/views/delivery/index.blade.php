@@ -160,8 +160,8 @@
             <a href="{{route('delivery.show',['id'=>$delivery->id])}}"><i class="ri-eye-fill"></i></a>
             <i class="ri-bank-card-2-fill" data-bs-toggle="modal" data-bs-target="#addBillModal{{$delivery->id}}"
               style="cursor: pointer;"></i>
-            <a href="#" onclick="printInvoice({{ $delivery->id }})"><i class="ri-file-list-fill"></i></a>
-
+            <a href="{{ route('delivery.print', $delivery->id) }}" target="_blank" title="Print"><i
+                class="ri-file-fill fs-4"></i></a>
             <!-- Modal for adding a bill -->
             <div class="modal fade" id="addBillModal{{$delivery->id}}" tabindex="-1"
               aria-labelledby="addBillModalLabel{{$delivery->id}}" aria-hidden="true">
@@ -242,7 +242,6 @@
     </table>
   </div>
 </div>
-<iframe id="invoiceFrame" style="display:none;"></iframe>
 
 @endsection
 
@@ -254,17 +253,6 @@
           document.getElementById('delete-form-' + id).submit();
       }
   }
-</script>
-<script>
-  function printInvoice(deliveryId) {
-        var iframe = document.getElementById('invoiceFrame');
-        iframe.style.display = 'block';
-        iframe.src = '/dashboard/order/delivery/print/' + deliveryId;
-        iframe.onload = function() {
-            iframe.contentWindow.print();
-            iframe.style.display = 'none';
-        };
-    }
 </script>
 <script>
   // generate a random number and append it as value to bill_number

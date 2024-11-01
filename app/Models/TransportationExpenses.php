@@ -10,7 +10,6 @@ class TransportationExpenses extends Model
     use HasFactory;
     protected $fillable = [
         'project_id',
-        'product_id',
         'quantity',
         'highway_expense',
         'gaz_expense',
@@ -23,8 +22,5 @@ class TransportationExpenses extends Model
         return $this->belongsTo(Project::class);
     }
 
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
-    }
+
 }

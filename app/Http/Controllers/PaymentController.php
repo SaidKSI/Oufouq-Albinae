@@ -11,61 +11,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Events\OrderPaid;
 use App\Models\Estimate;
+use App\Models\Facture;
 use App\Models\Project;
 
 class PaymentController extends Controller
 {
-    function store(Request $request)
-    {
-        // dd($request->all());
-        $validator = Validator::make($request->all(), [
-            'order_id' => 'required|exists:orders,id',
-            'paid_price' => 'required|numeric',
-            'payment_method' => 'required|string',
-            'document' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpeg,png,jpg,gif|max:2048',
-        ]);
-        if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            $errorMessage = implode('<br>', $errors);
-            toastr()->error($errorMessage);
-            return back()->withErrors($validator->errors())->withInput();
-        }
-        $order = Order::findOrFail($request->order_id);
-        // check if the paid price is greater than the remaining amount
-        if ($order->total_price - $order->payments->sum('paid_price') < $request->paid_price) {
-            // toastr()->error('Paid price is greater than the remaining amount.' . ($order->total_price - $order->payments->sum('paid_price')));
-            return back()->with('error', 'Paid price is greater than the remaining amount.' . ($order->total_price - $order->payments->sum('paid_price')));
-        }
-        $remaining = $order->total_price - $order->payments->sum('paid_price') - $request->paid_price;
-        $order->remaining = $remaining;
-        $order->paid_amount = $order->total_price - $remaining;
-        $order->payment_status = $remaining <= 0 ? 'paid' : 'pending';
-        $order->save();
 
-        $payment = new Payment();
-        $payment->order_id = $request->order_id;
-        $payment->paid_price = $request->paid_price;
-        $payment->remaining = $remaining;
-        $payment->payment_method = $request->payment_method;
-        $payment->payment_id = 'PMT' . rand(1000, 9999);
-        $payment->date = now()->toDateString();
-        $payment->type = 'order';
-        $payment->save();
-
-        if ($request->hasFile('document')) {
-            $file = $request->file('document');
-            $extension = $file->getClientOriginalExtension();
-            $fileName = $payment->payment_id . '-' . 'N°' . $order->Ref . '.' . $extension;
-            $path = $file->storeAs('payment-documents', $fileName, 'public');
-            // dd($path);pDoc
-            $payment->documents()->create([
-                'path' => $path,
-            ]);
-        }
-        event(new OrderPaid($request->paid_price));
-
-        return redirect()->route('order.index')->with('success', 'Payment added successfully.');
-    }
     function payment()
     {
         $employees = Employer::all();
@@ -134,42 +85,9 @@ class PaymentController extends Controller
     }
     function estimatePayment()
     {
-        $projects = Project::whereHas('estimate', function ($query) {
-            $query->where('type', 'estimate');
-        })->whereDoesntHave('estimate', function ($query) {
-            $query->where('type', 'invoice');
-        })->get();
-        $invoices = Estimate::where('type', 'invoice')->get();
-        return view('estimate.payment', ['projects' => $projects,'invoices' => $invoices]);
+        $invoices = Facture::get();
+        return view('estimate.payment', ['invoices' => $invoices]);
     }
 
-    function storeEstimatePayment(Request $request)
-    {
-        // dd($request->all());
-        $validator = Validator::make($request->all(), [
-            'project_id' => 'required|exists:projects,id',
-            'payment_method' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            $errorMessage = implode('<br>', $errors);
-            toastr()->error($errorMessage);
-            return back()->withErrors($validator->errors())->withInput();
-        }
-        $oldEstimate = Estimate::where('project_id', $request->project_id)->first();
-        $estimate = new Estimate();
-        $estimate->project_id = $request->project_id;
-        $estimate->reference = $oldEstimate->reference;
-        $estimate->quantity = $oldEstimate->quantity;
-        $estimate->total_price = $oldEstimate->total_price;
-        $estimate->tax = $oldEstimate->tax;
-        $estimate->type = 'invoice';
-        $estimate->number = 'INV-' . rand(1000, 9999);
-        $estimate->payment_method = $request->payment_method;
-        $estimate->save();
-
-        return redirect()->back()->with('success', 'Payment added successfully.');
-    }
 
 }

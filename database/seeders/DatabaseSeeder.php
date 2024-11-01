@@ -29,7 +29,6 @@ class DatabaseSeeder extends Seeder
             ClientSeeder::class,
             SupplierSeeder::class,
             ProjectSeeder::class, 
-            ProductSeeder::class,
             ProfessionSeeder::class,
             EmployerSeeder::class,
             CompanySeeder::class,

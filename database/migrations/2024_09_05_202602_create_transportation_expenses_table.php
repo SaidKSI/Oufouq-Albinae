@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('transportation_expenses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('project_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_id')->nullable()->constrained()->onDelete('cascade');
             $table->integer('quantity')->nullable();
             $table->string('ref')->nullable();
             $table->decimal('highway_expense', 10, 2)->nullable();
