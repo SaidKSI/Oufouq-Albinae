@@ -4,11 +4,12 @@
 <x-Breadcrumb title="{{ $type === 'supplier' ? 'Bon de Livraison Fournisseur' : 'Bon de Livraison Client' }}" />
 <div class="row">
   <div class="card">
-    <form method="GET" action="{{ route('delivery.index', ['type' => $type]) }}">
-      <div class="form-group">
+
+    <form method="GET" action="{{ route('delivery.index', ['type' => $type]) }}" class="m-3">
+      <div class="form-group w-25">
         <label for="filter_id">Filter by {{ $type === 'supplier' ? 'Supplier' : 'Client' }}</label>
         <select name="{{ $type === 'supplier' ? 'supplier_id' : 'client_id' }}" id="filter_id"
-          class="form-control w-25 m-2" onchange="this.form.submit()">
+          class="form-control w-25 m-2 select2 w-50">
           <option value="">All {{ $type === 'supplier' ? 'Suppliers' : 'Clients' }}</option>
           @foreach($filterEntity as $entity)
           <option value="{{ $entity->id }}" {{ $selectedEntity==$entity->id ? 'selected' : '' }}>
@@ -56,16 +57,31 @@
         @endforeach
       </tbody>
     </table>
-    <div class="text-end mt-3">
-        <a href="{{ route('regulation.print', [
+    <div class="text-end m-2">
+      <a href="{{ route('regulation.print', [
             'type' => $type,
             $type === 'supplier' ? 'supplier_id' : 'client_id' => $selectedEntity
-        ]) }}" 
-           class="btn btn-primary" 
-           target="_blank">
-            <i class="ri-printer-line me-1"></i> Imprimer
-        </a>
+        ]) }}" class="btn btn-primary" target="_blank">
+        <i class="ri-printer-line me-1"></i> Imprimer
+      </a>
     </div>
   </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+  $(document).ready(function() {
+    // Initialize Select2 on the select element
+    $('#filter_id').select2({
+      placeholder: "Select an option",
+      allowClear: true
+    });
+
+    // Submit the form on change
+    $('#filter_id').on('change', function() {
+      this.form.submit();
+    });
+  });
+</script>
+@endpush

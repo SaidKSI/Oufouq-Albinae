@@ -38,27 +38,33 @@
                 </button>
                 <div class="modal fade" id="itemsModal_{{ $estimate->id }}" tabindex="-1"
                   aria-labelledby="itemsModalLabel_{{ $estimate->id }}" aria-hidden="true">
-                  <div class="modal-dialog">
+                  <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                       <div class="modal-header">
                         <h5 class="modal-title" id="itemsModalLabel_{{ $estimate->id }} ">Estimate Items</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
-                        <table class="table">
+                        <table class="table table-striped">
                           <thead>
                             <tr>
-                              <td>#</td>
-                              <th>Reference</th>
-                              <th>Quantity</th>
+                              <th>Ref</th>
+                              <th>Product Name</th>
+                              <th>Category</th>
+                              <th>Prix per Unite</th>
+                              <th>quantity</th>
+                              <th>Total Price</th>
                             </tr>
                           </thead>
-                          <tbody id="modalItemsContent_{{ $estimate->id }}">
-                            @foreach($estimate->items as $item)
+                          <tbody id="articleModalBody">
+                            @foreach ($estimate->items as $item)
                             <tr>
-                              <td>{{ $loop->iteration }}</td>
-                              <td>{{ $item->reference }}</td>
-                              <td>{{ $item->quantity }}</td>
+                              <td>{{$item->ref}}</td>
+                              <td>{{$item->name}}</td>
+                              <td>{{$item->category}}</td>
+                              <td>{{$item->prix_unite}}</td>
+                              <td>{{$item->qte}}</td>
+                              <td>{{$item->total_price_unite}}</td>
                             </tr>
                             @endforeach
                           </tbody>

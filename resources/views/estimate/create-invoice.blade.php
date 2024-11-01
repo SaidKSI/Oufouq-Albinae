@@ -76,33 +76,21 @@
                         <table class="table table-sm table-borderless">
                             <thead>
                                 <tr class="text-uppercase">
-                                    <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Reference
+                                    <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Référence
                                     </th>
-                                    <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Quantity
+                                    <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                                        Désignation</th>
+                                    <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Qté</th>
+                                    <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Prix
+                                        unitaire</th>
+                                    <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">catégorie
                                     </th>
-                                    <th></th>
+                                    <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">montant
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="invoice-table-body">
-                                <tr>
-                                    <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                                        <input class="form-control" type="text" name="reference[]"
-                                            value="{{ rand(100000, 999999) }}">
-                                    </td>
-                                    <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                                        <input class="form-control quantity" type="number" name="quantity[]" value="1">
-                                    </td>
-                                    <td style="background: rgba(255,255,255,0);">
-                                        <button class="btn btn-outline-danger delete-row" type="button">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                                fill="currentColor" viewBox="0 0 16 16" class="bi bi-trash-fill">
-                                                <path
-                                                    d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0">
-                                                </path>
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
+
                             </tbody>
                         </table>
                         <div class="text-center" style="margin-bottom: 20px;">
@@ -260,19 +248,29 @@
     const elements = {
         addRowButton: document.getElementById('add-row'),
         tableBody: document.getElementById('invoice-table-body'),
-        numberInput: document.getElementById('number'),
+        uploadButton: document.getElementById('upload-button'),
+        fileInput: document.getElementById('doc'),
+        fileList: document.getElementById('file-list'),
         totalWithoutTaxInput: document.getElementById('total_without_tax'),
         taxInput: document.getElementById('tax'),
         totalWithTaxInput: document.getElementById('total_with_tax'),
-        numberToWord: document.getElementById('numberToWord'),
-        fileInput: document.getElementById('doc'),
-        uploadButton: document.getElementById('upload-button'),
-        fileList: document.getElementById('file-list'),
+        numberInput: document.getElementById('number'),
+        numberToWord: document.getElementById('numberToWord')
     };
+
+    let rowIndex = 0;
+
+    function initializeInvoice() {
+        setupFileUpload();
+        generateRandomNumber();
+        setupEventListeners();
+    }
+
     function setupFileUpload() {
         elements.uploadButton.addEventListener('click', () => elements.fileInput.click());
         elements.fileInput.addEventListener('change', updateFileList);
     }
+
     function updateFileList() {
         elements.fileList.innerHTML = '';
         Array.from(elements.fileInput.files).forEach(file => {
@@ -280,20 +278,51 @@
             elements.fileList.appendChild(fileBox);
         });
     }
+
     function createFileBox(fileName) {
         const fileBox = document.createElement('div');
         fileBox.className = 'file-box';
         fileBox.textContent = fileName;
         return fileBox;
     }
+
+    function generateRandomNumber() {
+        elements.numberInput.value = Math.floor(Math.random() * 1000000);
+    }
+
+    function setupEventListeners() {
+        elements.addRowButton.addEventListener('click', addNewRow);
+        elements.tableBody.addEventListener('click', handleRowDelete);
+        elements.tableBody.addEventListener('input', handleRowInput);
+        elements.taxInput.addEventListener('input', recalculateTotals);
+    }
+
+    function addNewRow() {
+        const newRow = createRowElement();
+        elements.tableBody.appendChild(newRow);
+        rowIndex++;
+    }
+
     function createRowElement() {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                <input class="form-control" type="text" name="reference[]" value="${Math.floor(Math.random() * 900000) + 100000}">
+                <input class="form-control" type="text" name="ref[]" value="${Math.floor(Math.random() * 1000000)}">
             </td>
             <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                <input class="form-control quantity" type="number" name="quantity[]" value="1">
+                <textarea class="form-control" rows="3" name="name[]"></textarea>
+            </td>
+            <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                <input class="form-control quantity" type="number" name="qte[]">
+            </td>
+            <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                <input class="form-control unit-price" type="number" name="prix_unite[]">
+            </td>
+            <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                <textarea class="form-control" rows="3" name="category[]"></textarea>
+            </td>
+            <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                <input class="form-control total-price" type="number" name="total_price_unite[]" readonly>
             </td>
             <td style="background: rgba(255,255,255,0);">
                 <button class="btn btn-outline-danger delete-row" type="button">
@@ -306,108 +335,47 @@
         return row;
     }
 
-    function setupEventListeners() {
-        elements.addRowButton.addEventListener('click', addNewRow);
-        elements.tableBody.addEventListener('click', handleRowDelete);
-        elements.tableBody.addEventListener('input', handleRowInput);
-        if (elements.taxInput) {
-            elements.taxInput.addEventListener('input', recalculateTotals);
-        }
-    }
-
-    function addNewRow() {
-        const newRow = createRowElement();
-        elements.tableBody.appendChild(newRow);
-    }
-
     function handleRowDelete(event) {
-        const deleteButton = event.target.closest('.delete-row');
-        if (deleteButton) {
-            const row = deleteButton.closest('tr');
-            if (elements.tableBody.children.length > 1) {
-                row.remove();
-                recalculateTotals(); // Recalculate totals after removing a row
-            }
-        }
-    }
-
-    function handleRowInput(event) {
-        if (event.target.classList.contains('quantity')) {
+        if (event.target.closest('.delete-row')) {
+            event.target.closest('tr').remove();
             recalculateTotals();
         }
     }
 
+    function handleRowInput(event) {
+        if (event.target.classList.contains('quantity') || event.target.classList.contains('unit-price')) {
+            updateRowTotal(event.target.closest('tr'));
+            recalculateTotals();
+        }
+    }
+
+    function updateRowTotal(row) {
+        const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+        const unitPrice = parseFloat(row.querySelector('.unit-price').value) || 0;
+        const totalPrice = quantity * unitPrice;
+        row.querySelector('.total-price').value = totalPrice.toFixed(2);
+    }
+
     function recalculateTotals() {
-        const rows = elements.tableBody.querySelectorAll('tr');
-        let totalQuantity = 0;
-
-        rows.forEach(row => {
-            const quantityInput = row.querySelector('.quantity');
-            if (quantityInput) {
-                totalQuantity += parseFloat(quantityInput.value) || 0;
-            }
-        });
-
-        if (elements.totalWithoutTaxInput) {
-            elements.totalWithoutTaxInput.value = totalQuantity.toFixed(2);
-        }
-
-        if (elements.taxInput && elements.totalWithTaxInput) {
-            const tax = parseFloat(elements.taxInput.value) || 0;
-            const totalWithTax = totalQuantity + (totalQuantity * (tax / 100));
-            elements.totalWithTaxInput.value = totalWithTax.toFixed(2);
-            updateNumberToWord(totalWithTax);
-        }
+        const totalWithoutTax = calculateTotalWithoutTax();
+        elements.totalWithoutTaxInput.value = totalWithoutTax.toFixed(2);
+        calculateTotalWithTax(totalWithoutTax);
     }
 
-    function updateNumberToWord(totalWithTax) {
-        if (elements.numberToWord) {
-            fetch(`/dashboard/order/delivery/${totalWithTax}/to-number`)
-                .then(response => response.json())
-                .then(data => {
-                    elements.numberToWord.textContent = data;
-                })
-                .catch(error => console.error('Error:', error));
-        }
+    function calculateTotalWithoutTax() {
+        return Array.from(elements.tableBody.querySelectorAll('.total-price'))
+            .reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
     }
 
-    // Generate random number for invoice
-    if (elements.numberInput) {
-        elements.numberInput.value = Math.floor(Math.random() * 900000) + 100000;
-    }
-
-    // Initialize the invoice functionality
-    setupEventListeners();
-    // Add first row if table is empty
-    if (elements.tableBody.children.length === 0) {
-        addNewRow();
-    }
-
-    // Add event listeners for total calculations
-    function setupTotalCalculations() {
-        if (elements.totalWithoutTaxInput) {
-            elements.totalWithoutTaxInput.addEventListener('input', calculateTotalWithTax);
-        }
-        if (elements.taxInput) {
-            elements.taxInput.addEventListener('input', calculateTotalWithTax);
-        }
-    }
-
-    // Calculate total with tax
-    function calculateTotalWithTax() {
-        const totalWithoutTax = parseFloat(elements.totalWithoutTaxInput.value) || 0;
+    function calculateTotalWithTax(totalWithoutTax) {
         const tax = parseFloat(elements.taxInput.value) || 0;
-        
         const totalWithTax = totalWithoutTax + (totalWithoutTax * (tax / 100));
         elements.totalWithTaxInput.value = totalWithTax.toFixed(2);
-        
-        // Update the number to word display
         updateNumberToWord(totalWithTax);
     }
 
-    // Update number to word display
-    function updateNumberToWord(amount) {
-        fetch(`/dashboard/order/delivery/${amount}/to-number`)
+    function updateNumberToWord(totalWithTax) {
+        fetch(`/dashboard/order/delivery/${totalWithTax}/to-number`)
             .then(response => response.json())
             .then(data => {
                 elements.numberToWord.textContent = data;
@@ -415,35 +383,7 @@
             .catch(error => console.error('Error:', error));
     }
 
-    // Format input as currency
-    function formatAsCurrency(input) {
-        input.addEventListener('blur', function(e) {
-            const value = parseFloat(this.value) || 0;
-            this.value = value.toFixed(2);
-        });
-    }
-
-    // Initialize
-    function initialize() {
-        setupEventListeners(); // Your existing function
-        setupTotalCalculations(); // New function for total calculations
-        setupFileUpload();
-        // Format total without tax input as currency
-        if (elements.totalWithoutTaxInput) {
-            formatAsCurrency(elements.totalWithoutTaxInput);
-        }
-
-        // Set default tax value if not set
-        if (elements.taxInput && !elements.taxInput.value) {
-            elements.taxInput.value = "20";
-        }
-
-        // Calculate initial total
-        calculateTotalWithTax();
-    }
-
-    // Call initialize
-    initialize();
+    initializeInvoice();
 });
 </script>
 @endpush

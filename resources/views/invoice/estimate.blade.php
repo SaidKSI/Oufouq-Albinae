@@ -106,15 +106,23 @@
     <table class="items-table">
       <thead>
         <tr>
-          <th>Reference</th>
-          <th>Quantity</th>
+          <th>Référence</th>
+          <th>Désignation</th>
+          <th>Qté</th>
+          <th>Prix Unite</th>
+          <th>catégorie</th>
+          <th>Montant</th>
         </tr>
       </thead>
       <tbody>
         @foreach($estimate->items as $item)
         <tr>
-          <td>{{ $item->reference }}</td>
-          <td>{{ $item->quantity }}</td>
+          <td>{{ $item->ref }}</td>
+          <td>{{ $item->name }}</td>
+          <td>{{ $item->qte }}</td>
+          <td>{{ $item->prix_unite }}</td>
+          <td>{{ $item->category }}</td>
+          <td>{{ $item->total_price_unite }}</td>
         </tr>
         @endforeach
       </tbody>

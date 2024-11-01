@@ -11,8 +11,12 @@ class EstimateItem extends Model
 
     protected $fillable = [
         'estimate_id',
-        'reference',
-        'quantity',
+        'ref',
+        'name',
+        'qte',
+        'prix_unite',
+        'category',
+        'total_price_unite',
     ];
 
     public function estimate()
@@ -20,5 +24,5 @@ class EstimateItem extends Model
         return $this->belongsTo(Estimate::class);
     }
 
-    
+
 }

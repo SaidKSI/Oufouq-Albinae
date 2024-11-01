@@ -169,9 +169,37 @@
       </tfoot>
     </table>
 
+
+
+    <!-- Notes -->
+    @if($delivery->note)
+    <div style="margin-top: 20px;">
+      <h3>Remarques:</h3>
+      <p style="font-size: 15px; text-align: center;">{{ $delivery->note }}</p>
+    </div>
+    @endif
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-line"></div>
+      <p>
+        Adresse : N°97 Rue Assila Laayayda Salé / IF : 3341831 / ICE : 000095738000027/ RC : 16137 CNSS : 8712863<br>
+        Patente : 28565292 / Capitale : 100 000,00 Gsm : 06 98 46 33 60 - 06 61 78 99 70<br>
+        E-mail : contact@oufoqalbinae.com
+      </p>
+      <p style="font-style: italic; color: #666;">Merci de Votre Confiance</p>
+    </div>
+
+
+    <!-- Print Button -->
+    <div class="text-center no-print" style="margin-top: 20px;">
+      <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer;">
+        Imprimer
+      </button>
+    </div>
     <!-- Payment Information -->
     @if($delivery->bills->count() > 0)
-    <div class="payment-info">
+    <div style="page-break-before: always;">
       <h3>Historique des Paiements</h3>
       <table>
         <thead>
@@ -199,34 +227,7 @@
       </table>
     </div>
     @endif
-
-    <!-- Notes -->
-    @if($delivery->note)
-    <div style="margin-top: 20px;">
-      <h3>Remarques:</h3>
-      <p style="font-size: 15px; text-align: center;">{{ $delivery->note }}</p>
-    </div>
-    @endif
-
-    <!-- Footer -->
-    <div class="footer">
-      <div class="footer-line"></div>
-      <p>
-        Adresse : N°97 Rue Assila Laayayda Salé / IF : 3341831 / ICE : 000095738000027/ RC : 16137 CNSS : 8712863<br>
-        Patente : 28565292 / Capitale : 100 000,00 Gsm : 06 98 46 33 60 - 06 61 78 99 70<br>
-        E-mail : contact@oufoqalbinae.com
-      </p>
-      <p style="font-style: italic; color: #666;">Merci de Votre Confiance</p>
-    </div>
   </div>
-
-  <!-- Print Button -->
-  <div class="text-center no-print" style="margin-top: 20px;">
-    <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer;">
-      Imprimer
-    </button>
-  </div>
-
   <script>
     document.addEventListener('DOMContentLoaded', function() {
             updateNumberToWord({{ $delivery->total_with_tax }});

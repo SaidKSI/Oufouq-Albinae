@@ -78,19 +78,21 @@
             <table class="table table-sm table-borderless">
               <thead>
                 <tr class="text-uppercase">
-                  <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Reference</th>
-                  <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Quantity</th>
+                  <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Référence
+                  </th>
+                  <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                    Désignation</th>
+                  <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Qté</th>
+                  <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Prix
+                    unitaire</th>
+                  <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">catégorie
+                  </th>
+                  <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">montant
+                  </th>
                 </tr>
               </thead>
               <tbody id="invoice-table-body">
-                <tr>
-                  <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                    <input class="form-control" type="text" name="ref" value="">
-                  </td>
-                  <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                    <input class="form-control quantity" type="number" name="qte" value="">
-                  </td>
-                </tr>
+
               </tbody>
             </table>
           </div>
@@ -246,9 +248,21 @@
                     <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
                         <input class="form-control" type="text" name="ref[]" value="${item.reference}" readonly>
                     </td>
-                    <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                        <input class="form-control quantity" type="number" name="qte[]" value="${item.quantity}" readonly>
+                     <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                      <textarea class="form-control" rows="3" name="name[]" >${item.name}</textarea>
                     </td>
+                    <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                        <input class="form-control quantity" type="number" name="qte[]" value="${item.qte}" readonly>
+                    </td>
+                    <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                        <input class="form-control unit-price" type="number" name="prix_unite[]" value="${item.prix_unite}">
+                    </td>
+                    <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                        <textarea class="form-control" rows="3" name="category[]">${item.category}</textarea>
+                    </td>
+                    <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                      <input class="form-control total-price" type="number" name="total_price_unite[]" value="${item.total_price_unite}" readonly>
+                     </td>
                 </tr>
             `;
             tableBody.append(row);

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use NumberToWords\NumberToWords;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class EstimateController extends Controller
@@ -44,22 +45,58 @@ class EstimateController extends Controller
         $selectedProjectId = $request->input('project_id');
         return view('estimate.create-invoice', compact('clients', 'selectedClientId', 'selectedProjectId'));
     }
+    protected function handleDocumentUpload($estimate, $request)
+    {
+        if ($request->hasFile('doc')) {
+            $files = $request->file('doc');
+            // Ensure $files is always an array
+            if (!is_array($files)) {
+                $files = [$files];
+            }
 
+            foreach ($files as $file) {
+                if ($file->isValid()) {
+                    try {
+                        // Store file in public storage
+                        $path = $file->store('estimate_documents', 'public');
+
+                        // Create document record
+                        $estimate->documents()->create([
+                            'path' => $path,
+                            'name' => $file->getClientOriginalName(),
+                            'documentable_type' => Estimate::class,
+                            'documentable_id' => $estimate->id
+                        ]);
+                    } catch (\Exception $e) {
+                        Log::error('Document upload failed: ' . $e->getMessage());
+                        throw new \Exception('Failed to upload document: ' . $e->getMessage());
+                    }
+                }
+            }
+        }
+    }
     function storeInvoice(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'project_id' => 'required|exists:projects,id',
             'number' => 'required|unique:estimates,number',
             'date' => 'required|date',
-            'reference' => 'required|array',
-            'reference.*' => 'required|string',
-            'quantity' => 'required|array',
-            'quantity.*' => 'required|numeric|min:0',
-            'total_without_tax' => 'required|numeric|min:0',
-            'tax' => 'required|numeric|min:0|max:100',
-            'total_with_tax' => 'required|numeric|min:0',
-            'note' => 'nullable|string',
-            'doc.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,pdf|max:2048',
+            'ref' => 'required|array',
+            'ref.*' => 'required|string',
+            'name' => 'required|array',
+            'name.*' => 'required|string',
+            'qte' => 'required|array',
+            'qte.*' => 'required|numeric',
+            'prix_unite' => 'required|array',
+            'prix_unite.*' => 'required|numeric',
+            'category' => 'required|array',
+            'category.*' => 'required|string',
+            'total_price_unite' => 'required|array',
+            'total_without_tax' => 'required|numeric',
+            'tax' => 'required|numeric',
+            'total_with_tax' => 'required|numeric',
+            'doc' => 'nullable|file',
+            'note' => 'nullable|string'
         ]);
 
         if ($validator->fails()) {
@@ -79,30 +116,24 @@ class EstimateController extends Controller
                 'type' => 'estimate',
                 'total_price' => $request->total_with_tax,
                 'due_date' => $request->date,
-                'quantity' => array_sum($request->quantity), // Sum of all items quantities
                 'tax' => $request->tax,
                 'note' => $request->note,
             ]);
 
             // Create estimate items
-            foreach ($request->reference as $index => $reference) {
+            foreach ($request->ref as $index => $ref) {
                 $estimate->items()->create([
-                    'reference' => $reference,
-                    'quantity' => $request->quantity[$index],
+                    'ref' => $ref,
+                    'name' => $request['name'][$index],
+                    'qte' => $request['qte'][$index],
+                    'prix_unite' => $request['prix_unite'][$index],
+                    'category' => $request['category'][$index],
+                    'total_price_unite' => $request['total_price_unite'][$index],
                 ]);
             }
 
             // Handle file uploads
-            if ($request->hasFile('doc')) {
-                foreach ($request->file('doc') as $file) {
-                    $path = $file->store('invoice_documents', 'public');
-
-                    $estimate->documents()->create([
-                        'path' => $path,
-                        'name' => $file->getClientOriginalName(),
-                    ]);
-                }
-            }
+            $this->handleDocumentUpload($estimate, $request);
 
             DB::commit();
             return redirect()->route('estimates')->with('success', 'Estimate created successfully');

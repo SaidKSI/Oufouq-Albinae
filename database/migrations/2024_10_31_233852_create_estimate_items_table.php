@@ -13,8 +13,12 @@ return new class extends Migration {
         Schema::create('estimate_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('estimate_id')->constrained('estimates')->onDelete('cascade');
-            $table->string('reference');
-            $table->integer('quantity');
+            $table->string('ref');
+            $table->string('name');
+            $table->integer('qte');
+            $table->decimal('prix_unite', 10, 2);
+            $table->string('category');
+            $table->decimal('total_price_unite', 10, 2);
             $table->timestamps();
         });
     }
