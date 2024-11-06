@@ -5,7 +5,7 @@
 <div class="row">
   <div class="card">
 
-    <form method="GET" action="{{ route('delivery.index', ['type' => $type]) }}" class="m-3">
+    <form method="GET" action="{{ route('regulation.index', ['type' => $type]) }}" class="m-3">
       <div class="form-group w-25">
         <label for="filter_id">Filter by {{ $type === 'supplier' ? 'Supplier' : 'Client' }}</label>
         <select name="{{ $type === 'supplier' ? 'supplier_id' : 'client_id' }}" id="filter_id"
