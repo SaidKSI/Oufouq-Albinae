@@ -10,7 +10,6 @@
             font-family: 'Open Sans', sans-serif;
             background: url("{{asset('assets/invoice_asset/img/Oufoq%20albinae%20BIG.png')}}") center / cover no-repeat;
             min-height: 100vh;
-            padding: 20px;
         }
 
         .container {
@@ -24,6 +23,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
         }
 
         th,
@@ -51,6 +51,11 @@
             text-align: center;
         }
 
+        .items-table th,
+        .items-table td {
+            text-align: left;
+        }
+
         @media print {
             body {
                 background: none;
@@ -59,18 +64,134 @@
             .container {
                 background: none;
             }
+
+            .no-print {
+                display: none;
+            }
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .logo-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .logo {
+            width: 150px;
+            margin-bottom: 10px;
+        }
+
+        .devis-number {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .date-section {
+            text-align: right;
+            margin-right: 100px;
+        }
+
+        .location-date {
+            margin-top: 70px;
+            margin-right: 55px;
+        }
+
+        .client-info {
+            border: 5px solid #000;
+            padding: 8px 15px;
+            min-width: 200px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 60px;
+        }
+
+        .client-info div {
+            margin: 2px 0;
+        }
+
+        .city {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .totals-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        .totals-table td {
+            border: 2px solid #000;
+            padding: 8px 15px;
+        }
+
+        .amount-in-words {
+            text-align: left;
+            padding: 15px;
+            font-weight: bold;
+            font-style: italic;
+            width: 60%;
+            vertical-align: middle;
+        }
+
+        .amount-in-words span {
+            text-transform: uppercase;
+        }
+
+        .totals-column {
+            width: 40%;
+        }
+
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #000;
+        }
+
+        .totals-row:last-child {
+            border-bottom: none;
+        }
+
+        .totals-label {
+            font-weight: bold;
+            text-transform: uppercase;
         }
     </style>
 </head>
 
 <body>
+    <div class="vstack"><img src="{{asset('assets/invoice_asset/img/BG_FD.png')}}"
+            style="width: 100%;height: 44.5938px;margin-bottom: 8px;margin-left: 0px;margin-right: 0px">
+    </div>
     <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <img src="{{asset('assets/invoice_asset/img/logo%20big.png')}}" style="width: 150px;">
-            <h4>Facture N°# {{ $invoice->number }}</h4>
-            <div>
-                <span style="font-weight: bold; margin-right: 22px;">Salé</span>
-                <span>Le {{ $invoice->created_at->format('d/m/Y') }}</span>
+        <!-- Header -->
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="{{asset('assets/invoice_asset/img/logo%20big.png')}}" class="logo" alt="Logo">
+                <div class="devis-number">Facture N°# {{ $invoice->number }}</div>
+                <div class="devis-number">Client N°# {{ $invoice->estimate->project->client->ice }}</div>
+            </div>
+
+            <div class="date-section">
+                <div class="location-date">
+                    <span class="city" style="font-size: 20px">Salé</span>
+                    <span style="font-size: 18px">Le {{ $invoice->date }}</span>
+                </div>
+                <div class="client-info" style="align-items: flex-start;">
+                    <div style="font-size: 18px">{{ $invoice->estimate->project->client->name }}</div>
+                    <br>
+                    <div style="font-size: 18px">{{ $invoice->estimate->project->client->city }}</div>
+                </div>
             </div>
         </div>
         <hr>
@@ -78,7 +199,6 @@
             <thead>
                 <tr>
                     <th>Client</th>
-                    <th>Projet</th>
                     <th>Payment Method</th>
                     <th>Transaction ID</th>
                 </tr>
@@ -86,42 +206,48 @@
             <tbody>
                 <tr>
                     <td>{{ $invoice->estimate->project->client->name }}</td>
-                    <td>{{ $invoice->estimate->project->name }}</td>
                     <td>{{ $invoice->payment_method }}</td>
                     <td>{{ $invoice->transaction_id }}</td>
                 </tr>
             </tbody>
         </table>
-        <table style="margin-top: 20px;">
-            <thead>
-                <tr>
-                    <th>Total HT</th>
-                    <th>TVA</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style="font-weight: bold;">{{ $invoice->total_without_tax }}</td>
-                    <td style="font-weight: bold;">{{ $invoice->tax }}%</td>
-                    <td style="font-weight: bold;">{{ number_format($invoice->total_with_tax, 2) }}</td>
-                </tr>
-            </tbody>
-            <tfoot>
-                <tr class="text-center">
-                    <td colspan="5" style="text-align: center;font-weight: bold;font-size: 18px;">
-                        Arreté La présente facture à la somme de :<br>
-                        #... <span id="numberToWord"></span> ...#
-                    </td>
-                </tr>
-            </tfoot>
+        @php
+        $taxAmount = number_format(($invoice->total_without_tax * 1.2) - $invoice->total_without_tax, 2);
+        @endphp
+        <table class="totals-table">
+            <tr>
+                <td class="amount-in-words" rowspan="3">
+                    Arrêté Le présent devis à La Somme De :<br>
+                    #... <span>{{ $invoice->total_price_in_words }} DIRHAMS</span> ...#
+                </td>
+                <td class="totals-column">
+                    <div class="totals-row">
+                        <span class="totals-label">Total HT:</span>
+                        <span>{{ number_format($invoice->total_without_tax, 2) }}</span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="totals-column">
+                    <div class="totals-row">
+                        <span class="totals-label">TVA:</span>
+                        <span>{{ $taxAmount }}</span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="totals-column">
+                    <div class="totals-row">
+                        <span class="totals-label">Total TTC:</span>
+                        <span>{{ number_format($invoice->total_without_tax * 1.2, 2) }}</span>
+                    </div>
+                </td>
+            </tr>
         </table>
-        @if($invoice->note)
         <div style="margin-top: 20px;">
             <h3>Remarques:</h3>
             <p style="font-size: 15px;text-align: center;">{{ $invoice->note }}</p>
         </div>
-        @endif
         <div class="footer">
             <div class="footer-line"></div>
             <p>
@@ -139,18 +265,14 @@
         </button>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            updateNumberToWord({{ $invoice->total_with_tax }});
+        document.addEventListener('DOMContentLoaded', function() {
+          const amount = {{ $invoice->total_without_tax  * 1.2}};
+          fetch(`/dashboard/order/delivery/${amount}/to-number`)
+            .then(response => response.json())
+            .then(data => {
+              document.querySelector('.amount-in-words span').textContent = data + ' DIRHAMS';
+            });
         });
-
-        function updateNumberToWord(totalWithTax) {
-            fetch(`/dashboard/order/delivery/${totalWithTax}/to-number`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('numberToWord').textContent = data;
-                })
-                .catch(error => console.error('Error:', error));
-        }
     </script>
 </body>
 

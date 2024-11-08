@@ -24,7 +24,7 @@ class Facture extends Model
     protected $casts = [
         'date' => 'date',
         'total_without_tax' => 'decimal:2',
-        'tax' => 'decimal:2',
+        'tax' => 'decimal:10,2',
         'total_with_tax' => 'decimal:2',
     ];
 

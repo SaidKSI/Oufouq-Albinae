@@ -10,7 +10,6 @@
       font-family: 'Open Sans', sans-serif;
       background: url("{{asset('assets/invoice_asset/img/Oufoq%20albinae%20BIG.png')}}") center / cover no-repeat;
       min-height: 100vh;
-      padding: 20px;
     }
 
     .container {
@@ -70,24 +69,135 @@
         display: none;
       }
     }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .logo-section {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .logo {
+      width: 150px;
+      margin-bottom: 10px;
+    }
+
+    .devis-number {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .date-section {
+      text-align: right;
+      margin-right: 100px;
+    }
+
+    .location-date {
+      margin-top: 70px;
+      margin-right: 55px;
+    }
+
+    .client-info {
+      border: 5px solid #000;
+      padding: 8px 15px;
+      min-width: 200px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 60px;
+    }
+
+    .client-info div {
+      margin: 2px 0;
+    }
+
+    .city {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .totals-table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+
+    .totals-table td {
+      border: 2px solid #000;
+      padding: 8px 15px;
+    }
+
+    .amount-in-words {
+      text-align: left;
+      padding: 15px;
+      font-weight: bold;
+      font-style: italic;
+      width: 60%;
+      vertical-align: middle;
+    }
+
+    .amount-in-words span {
+      text-transform: uppercase;
+    }
+
+    .totals-column {
+      width: 40%;
+    }
+
+    .totals-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid #000;
+    }
+
+    .totals-row:last-child {
+      border-bottom: none;
+    }
+
+    .totals-label {
+      font-weight: bold;
+      text-transform: uppercase;
+    }
   </style>
 </head>
 
 <body>
+  <div class="vstack"><img src="{{asset('assets/invoice_asset/img/BG_FD.png')}}"
+      style="width: 100%;height: 44.5938px;margin-bottom: 8px;margin-left: 0px;margin-right: 0px">
+  </div>
   <div class="container">
     <!-- Header -->
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <img src="{{asset('assets/invoice_asset/img/logo%20big.png')}}" style="width: 150px;">
-      <h4>Devis N°# {{ $estimate->number }}</h4>
-      <div>
-        <span style="font-weight: bold; margin-right: 22px;">Salé</span>
-        <span>Le {{ $estimate->due_date }}</span>
+    <div class="header-container">
+      <div class="logo-section">
+        <img src="{{asset('assets/invoice_asset/img/logo%20big.png')}}" class="logo" alt="Logo">
+        <div class="devis-number">Devis N°# {{ $estimate->number }}</div>
+        <div class="devis-number">Client N°# {{ $estimate->project->client->ice }}</div>
+      </div>
+
+      <div class="date-section">
+        <div class="location-date">
+          <span class="city" style="font-size: 20px">Salé</span>
+          <span style="font-size: 18px">Le {{ $estimate->due_date }}</span>
+        </div>
+        <div class="client-info" style="align-items: flex-start;">
+          <div style="font-size: 18px">{{ $estimate->project->client->name }}</div>
+          <br>
+          <div style="font-size: 18px">{{ $estimate->project->client->city }}</div>
+        </div>
       </div>
     </div>
     <hr>
 
     <!-- Project Info -->
-    <table>
+    {{-- <table>
       <thead>
         <tr>
           <th>Client</th>
@@ -100,17 +210,16 @@
           <td>{{ $estimate->project->name }}</td>
         </tr>
       </tbody>
-    </table>
+    </table> --}}
 
     <!-- Items -->
     <table class="items-table">
       <thead>
         <tr>
           <th>Référence</th>
-          <th>Désignation</th>
+          <th colspan="2">Désignation</th>
           <th>Qté</th>
           <th>Prix Unite</th>
-          <th>catégorie</th>
           <th>Montant</th>
         </tr>
       </thead>
@@ -118,10 +227,9 @@
         @foreach($estimate->items as $item)
         <tr>
           <td>{{ $item->ref }}</td>
-          <td>{{ $item->name }}</td>
+          <td colspan="2">{{ $item->name }}</td>
           <td>{{ $item->qte }}</td>
           <td>{{ $item->prix_unite }}</td>
-          <td>{{ $item->category }}</td>
           <td>{{ $item->total_price_unite }}</td>
         </tr>
         @endforeach
@@ -129,31 +237,35 @@
     </table>
 
     <!-- Totals -->
-    <table>
-      <thead>
-        <tr>
-          <th>Total HT</th>
-          <th>TVA</th>
-          <th>Total TTC</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="font-weight: bold;">{{ number_format($estimate->total_price, 2) }}</td>
-          <td style="font-weight: bold;">{{ $estimate->tax }}%</td>
-          <td style="font-weight: bold;">
-            {{ number_format($estimate->total_price + ($estimate->total_price * $estimate->tax / 100), 2) }}
-          </td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="3" style="text-align: center; font-weight: bold; font-size: 18px;">
-            Arreté Le présent devis à la somme de :<br>
-            #... <span id="numberToWord"></span> ...#
-          </td>
-        </tr>
-      </tfoot>
+    <table class="totals-table">
+      <tr>
+        <td class="amount-in-words" rowspan="3">
+          Arrêté Le présent devis à La Somme De :<br>
+          #... <span>{{ $estimate->total_price_in_words }} DIRHAMS</span> ...#
+        </td>
+        <td class="totals-column">
+          <div class="totals-row">
+            <span class="totals-label">Total HT:</span>
+            <span>{{ number_format($estimate->total_without_tax, 2) }}</span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="totals-column">
+          <div class="totals-row">
+            <span class="totals-label">TVA:</span>
+            <span>{{ number_format($estimate->tax, 2) }}</span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="totals-column">
+          <div class="totals-row">
+            <span class="totals-label">Total TTC:</span>
+            <span>{{ number_format($estimate->total_with_tax, 2) }}</span>
+          </div>
+        </td>
+      </tr>
     </table>
 
     <!-- Notes -->
@@ -201,18 +313,13 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-            const totalWithTax = {{ $estimate->total_price + ($estimate->total_price * $estimate->tax / 100) }};
-            updateNumberToWord(totalWithTax);
+      const amount = {{ $estimate->total_with_tax }};
+      fetch(`/dashboard/order/delivery/${amount}/to-number`)
+        .then(response => response.json())
+        .then(data => {
+          document.querySelector('.amount-in-words span').textContent = data + ' DIRHAMS';
         });
-
-        function updateNumberToWord(amount) {
-            fetch(`/dashboard/order/delivery/${amount}/to-number`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('numberToWord').textContent = data;
-                })
-                .catch(error => console.error('Error:', error));
-        }
+    });
   </script>
 </body>
 

@@ -77,6 +77,7 @@ class EstimateController extends Controller
     }
     function storeInvoice(Request $request)
     {
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'project_id' => 'required|exists:projects,id',
             'number' => 'required|unique:estimates,number',
@@ -114,9 +115,10 @@ class EstimateController extends Controller
                 'project_id' => $request->project_id,
                 'number' => $request->number,
                 'type' => 'estimate',
-                'total_price' => $request->total_with_tax,
+                'total_without_tax' => $request->total_without_tax,
+                'total_with_tax' => $request->total_with_tax,
                 'due_date' => $request->date,
-                'tax' => $request->tax,
+                'tax' => $request->total_with_tax - $request->total_without_tax,
                 'note' => $request->note,
             ]);
 

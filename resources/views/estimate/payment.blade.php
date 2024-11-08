@@ -26,7 +26,7 @@
             <tbody>
               @foreach($invoices as $invoice)
               @php
-              $taxAmount = $invoice->total_with_tax - $invoice->total_without_tax;
+              $taxAmount = $invoice->total_without_tax * 1.2 - $invoice->total_without_tax;
               @endphp
               <tr>
                 <td>{{ $invoice->number }}</td>
@@ -34,8 +34,7 @@
                 <td>{{ $invoice->estimate->project->name }}</td>
                 <td>{{ $invoice->estimate->sum('quantity') }}</td>
                 <td>{{ number_format($invoice->total_without_tax,2) }}</td>
-                <td><span data-bs-toggle="tooltip" data-bs-html="true"
-                    data-bs-title="<b>{{number_format($taxAmount,2)}}</b>">{{ $invoice->tax }} %</span></td>
+                <td>{{ number_format($invoice->tax,2) }}</td>
                 <td>
 
                   {{ number_format($invoice->total_with_tax, 2) }}

@@ -15,11 +15,11 @@ return new class extends Migration {
             $table->string('number')->nullable();
             $table->date('date');
             $table->decimal('total_without_tax', 10, 2);
-            $table->decimal('tax', 10, 2);
+            $table->decimal('tax', 10, 2)->default(0);
             $table->decimal('total_with_tax', 10, 2);
             $table->string('doc')->nullable();
             $table->text('note')->nullable();
-            $table->string('payment_method');
+            $table->string('payment_method')->nullable();
             $table->string('type');
             $table->unsignedBigInteger('client_id');
             $table->unsignedBigInteger('project_id');

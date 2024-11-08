@@ -97,6 +97,18 @@
             </table>
           </div>
           <div class="text-center" style="margin-bottom: 20px;">
+            <button id="add-row"
+              class="btn btn-outline-success btn-sm fw-bold border rounded-pill border-1 border-success" type="button"
+              style="width: 30%;padding: 0;margin-bottom: 9px;margin-top: 8px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16"
+                class="bi bi-plus-lg">
+                <path fill-rule="evenodd"
+                  d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2">
+                </path>
+              </svg>&nbsp;Nouvelle ligne
+            </button>
+          </div>
+          <div class="text-center" style="margin-bottom: 20px;">
             <table class="table table-sm table-borderless">
               <tr>
                 <th class="text-capitalize border-2 border-dark" style="background: rgba(255,255,255,0);" colspan="3"
@@ -232,7 +244,7 @@
         // Calculate and set total with tax
         const totalWithoutTax = parseFloat(data.total_price) || 0;
         const tax = parseFloat(data.tax) || 0;
-        const totalWithTax = totalWithoutTax + (totalWithoutTax * (tax / 100));
+        const totalWithTax =  totalWithoutTax * 1.2;
         const note = data.note;
         const doc = data.doc;
         $('#total_with_tax').val(totalWithTax.toFixed(2));

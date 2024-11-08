@@ -24,10 +24,7 @@
           </thead>
           <tbody>
             @foreach($estimates as $estimate)
-            @php
-            $totalWithoutTax = $estimate->total_price / (1 + $estimate->tax / 100);
-            $taxAmount = $estimate->total_price - $totalWithoutTax;
-            @endphp
+
             <tr>
               <td>{{ $estimate->project->client->name }}</td>
               <td>{{ $estimate->project->name }}</td>
@@ -77,12 +74,10 @@
                   </div>
                 </div>
               </td>
-              <td>{{ number_format($estimate->total_price,2) }}</td>
-              <td><span data-bs-toggle="tooltip" data-bs-html="true"
-                  data-bs-title="<b>{{number_format($taxAmount,2)}}</b>">{{ $estimate->tax }} %</span></td>
+              <td>{{ number_format($estimate->total_without_tax,2) }}</td>
+              <td>{{ number_format($estimate->tax,2) }}</td>
               <td>
-
-                {{ number_format($estimate->total_price + $taxAmount, 2) }}
+                {{ number_format($estimate->total_with_tax, 2) }}
               </td>
               <td>
                 <a href="#" class="text-danger" onclick="confirmDelete({{$estimate->id}})"><i

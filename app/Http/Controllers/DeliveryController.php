@@ -108,7 +108,7 @@ class DeliveryController extends Controller
             'project_id' => $request['project_id'],
             'supplier_id' => $request['supplier_id'],
             'total_without_tax' => $request['total_without_tax'],
-            'tax' => $request['tax'],
+            'tax' => $request['total_with_tax'] - $request['total_without_tax'],
             'total_with_tax' => $request['total_with_tax'],
             'doc' => $docPath,
             'note' => $request['note'],

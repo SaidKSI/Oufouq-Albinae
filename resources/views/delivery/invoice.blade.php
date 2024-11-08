@@ -149,8 +149,8 @@
                 <td class="border-2 border-dark" style="background: rgba(255,255,255,0);"> <input type="text"
                     name="total_without_tax" id="total_without_tax" readonly> </td>
                 <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                  <div class="input-group"><input class="form-control" type="number" value="20" id="tax"
-                      name="tax"><span class="input-group-text">%</span></div>
+                  <div class="input-group"><input class="form-control" type="number" value="20" id="tax" name="tax"
+                      readonly><span class="input-group-text">%</span></div>
                 </td>
                 <td class="border-2 border-dark" style="background: rgba(255,255,255,0);"><input type="text"
                     name="total_with_tax" id="total_with_tax" readonly> </td>
@@ -387,7 +387,7 @@
 
     function calculateTotalWithTax(totalWithoutTax) {
         const tax = parseFloat(elements.taxInput.value) || 0;
-        const totalWithTax = totalWithoutTax + (totalWithoutTax * (tax / 100));
+        const totalWithTax = totalWithoutTax * 1.2;
         elements.totalWithTaxInput.value = totalWithTax.toFixed(2);
         updateNumberToWord(totalWithTax);
     }
