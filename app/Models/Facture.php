@@ -18,7 +18,8 @@ class Facture extends Model
         'total_without_tax',
         'tax',
         'total_with_tax',
-        'note'
+        'note',
+        'doc'
     ];
 
     protected $casts = [

@@ -129,7 +129,6 @@
                   <div class="input-group">
                     <input class="form-control" type="number" value="20" id="tax" name="tax" min="0" max="100"
                       step="0.01">
-                    <span class="input-group-text">%</span>
                   </div>
                 </td>
                 <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
@@ -238,13 +237,13 @@
 
     function updateFormWithEstimateData(data) {
         // Update totals and tax
-        $('#total_without_tax').val(data.total_price).prop('readonly', true);
+        $('#total_without_tax').val(data.total_without_tax).prop('readonly', true);
         $('#tax').val(data.tax).prop('readonly', true);
         
         // Calculate and set total with tax
-        const totalWithoutTax = parseFloat(data.total_price) || 0;
+        const totalWithoutTax = parseFloat(data.total_with_tax) || 0;
         const tax = parseFloat(data.tax) || 0;
-        const totalWithTax =  totalWithoutTax * 1.2;
+        const totalWithTax =  totalWithoutTax;
         const note = data.note;
         const doc = data.doc;
         $('#total_with_tax').val(totalWithTax.toFixed(2));
@@ -258,7 +257,7 @@
             const row = `
                 <tr>
                     <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                        <input class="form-control" type="text" name="ref[]" value="${item.reference}" readonly>
+                        <input class="form-control" type="text" name="ref[]" value="${item.ref}" readonly>
                     </td>
                      <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
                       <textarea class="form-control" rows="3" name="name[]" >${item.name}</textarea>

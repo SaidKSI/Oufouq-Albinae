@@ -200,7 +200,6 @@
     <table>
       <thead>
         <tr>
-          <th>Client</th>
           @if($delivery->supplier)
           <th>Fournisseur</th>
           @endif
@@ -209,7 +208,6 @@
       </thead>
       <tbody>
         <tr>
-          <td>{{ $delivery->client->name }}</td>
           @if($delivery->supplier)
           <td>{{ $delivery->supplier->name }}</td>
           @endif

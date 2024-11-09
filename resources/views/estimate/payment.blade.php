@@ -26,19 +26,16 @@
             <tbody>
               @foreach($invoices as $invoice)
               @php
-              $taxAmount = $invoice->total_without_tax * 1.2 - $invoice->total_without_tax;
+              $taxAmount = number_format(($invoice->total_without_tax * 1.2) - $invoice->total_without_tax, 2);
               @endphp
               <tr>
                 <td>{{ $invoice->number }}</td>
                 <td>{{ $invoice->estimate->project->client->name }}</td>
                 <td>{{ $invoice->estimate->project->name }}</td>
                 <td>{{ $invoice->estimate->sum('quantity') }}</td>
-                <td>{{ number_format($invoice->total_without_tax,2) }}</td>
-                <td>{{ number_format($invoice->tax,2) }}</td>
-                <td>
-
-                  {{ number_format($invoice->total_with_tax, 2) }}
-                </td>
+                <td>{{ number_format((float)$invoice->total_without_tax, 2) }}</td>
+                <td>{{ $taxAmount }}</td>
+                <td>{{ number_format((float)$invoice->total_with_tax, 2) }}</td>
                 <td>
                   <a href="{{ route('facture.print', $invoice->id) }}" target="_blank" title="Print"><i
                       class="ri-file-fill fs-4"></i></a>

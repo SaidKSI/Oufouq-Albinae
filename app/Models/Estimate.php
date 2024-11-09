@@ -21,6 +21,7 @@ class Estimate extends Model
         'payment_method',
         'transaction_id',
         'note',
+        'doc'
     ];
 
 

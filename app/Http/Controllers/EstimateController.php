@@ -149,7 +149,8 @@ class EstimateController extends Controller
     public function getEstimateDetails(Estimate $estimate)
     {
         return response()->json([
-            'total_price' => $estimate->total_price,
+            'total_without_tax' => $estimate->total_without_tax,
+            'total_with_tax' => $estimate->total_with_tax,
             'tax' => $estimate->tax,
             'items' => $estimate->items,
             'note' => $estimate->note,

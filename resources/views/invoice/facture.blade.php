@@ -198,14 +198,12 @@
         <table>
             <thead>
                 <tr>
-                    <th>Client</th>
                     <th>Payment Method</th>
                     <th>Transaction ID</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>{{ $invoice->estimate->project->client->name }}</td>
                     <td>{{ $invoice->payment_method }}</td>
                     <td>{{ $invoice->transaction_id }}</td>
                 </tr>
