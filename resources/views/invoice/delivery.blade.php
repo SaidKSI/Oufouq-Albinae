@@ -10,6 +10,8 @@
       font-family: 'Open Sans', sans-serif;
       background: url("{{asset('assets/invoice_asset/img/Oufoq%20albinae%20BIG.png')}}") center / cover no-repeat;
       min-height: 100vh;
+      margin: 0;
+      padding: 0;
     }
 
     .container {
@@ -34,9 +36,14 @@
     }
 
     .footer {
-      margin-top: 20px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
       text-align: center;
       font-size: 13px;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.9);
     }
 
     .footer-line {
@@ -59,14 +66,32 @@
     @media print {
       body {
         background: none;
+        min-height: auto;
       }
 
       .container {
         background: none;
+        margin-bottom: 150px;
+      }
+
+      .footer {
+        background: none;
+        position: fixed;
+        bottom: 0;
+      }
+
+      .footer-line {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
 
       .no-print {
         display: none;
+      }
+
+      @page {
+        margin: 0;
+        size: auto;
       }
     }
 
@@ -277,13 +302,7 @@
 
 
 
-    <!-- Notes -->
-    @if($delivery->note)
-    <div style="margin-top: 20px;">
-      <h3>Remarques:</h3>
-      <p style="font-size: 15px; text-align: center;">{{ $delivery->note }}</p>
-    </div>
-    @endif
+
 
     <!-- Footer -->
     <div class="footer">
@@ -303,36 +322,7 @@
         Imprimer
       </button>
     </div>
-    <!-- Payment Information -->
-    @if($delivery->bills->count() > 0)
-    <div style="page-break-before: always;">
-      <h3>Historique des Paiements</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Montant</th>
-          </tr>
-        </thead>
-        <tbody>
-          @foreach($delivery->bills as $bill)
-          <tr>
-            <td>{{ $bill->created_at }}</td>
-            <td>{{ number_format($bill->amount, 2) }}</td>
-          </tr>
-          @endforeach
-          <tr>
-            <td><strong>Total Payé</strong></td>
-            <td><strong>{{ number_format($delivery->total_paid, 2) }}</strong></td>
-          </tr>
-          <tr>
-            <td><strong>Reste à Payer</strong></td>
-            <td><strong>{{ number_format($delivery->remaining_amount, 2) }}</strong></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    @endif
+
   </div>
   <script>
     document.addEventListener('DOMContentLoaded', function() {

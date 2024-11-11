@@ -228,7 +228,7 @@ class ProjectController extends Controller
             'payment_method' => 'required|in:bank_transfer,cheque,credit,cash,traita',
             'transaction_id' => 'nullable|string',
             'total_without_tax' => 'required|numeric|min:0',
-            'tax' => 'required|numeric|between:0,100',
+            'tax' => 'required',
             'total_with_tax' => 'required|numeric|min:0',
             'note' => 'nullable|string',
             'doc.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,pdf|max:2048',

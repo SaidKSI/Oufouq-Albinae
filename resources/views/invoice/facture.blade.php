@@ -10,6 +10,8 @@
             font-family: 'Open Sans', sans-serif;
             background: url("{{asset('assets/invoice_asset/img/Oufoq%20albinae%20BIG.png')}}") center / cover no-repeat;
             min-height: 100vh;
+            margin: 0;
+            padding: 0;
         }
 
         .container {
@@ -34,9 +36,14 @@
         }
 
         .footer {
-            margin-top: 20px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
             text-align: center;
             font-size: 13px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
         }
 
         .footer-line {
@@ -59,14 +66,32 @@
         @media print {
             body {
                 background: none;
+                min-height: auto;
             }
 
             .container {
                 background: none;
+                margin-bottom: 150px;
+            }
+
+            .footer {
+                background: none;
+                position: fixed;
+                bottom: 0;
+            }
+
+            .footer-line {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
             .no-print {
                 display: none;
+            }
+
+            @page {
+                margin: 0;
+                size: auto;
             }
         }
 
@@ -242,10 +267,7 @@
                 </td>
             </tr>
         </table>
-        <div style="margin-top: 20px;">
-            <h3>Remarques:</h3>
-            <p style="font-size: 15px;text-align: center;">{{ $invoice->note }}</p>
-        </div>
+
         <div class="footer">
             <div class="footer-line"></div>
             <p>

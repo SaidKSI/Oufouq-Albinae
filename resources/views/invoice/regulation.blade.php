@@ -10,7 +10,8 @@
       font-family: 'Open Sans', sans-serif;
       background: url("{{asset('assets/invoice_asset/img/Oufoq%20albinae%20BIG.png')}}") center / cover no-repeat;
       min-height: 100vh;
-      padding: 20px;
+      margin: 0;
+      padding: 0;
     }
 
     .container {
@@ -35,9 +36,14 @@
     }
 
     .footer {
-      margin-top: 20px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
       text-align: center;
       font-size: 13px;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.9);
     }
 
     .footer-line {
@@ -48,25 +54,142 @@
       margin-bottom: 5px;
     }
 
-    .summary-box {
-      border: 2px solid #000;
-      padding: 15px;
-      margin: 20px 0;
-      border-radius: 8px;
+    .text-center {
+      text-align: center;
+    }
+
+    .items-table th,
+    .items-table td {
+      text-align: left;
     }
 
     @media print {
       body {
         background: none;
+        min-height: auto;
       }
 
       .container {
         background: none;
+        margin-bottom: 150px;
+      }
+
+      .footer {
+        background: none;
+        position: fixed;
+        bottom: 0;
+      }
+
+      .footer-line {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
 
       .no-print {
         display: none;
       }
+
+      @page {
+        margin: 0;
+        size: auto;
+      }
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .logo-section {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .logo {
+      width: 150px;
+      margin-bottom: 10px;
+    }
+
+    .devis-number {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .date-section {
+      text-align: right;
+      margin-right: 100px;
+    }
+
+    .location-date {
+      margin-top: 70px;
+      margin-right: 55px;
+    }
+
+    .client-info {
+      border: 5px solid #000;
+      padding: 8px 15px;
+      min-width: 200px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 60px;
+    }
+
+    .client-info div {
+      margin: 2px 0;
+    }
+
+    .city {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .totals-table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+
+    .totals-table td {
+      border: 2px solid #000;
+      padding: 8px 15px;
+    }
+
+    .amount-in-words {
+      text-align: left;
+      padding: 15px;
+      font-weight: bold;
+      font-style: italic;
+      width: 60%;
+      vertical-align: middle;
+    }
+
+    .amount-in-words span {
+      text-transform: uppercase;
+    }
+
+    .totals-column {
+      width: 40%;
+    }
+
+    .totals-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid #000;
+    }
+
+    .totals-row:last-child {
+      border-bottom: none;
+    }
+
+    .totals-label {
+      font-weight: bold;
+      text-transform: uppercase;
     }
   </style>
 </head>
