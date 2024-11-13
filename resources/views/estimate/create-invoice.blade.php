@@ -128,8 +128,8 @@
                                 </td>
                                 <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
                                     <div class="input-group">
-                                        <input class="form-control" type="number" value="0.00" id="tax" name="tax" min="0"
-                                            max="100" step="0.01" readonly>
+                                        <input class="form-control" type="number" value="0.00" id="tax" name="tax"
+                                            min="0" max="100" step="0.01" readonly>
 
                                     </div>
                                 </td>
@@ -368,9 +368,10 @@
     }
 
     function calculateTotalWithTax(totalWithoutTax) {
-        const tax = parseFloat(elements.taxInput.value) || 0;
-        const totalWithTax =  totalWithoutTax * 1.2;
+        const tax = (totalWithoutTax * 1.2) - totalWithoutTax;
+        const totalWithTax = totalWithoutTax * 1.2;
         elements.totalWithTaxInput.value = totalWithTax.toFixed(2);
+        elements.taxInput.value = tax.toFixed(2);
         updateNumberToWord(totalWithTax);
     }
 

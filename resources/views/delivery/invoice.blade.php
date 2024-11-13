@@ -379,16 +379,17 @@
         elements.totalWithoutTaxInput.value = totalWithoutTax.toFixed(2);
         calculateTotalWithTax(totalWithoutTax);
     }
-
+   
     function calculateTotalWithoutTax() {
         return Array.from(elements.tableBody.querySelectorAll('.total-price'))
             .reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
     }
 
     function calculateTotalWithTax(totalWithoutTax) {
-        const tax = parseFloat(elements.taxInput.value) || 0;
+        const tax = (totalWithoutTax * 1.2) - totalWithoutTax;
         const totalWithTax = totalWithoutTax * 1.2;
         elements.totalWithTaxInput.value = totalWithTax.toFixed(2);
+        elements.taxInput.value = tax.toFixed(2);
         updateNumberToWord(totalWithTax);
     }
 
