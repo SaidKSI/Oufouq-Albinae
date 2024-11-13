@@ -130,7 +130,7 @@
                                     <div class="input-group">
                                         <input class="form-control" type="number" value="20" id="tax" name="tax" min="0"
                                             max="100" step="0.01" readonly>
-                                        <span class="input-group-text">%</span>
+
                                     </div>
                                 </td>
                                 <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">

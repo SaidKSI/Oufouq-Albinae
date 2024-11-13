@@ -247,7 +247,6 @@
         <tr>
           <th>Référence</th>
           <th>Désignation</th>
-          <th>Catégorie</th>
           <th>Quantité</th>
           <th>Prix Unitaire</th>
           <th>Total</th>
@@ -258,7 +257,6 @@
         <tr>
           <td>{{ $item->ref }}</td>
           <td>{{ $item->name }}</td>
-          <td>{{ $item->category }}</td>
           <td>{{ $item->qte }}</td>
           <td>{{ number_format($item->prix_unite, 2) }}</td>
           <td>{{ number_format($item->total_price_unite, 2) }}</td>
