@@ -98,7 +98,7 @@
               <th class="text-capitalize border-2 border-dark" style="background: rgba(255,255,255,0);" colspan="3"
                 rowspan="2">Arreté La présente facture à la somme de :<br>#...{{$totalInAlphabet}}...#</th>
               <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">total ht</th>
-              <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">tva</th>
+              <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">tva (20%)</th>
               <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">total</th>
             </tr>
 

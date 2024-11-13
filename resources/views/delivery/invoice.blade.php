@@ -141,7 +141,7 @@
                   rowspan="2">Arreté La présente facture à la somme de :<br>#... <span id="numberToWord"></span> ...#
                 </th>
                 <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">total ht</th>
-                <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">tva</th>
+                <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">tva (20%)</th>
                 <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">total</th>
               </tr>
 
@@ -149,7 +149,7 @@
                 <td class="border-2 border-dark" style="background: rgba(255,255,255,0);"> <input type="text"
                     name="total_without_tax" id="total_without_tax" readonly> </td>
                 <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                  <div class="input-group"><input class="form-control" type="number" value="20" id="tax" name="tax"
+                  <div class="input-group"><input class="form-control" type="number" value="0.00" id="tax" name="tax"
                       readonly></div>
                 </td>
                 <td class="border-2 border-dark" style="background: rgba(255,255,255,0);"><input type="text"
