@@ -204,18 +204,37 @@
             <div class="logo-section">
                 <img src="{{asset('assets/invoice_asset/img/logo%20big.png')}}" class="logo" alt="Logo">
                 <div class="devis-number">Facture N°# {{ $invoice->number }}</div>
-                <div class="devis-number">Client N°# {{ $invoice->estimate->project->client->ice }}</div>
+                <div class="devis-number">
+                    Client N°# 
+                    @if($invoice->estimate_id)
+                        {{ $invoice->estimate->project->client->ice }}
+                    @else
+                        {{ $invoice->delivery->client->ice }}
+                    @endif
+                </div>
             </div>
 
             <div class="date-section">
                 <div class="location-date">
                     <span class="city" style="font-size: 20px">Salé</span>
-                    <span style="font-size: 18px">Le {{ $invoice->date }}</span>
+                    <span style="font-size: 18px">Le {{ $invoice->date->format('Y-m-d') }}</span>
                 </div>
                 <div class="client-info" style="align-items: flex-start;">
-                    <div style="font-size: 18px">{{ $invoice->estimate->project->client->name }}</div>
+                    <div style="font-size: 18px">
+                        @if($invoice->estimate_id)
+                            {{ $invoice->estimate->project->client->name }}
+                        @else
+                            {{ $invoice->delivery->client->name }}
+                        @endif
+                    </div>
                     <br>
-                    <div style="font-size: 18px">{{ $invoice->estimate->project->client->city }}</div>
+                    <div style="font-size: 18px">
+                        @if($invoice->estimate_id)
+                            {{ $invoice->estimate->project->client->city }}
+                        @else
+                            {{ $invoice->delivery->client->city }}
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -246,25 +265,35 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($invoice->estimate->items as $item)
-                <tr>
-                    <td>{{ $item->ref }}</td>
-                    <td>{{ $item->name }}</td>
-                    <td>{{ $item->qte }}</td>
-                    <td>{{ number_format($item->prix_unite, 2) }}</td>
-                    <td>{{ number_format($item->total_price_unite, 2) }}</td>
-                </tr>
-                @endforeach
+                @if($invoice->estimate_id)
+                    @foreach($invoice->estimate->items as $item)
+                    <tr>
+                        <td>{{ $item->ref }}</td>
+                        <td>{{ $item->name }}</td>
+                        <td>{{ $item->qte }}</td>
+                        <td>{{ number_format($item->prix_unite, 2) }}</td>
+                        <td>{{ number_format($item->total_price_unite, 2) }}</td>
+                    </tr>
+                    @endforeach
+                @else
+                    @foreach($invoice->delivery->items as $item)
+                    <tr>
+                        <td>{{ $item->ref }}</td>
+                        <td>{{ $item->name }}</td>
+                        <td>{{ $item->qte }}</td>
+                        <td>{{ number_format($item->prix_unite, 2) }}</td>
+                        <td>{{ number_format($item->total_price_unite, 2) }}</td>
+                    </tr>
+                    @endforeach
+                @endif
             </tbody>
         </table>
-        @php
-        $taxAmount = number_format(($invoice->total_without_tax * 1.2) - $invoice->total_without_tax, 2);
-        @endphp
+
         <table class="totals-table">
             <tr>
                 <td class="amount-in-words" rowspan="3">
                     Arrêté Le présent devis à La Somme De :<br>
-                    #... <span>{{ $invoice->total_price_in_words }} DIRHAMS</span> ...#
+                    #... <span id="numberToWord">{{ $invoice->total_price_in_words }} DIRHAMS</span> ...#
                 </td>
                 <td class="totals-column">
                     <div class="totals-row">
@@ -277,7 +306,7 @@
                 <td class="totals-column">
                     <div class="totals-row">
                         <span class="totals-label">TVA:</span>
-                        <span>{{ $taxAmount }}</span>
+                        <span>{{ number_format($invoice->tax, 2) }}</span>
                     </div>
                 </td>
             </tr>
@@ -285,7 +314,7 @@
                 <td class="totals-column">
                     <div class="totals-row">
                         <span class="totals-label">Total TTC:</span>
-                        <span>{{ number_format($invoice->total_without_tax * 1.2, 2) }}</span>
+                        <span>{{ number_format($invoice->total_with_tax, 2) }}</span>
                     </div>
                 </td>
             </tr>
@@ -294,27 +323,29 @@
         <div class="footer">
             <div class="footer-line"></div>
             <p>
-                Adresse : N°97 Rue Assila Laayayda Salé / IF : 3341831 / ICE : 000095738000027/ RC : 16137 CNSS :
-                8712863<br>
+                Adresse : N°97 Rue Assila Laayayda Salé / IF : 3341831 / ICE : 000095738000027/ RC : 16137 CNSS : 8712863<br>
                 Patente : 28565292 / Capitale : 100 000,00 Gsm : 06 98 46 33 60 - 06 61 78 99 70<br>
                 E-mail : contact@oufoqalbinae.com
             </p>
             <p style="font-style: italic; color: #666;">Merci de Votre Confiance</p>
         </div>
     </div>
+
     <div class="text-center no-print" style="margin-top: 20px;">
         <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer;">
             Imprimer
         </button>
     </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-          const amount = {{ $invoice->total_without_tax  * 1.2}};
-          fetch(`/dashboard/order/delivery/${amount}/to-number`)
-            .then(response => response.json())
-            .then(data => {
-              document.querySelector('.amount-in-words span').textContent = data + ' DIRHAMS';
-            });
+            const amount = {{ $invoice->total_with_tax }};
+            fetch(`/dashboard/order/delivery/${amount}/to-number`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('numberToWord').textContent = data + ' DIRHAMS';
+                })
+                .catch(error => console.error('Error:', error));
         });
     </script>
 </body>

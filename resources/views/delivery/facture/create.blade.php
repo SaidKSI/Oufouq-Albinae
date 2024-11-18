@@ -4,7 +4,7 @@
 <x-Breadcrumb title="Create Invoice" />
 <div class="row bg-secondary">
   <div class="card">
-    <form action="{{ route('project.store_invoice') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('delivery.store_facture') }}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="card-body">
         <div class="container shadow"
@@ -42,11 +42,11 @@
                 <tr class="text-uppercase text-center">
                   <td style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
                     <div class="input-group">
-                      <select class="bg-transparent border-0 focus-ring form-select select2" id="estimate"
-                        name="estimate">
-                        <option disabled selected>Choisir un estimate</option>
-                        @foreach ($estimates as $estimate)
-                        <option value="{{ $estimate->id }}">{{ $estimate->project->name }} - {{ $estimate->number }}
+                      <select class="bg-transparent border-0 focus-ring form-select select2" id="delivery"
+                        name="delivery">
+                        <option disabled selected>Choisir un delivery</option>
+                        @foreach ($deliveries as $delivery)
+                        <option value="{{ $delivery->id }}">{{ $delivery->project->name }} - {{ $delivery->number }} - <span class="text-primary">{{ $delivery->supplier_id ? $delivery->supplier->name :$delivery->client->name  }}</span>
                         </option>
                         @endforeach
                       </select>
@@ -115,7 +115,8 @@
                 </td>
                 <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
                   <div class="input-group">
-                    <input class="form-control" type="number" value="0.00" id="tax" name="tax" min="0" step="0.01">
+                    <input class="form-control" type="number" value="0.00" id="tax" name="tax" min="0"
+                      step="0.01">
                   </div>
                 </td>
                 <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
@@ -205,44 +206,26 @@
     // Generate random invoice number
     $('#number').val(Math.floor(Math.random() * 900000) + 100000);
 
-    // Handle estimate selection
-    $('#estimate').on('change', function() {
-        const estimateId = $(this).val();
-        if (estimateId) {
-            fetch(`/dashboard/estimates/${estimateId}/details`)
+    // Handle delivery selection
+    $('#delivery').on('change', function() {
+        const deliveryId = $(this).val();
+        if (deliveryId) {
+            fetch(`/dashboard/delivery/${deliveryId}/details`)
                 .then(response => response.json())
                 .then(data => {
-                    // Update form fields with estimate data
-                    updateFormWithEstimateData(data);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    toastr.error('Error fetching estimate details');
-                });
-        }
-    });
+                    // Update form fields with delivery data
+                    $('#total_without_tax').val(data.total_without_tax);
+                    $('#tax').val(data.tax);
+                    $('#total_with_tax').val(data.total_with_tax);
+                    $('textarea[name="note"]').val(data.note);
 
-    function updateFormWithEstimateData(data) {
-        // Update totals and tax
-        $('#total_without_tax').val(data.total_without_tax).prop('readonly', true);
-        $('#tax').val(data.tax).prop('readonly', true);
-        
-        // Calculate and set total with tax
-        const totalWithoutTax = parseFloat(data.total_with_tax) || 0;
-        const tax = parseFloat(data.tax) || 0;
-        const totalWithTax =  totalWithoutTax;
-        const note = data.note;
-        const doc = data.doc;
-        $('#total_with_tax').val(totalWithTax.toFixed(2));
-        $('textarea[name="note"]').val(note);
-        $('#doc-name').val(doc);
-        // Update items table
-        const tableBody = $('#invoice-table-body');
-        tableBody.empty();
+                    // Update items table
+                    const tableBody = $('#invoice-table-body');
+                    tableBody.empty();
 
-        data.items.forEach(item => {
-            const row = `
-                <tr>
+                    data.items.forEach(item => {
+                        const row = `
+                             <tr>
                     <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
                         <input class="form-control" type="text" name="ref[]" value="${item.ref}" readonly>
                     </td>
@@ -262,33 +245,26 @@
                       <input class="form-control total-price" type="number" name="total_price_unite[]" value="${item.total_price_unite}" readonly>
                      </td>
                 </tr>
-            `;
-            tableBody.append(row);
-        });
+                        `;
+                        tableBody.append(row);
+                    });
 
-        // Update number to word
-        updateNumberToWord(totalWithTax);
+                    // Update number to words
+                    updateNumberToWord(data.total_with_tax);
 
-        // Update documents display
-        const docContainer = $('#doc-name');
-        docContainer.empty(); // Clear existing content
-
-        if (data.documents && data.documents.length > 0) {
-            data.documents.forEach(doc => {
-                const docLink = `
-                    <div class="doc-item mb-2">
-                        <a href="${doc.url}" target="_blank" class="text-primary">
-                            <i class="ri-file-text-line me-1"></i>
-                            ${doc.name}
-                        </a>
-                    </div>
-                `;
-                docContainer.append(docLink);
-            });
-        } else {
-            docContainer.html('<span class="text-muted">No documents attached</span>');
+                    // Add delivery_id to form
+                    if (!$('input[name="delivery_id"]').length) {
+                        $('form').append(`<input type="hidden" name="delivery_id" value="${data.delivery_id}">`);
+                    } else {
+                        $('input[name="delivery_id"]').val(data.delivery_id);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    toastr.error('Error fetching delivery details');
+                });
         }
-    }
+    });
 
     function updateNumberToWord(amount) {
         fetch(`/dashboard/order/delivery/${amount}/to-number`)

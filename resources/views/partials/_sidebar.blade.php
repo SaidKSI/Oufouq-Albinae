@@ -83,7 +83,7 @@
             </li>
             <li class="side-nav-item">
               <a href="{{route('estimate.payment')}}">
-                <span> Facteur </span>
+                <span> Estimate Facture </span>
               </a>
             </li>
             <li>
@@ -95,7 +95,12 @@
           </ul>
         </div>
       </li>
-
+      <li class="side-nav-item">
+        <a href="{{route('delivery.facture.index')}}" class="side-nav-link">
+          <i class="bi bi-clipboard-check "></i>
+          <span> Bon de Livraison Facture </span>
+        </a>
+      </li>
       <li class="side-nav-item">
         <a data-bs-toggle="collapse" href="#sidebarCharges" aria-expanded="false" aria-controls="sidebarCharges"
           class="side-nav-link">

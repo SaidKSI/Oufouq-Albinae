@@ -85,7 +85,7 @@ class PaymentController extends Controller
     }
     function estimatePayment()
     {
-        $invoices = Facture::get();
+        $invoices = Facture::where('delivery_id', null)->get();
         return view('estimate.payment', ['invoices' => $invoices]);
     }
 

@@ -11,6 +11,7 @@ class Facture extends Model
 
     protected $fillable = [
         'estimate_id',
+        'delivery_id',
         'number',
         'date',
         'payment_method',
@@ -25,13 +26,30 @@ class Facture extends Model
     protected $casts = [
         'date' => 'date',
         'total_without_tax' => 'decimal:2',
-        'tax' => 'decimal:10,2',
+        'tax' => 'decimal:2',
         'total_with_tax' => 'decimal:2',
     ];
+
+    // Format numbers before saving
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($facture) {
+            $facture->total_without_tax = number_format((float)$facture->total_without_tax, 2, '.', '');
+            $facture->tax = number_format((float)$facture->tax, 2, '.', '');
+            $facture->total_with_tax = number_format((float)$facture->total_with_tax, 2, '.', '');
+        });
+    }
 
     public function estimate()
     {
         return $this->belongsTo(Estimate::class);
+    }
+
+    public function delivery()
+    {
+        return $this->belongsTo(Delivery::class);
     }
 
     public function documents()

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Models\CompanySetting;
 use App\Models\Estimate;
+use App\Models\Facture;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -84,7 +85,7 @@ class EstimateController extends Controller
             'date' => 'required|date',
             'ref' => 'required|array',
             'ref.*' => 'required|string',
-            'name' => 'required|array',
+            'name' => 'required|array', 
             'name.*' => 'required|string',
             'qte' => 'required|array',
             'qte.*' => 'required|numeric',
@@ -94,10 +95,46 @@ class EstimateController extends Controller
             'category.*' => 'required|string',
             'total_price_unite' => 'required|array',
             'total_without_tax' => 'required|numeric',
-            'tax' => 'required|numeric',
+            'tax' => 'required|numeric', 
             'total_with_tax' => 'required|numeric',
             'doc' => 'nullable|file',
             'note' => 'nullable|string'
+        ], [
+            'project_id.required' => 'The project ID is required.',
+            'project_id.exists' => 'The selected project does not exist.',
+            'number.required' => 'The invoice number is required.',
+            'number.unique' => 'This invoice number has already been used.',
+            'date.required' => 'The date is required.',
+            'date.date' => 'Please enter a valid date.',
+            'ref.required' => 'The reference field is required.',
+            'ref.array' => 'The reference must be an array.',
+            'ref.*.required' => 'Each reference field is required.',
+            'ref.*.string' => 'Each reference must be text.',
+            'name.required' => 'The name field is required.',
+            'name.array' => 'The name must be an array.',
+            'name.*.required' => 'Each name field is required.',
+            'name.*.string' => 'Each name must be text.',
+            'qte.required' => 'The quantity field is required.',
+            'qte.array' => 'The quantity must be an array.',
+            'qte.*.required' => 'Each quantity field is required.',
+            'qte.*.numeric' => 'Each quantity must be a number.',
+            'prix_unite.required' => 'The unit price field is required.',
+            'prix_unite.array' => 'The unit price must be an array.',
+            'prix_unite.*.required' => 'Each unit price field is required.',
+            'prix_unite.*.numeric' => 'Each unit price must be a number.',
+            'category.required' => 'The category field is required.',
+            'category.array' => 'The category must be an array.',
+            'category.*.required' => 'Each category field is required.',
+            'category.*.string' => 'Each category must be text.',
+            'total_price_unite.required' => 'The total unit price field is required.',
+            'total_price_unite.array' => 'The total unit price must be an array.',
+            'total_without_tax.required' => 'The total without tax is required.',
+            'total_without_tax.numeric' => 'The total without tax must be a number.',
+            'tax.required' => 'The tax amount is required.',
+            'tax.numeric' => 'The tax must be a number.',
+            'total_with_tax.required' => 'The total with tax is required.',
+            'total_with_tax.numeric' => 'The total with tax must be a number.',
+            'doc.file' => 'The document must be a file.'
         ]);
 
         if ($validator->fails()) {
@@ -163,5 +200,92 @@ class EstimateController extends Controller
                 ];
             })
         ]);
+    }
+    public function storeFacture(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'estimate_id' => 'required|exists:estimates,id',
+            'number' => 'required|unique:factures,number',
+            'date' => 'required|date',
+            'payment_method' => 'required|in:bank_transfer,cheque,credit,cash,traita',
+            'transaction_id' => 'nullable|string',
+            'total_without_tax' => 'required|numeric|min:0',
+            'tax' => 'required|numeric|min:0',
+            'total_with_tax' => 'required|numeric|min:0',
+            'note' => 'nullable|string',
+            'doc.*' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048'
+        ], [
+            'estimate_id.required' => 'The estimate ID is required.',
+            'estimate_id.exists' => 'The selected estimate does not exist.',
+            'number.required' => 'The invoice number is required.',
+            'number.unique' => 'This invoice number has already been used.',
+            'date.required' => 'The date is required.',
+            'date.date' => 'Please enter a valid date.',
+            'payment_method.required' => 'The payment method is required.',
+            'payment_method.in' => 'Invalid payment method selected.',
+            'total_without_tax.required' => 'The total without tax is required.',
+            'total_without_tax.numeric' => 'The total without tax must be a number.',
+            'total_without_tax.min' => 'The total without tax cannot be negative.',
+            'tax.required' => 'The tax amount is required.',
+            'tax.numeric' => 'The tax must be a number.',
+            'tax.min' => 'The tax cannot be negative.',
+            'total_with_tax.required' => 'The total with tax is required.',
+            'total_with_tax.numeric' => 'The total with tax must be a number.',
+            'total_with_tax.min' => 'The total with tax cannot be negative.',
+            'doc.*.mimes' => 'Documents must be PDF, DOC, DOCX, JPG, JPEG or PNG files.',
+            'doc.*.max' => 'Documents must not exceed 2MB in size.'
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $errorMessage = implode('<br>', $errors);
+            toastr()->error($errorMessage);
+            return back()->withErrors($validator->errors())->withInput();
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Format numbers
+            $totalWithoutTax = number_format((float)$request->total_without_tax, 2, '.', '');
+            $tax = number_format((float)$request->tax, 2, '.', '');
+            $totalWithTax = number_format((float)$request->total_with_tax, 2, '.', '');
+
+            // Create the facture
+            $facture = Facture::create([
+                'estimate_id' => $request->estimate_id,
+                'delivery_id' => null,  // Since this is for estimate
+                'number' => $request->number,
+                'date' => $request->date,
+                'payment_method' => $request->payment_method,
+                'transaction_id' => $request->transaction_id,
+                'total_without_tax' => $totalWithoutTax,
+                'tax' => $tax,
+                'total_with_tax' => $totalWithTax,
+                'note' => $request->note
+            ]);
+
+            // Handle document uploads if any
+            if ($request->hasFile('doc')) {
+                foreach ($request->file('doc') as $file) {
+                    $path = $file->store('facture-documents', 'public');
+                    $facture->documents()->create([
+                        'name' => $file->getClientOriginalName(),
+                        'path' => $path
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return redirect()->route('factures.index')
+                ->with('success', 'Facture created successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Facture Creation Error: ' . $e->getMessage());
+            toastr()->error('An error occurred while creating the facture: ' . $e->getMessage());
+            return back()->withInput();
+        }
     }
 }

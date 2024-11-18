@@ -58,4 +58,14 @@ class Delivery extends Model
     {
         return $this->total_with_tax - $this->total_paid;
     }
+
+    public function factures()
+    {
+        return $this->hasMany(Facture::class);
+    }
+
+    public function documents()
+    {
+        return $this->hasMany(Document::class);
+    }
 }

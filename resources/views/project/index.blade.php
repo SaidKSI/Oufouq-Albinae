@@ -234,8 +234,7 @@
                                                 <div class="card-body">
                                                     <h4 class="header-title">Project Progress</h4>
                                                     <input type="text" id="range_02" data-plugin="range-slider"
-                                                        data-min="0" data-max="100"
-                                                        data-from="{{$project->progress_percentage}}"
+                                                        data-min="0" data- data-from="{{$project->progress_percentage}}"
                                                         name="progress_percentage"
                                                         value="{{$project->progress_percentage}}" />
                                                 </div>

@@ -129,7 +129,7 @@
                                 <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
                                     <div class="input-group">
                                         <input class="form-control" type="number" value="0.00" id="tax" name="tax"
-                                            min="0" max="100" step="0.01" readonly>
+                                            min="0" step="0.01" readonly>
 
                                     </div>
                                 </td>

@@ -197,7 +197,7 @@
                                                 <div class="form-group">
                                                     <label for="description">Progress</label>
                                                     <input type="text" id="range_02" data-plugin="range-slider"
-                                                        data-min="0" data-max="100" name="progress"
+                                                        data-min="0" data- name="progress"
                                                         data-from="{{$task->description}}" />
                                                 </div>
                                             </div>
