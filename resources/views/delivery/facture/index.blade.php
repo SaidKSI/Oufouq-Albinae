@@ -7,7 +7,7 @@
     <div class="card-body p-2">
       <div class="card-body p-2">
         <div class="col-md-2 ">
-          <a href="{{ route('project-estimate.invoice') }}" class="btn btn-outline-primary">Add</a>
+          <a href="{{ route('delivery.facture.create') }}" class="btn btn-outline-primary">Create Bon Livraison Facture</a>
         </div>
         <div class="col-md-12">
           <table id="basic-datatable" class="table table-striped dt-responsive">
