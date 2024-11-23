@@ -35,9 +35,10 @@ Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'submit'])->name('submit.login');
 
 Route::prefix('dashboard')->middleware(['auth'])->group(function () {
-    // ? Supplier Routes
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
+    // ? Supplier Routes
     Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index');
+    Route::get('/supplier/show/{id}', [SupplierController::class, 'show'])->name('supplier.show');
     Route::post('/supplier/store', [SupplierController::class, 'store'])->name('supplier.store');
     Route::put('/supplier/{id}', [SupplierController::class, 'update'])->name('supplier.update');
     Route::delete('/supplier/{id}', [SupplierController::class, 'destroy'])->name('supplier.destroy');

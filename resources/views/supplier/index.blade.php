@@ -109,7 +109,7 @@
         <tbody>
           @foreach ($suppliers as $supplier)
           <tr>
-            <td><a href="#" class="text-dark">{{$supplier->full_name}}</a></td>
+            <td><a href="{{route('supplier.show', $supplier->id)}}">{{$supplier->full_name}}</a></td>
             <td>{{$supplier->cie}}</td>
             <td>{{$supplier->phone}}</td>
             <td>{{$supplier->email}}</td>

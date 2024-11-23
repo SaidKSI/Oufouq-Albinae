@@ -52,6 +52,24 @@ class SupplierController extends Controller
         // toastr()->success('Supplier added successfully.');
         return redirect()->route('supplier.index')->with('success', 'Supplier added successfully.');
     }
+    public function show($id)
+    {
+        $supplier = Supplier::findOrFail($id);
+        
+        $deliveriesQuery = $supplier->delivery();
+        
+        // Apply date filters if present
+        if (request('start_date')) {
+            $deliveriesQuery->whereDate('created_at', '>=', request('start_date'));
+        }
+        if (request('end_date')) {
+            $deliveriesQuery->whereDate('created_at', '<=', request('end_date'));
+        }
+        
+        $deliveries = $deliveriesQuery->orderBy('created_at', 'desc')->get();
+        
+        return view('supplier.show', compact('supplier', 'deliveries'));
+    }
     function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [

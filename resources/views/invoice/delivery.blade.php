@@ -204,7 +204,7 @@
       <div class="logo-section">
         <img src="{{asset('assets/invoice_asset/img/logo%20big.png')}}" class="logo" alt="Logo">
         <div class="devis-number">Bon de Livraison N°# {{ $delivery->number }}</div>
-        <div class="devis-number">Client N°# {{ $delivery->project->client->ice }}</div>
+        <div class="devis-number">Client N°# 000{{ $delivery->project->client_id }}</div>
       </div>
 
       <div class="date-section">
@@ -234,7 +234,7 @@
       <tbody>
         <tr>
           @if($delivery->supplier)
-          <td>{{ $delivery->supplier->name }}</td>
+          <td>{{ $delivery->supplier->full_name }}</td>
           @endif
           <td>{{ ucfirst($delivery->payment_method) }}</td>
         </tr>
