@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\CompanySetting;
+use App\Models\Delivery;
+use App\Models\DeliveryItem;
 use App\Models\Estimate;
 use App\Models\Facture;
 use App\Models\Project;
@@ -85,7 +87,7 @@ class EstimateController extends Controller
             'date' => 'required|date',
             'ref' => 'required|array',
             'ref.*' => 'required|string',
-            'name' => 'required|array', 
+            'name' => 'required|array',
             'name.*' => 'required|string',
             'qte' => 'required|array',
             'qte.*' => 'required|numeric',
@@ -95,7 +97,7 @@ class EstimateController extends Controller
             'category.*' => 'required|string',
             'total_price_unite' => 'required|array',
             'total_without_tax' => 'required|numeric',
-            'tax' => 'required|numeric', 
+            'tax' => 'required|numeric',
             'total_with_tax' => 'required|numeric',
             'doc' => 'nullable|file',
             'note' => 'nullable|string'
@@ -207,7 +209,7 @@ class EstimateController extends Controller
             'estimate_id' => 'required|exists:estimates,id',
             'number' => 'required|unique:factures,number',
             'date' => 'required|date',
-            'payment_method' => 'required|in:bank_transfer,cheque,credit,cash,traita',
+            'payment_method' => 'required|in:bank_transfer,cheque,credit,cash,traita,other',
             'transaction_id' => 'nullable|string',
             'total_without_tax' => 'required|numeric|min:0',
             'tax' => 'required|numeric|min:0',
@@ -247,9 +249,9 @@ class EstimateController extends Controller
             DB::beginTransaction();
 
             // Format numbers
-            $totalWithoutTax = number_format((float)$request->total_without_tax, 2, '.', '');
-            $tax = number_format((float)$request->tax, 2, '.', '');
-            $totalWithTax = number_format((float)$request->total_with_tax, 2, '.', '');
+            $totalWithoutTax = number_format((float) $request->total_without_tax, 2, '.', '');
+            $tax = number_format((float) $request->tax, 2, '.', '');
+            $totalWithTax = number_format((float) $request->total_with_tax, 2, '.', '');
 
             // Create the facture
             $facture = Facture::create([
@@ -286,6 +288,91 @@ class EstimateController extends Controller
             Log::error('Facture Creation Error: ' . $e->getMessage());
             toastr()->error('An error occurred while creating the facture: ' . $e->getMessage());
             return back()->withInput();
+        }
+    }
+
+    public function convertToFacture(Request $request, Estimate $estimate)
+    {
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'payment_method' => 'required|in:bank_transfer,check,credit,cash,traita,other',
+            'transaction_id' => 'required|string',
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $errorMessage = implode('<br>', $errors);
+            toastr()->error($errorMessage);
+            return back()->withErrors($validator->errors())->withInput();
+        }
+        // Create new facture from estimate
+        $facture = Facture::create([
+            'estimate_id' => $estimate->id,
+            'number' => random_int(100000, 999999),
+            'date' => now(),
+            'payment_method' => $request->payment_method,
+            'transaction_id' => $request->transaction_id,
+            'total_without_tax' => $estimate->total_without_tax,
+            'tax' => $estimate->tax,
+            'total_with_tax' => $estimate->total_with_tax,
+            'note' => $estimate->note,
+        ]);
+
+        return redirect()->route('facture.print', $facture->id)
+            ->with('success', 'Estimate converted to invoice successfully');
+    }
+
+    public function convertToDelivery(Request $request, Estimate $estimate)
+    {
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'payment_method' => 'required|string',
+            'transaction_id' => 'required|string|max:255',
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $errorMessage = implode('<br>', $errors);
+            toastr()->error($errorMessage);
+            return back()->withErrors($validator->errors())->withInput();
+        }
+        try {
+            DB::beginTransaction();
+
+            // Create new delivery from estimate
+            $delivery = Delivery::create([
+                'number' => random_int(100000, 999999),
+                'date' => now(),
+                'client_id' => $estimate->project->client_id,
+                'project_id' => $estimate->project_id,
+                'total_without_tax' => $estimate->total_without_tax,
+                'tax' => $estimate->tax,
+                'total_with_tax' => $estimate->total_with_tax,
+                'payment_method' => $request->payment_method,
+                'transaction_id' => $request->transaction_id,
+                'note' => $estimate->note,
+                'type' => 'delivery'
+            ]);
+
+            // Copy estimate items to delivery items
+            foreach ($estimate->items as $item) {
+                $delivery->items()->create([
+                    'delivery_id' => $delivery->id,
+                    'ref' => $item->ref,
+                    'name' => $item->name,
+                    'qte' => $item->qte,
+                    'prix_unite' => $item->prix_unite,
+                    'category' => $item->category,
+                    'total_price_unite' => $item->total_price_unite,
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('delivery.print', $delivery->id)
+                ->with('success', 'Estimate converted to delivery note successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Error converting estimate to delivery: ' . $e->getMessage());
         }
     }
 }

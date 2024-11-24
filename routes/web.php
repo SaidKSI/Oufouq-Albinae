@@ -154,4 +154,10 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::get('/regulation/{type}/print', [InvoiceController::class, 'print'])->name('regulation.print');
     // * Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::post('/estimate/{estimate}/to-facture', [EstimateController::class, 'convertToFacture'])->name('estimate.to.facture');
+    Route::post('/estimate/{estimate}/to-delivery', [EstimateController::class, 'convertToDelivery'])->name('estimate.to.delivery');
+
+    Route::get('/facture/{facture}/print', [InvoiceController::class, 'facturePrint'])->name('facture.print');
+    Route::get('/delivery/{delivery}/print', [InvoiceController::class, 'deliveryPrint'])->name('delivery.print');
 });
