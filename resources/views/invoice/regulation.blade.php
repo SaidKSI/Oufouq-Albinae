@@ -215,6 +215,8 @@
       <p>Adresse: {{ $entity->address }}</p>
       <p>Téléphone: {{ $entity->phone }}</p>
     </div>
+    @else
+    <h3 class="text-center text-bold">Tous les livraisons pour Les {{ $type === 'supplier' ? 'Fournisseur' : 'Client' }}</h3>
     @endif
 
     <!-- Deliveries -->
@@ -271,7 +273,8 @@
   </div>
 
   <!-- Print Button -->
-  <div class="text-center no-print" style="margin-top: 20px; display: flex; justify-content: center; align-items: center;">
+  <div class="text-center no-print"
+    style="margin-top: 20px; display: flex; justify-content: center; align-items: center;">
     <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer;">
       Imprimer
     </button>

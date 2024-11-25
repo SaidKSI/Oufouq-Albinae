@@ -284,4 +284,11 @@ class ProjectController extends Controller
         $estimates = Estimate::where('type', 'estimate')->get();
         return view('project.facture', compact('estimates'));
     }
+
+    public function destroyEstimateFacture($id)
+    {
+        $facture = Facture::find($id);
+        $facture->delete();
+        return redirect()->back()->with('success', 'Facture deleted successfully.');
+    }
 }

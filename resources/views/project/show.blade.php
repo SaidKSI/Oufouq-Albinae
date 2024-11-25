@@ -220,7 +220,7 @@
                                     @foreach ($project->deliveries as $delivery)
                                     <tr>
                                         <td>{{$delivery->number}}</td>
-                                        <td>{{$delivery->supplier->full_name}}</td>
+                                        <td>{{$delivery->supplier->name}}</td>
 
                                         <td>
                                             <i class="ri-file-list-3-line" data-bs-toggle="modal"

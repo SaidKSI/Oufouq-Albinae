@@ -295,14 +295,22 @@ class EstimateController extends Controller
     {
         // dd($request->all());
         $validator = Validator::make($request->all(), [
-            'payment_method' => 'required|in:bank_transfer,check,credit,cash,traita,other',
+            'payment_method' => 'required|string',
             'transaction_id' => 'required|string',
+        ], [
+            'payment_method.required' => 'The payment method is required.',
+            'transaction_id.required' => 'The transaction ID is required.',
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
             $errorMessage = implode('<br>', $errors);
             toastr()->error($errorMessage);
             return back()->withErrors($validator->errors())->withInput();
+        }
+        // check if the estimate is already converted to facture
+        if ($estimate->facture) {
+            toastr()->error('This estimate has already been converted to a facture.');
+            return back();
         }
         // Create new facture from estimate
         $facture = Facture::create([
@@ -327,12 +335,20 @@ class EstimateController extends Controller
         $validator = Validator::make($request->all(), [
             'payment_method' => 'required|string',
             'transaction_id' => 'required|string|max:255',
+        ],[
+            'payment_method.required' => 'The payment method is required.',
+            'transaction_id.required' => 'The transaction ID is required.',
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
             $errorMessage = implode('<br>', $errors);
             toastr()->error($errorMessage);
             return back()->withErrors($validator->errors())->withInput();
+        }
+        // check if the estimate is already converted to delivery
+        if ($estimate->delivery) {
+            toastr()->error('This estimate has already been converted to a delivery.');
+            return back();
         }
         try {
             DB::beginTransaction();
@@ -349,7 +365,7 @@ class EstimateController extends Controller
                 'payment_method' => $request->payment_method,
                 'transaction_id' => $request->transaction_id,
                 'note' => $estimate->note,
-                'type' => 'delivery'
+                'type' => 'client'
             ]);
 
             // Copy estimate items to delivery items

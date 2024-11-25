@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Regulation')
 @section('content')
-<x-Breadcrumb title="{{ $type === 'supplier' ? 'Bon de Livraison Fournisseur' : 'Bon de Livraison Client' }}" />
+<x-Breadcrumb title="{{ $type === 'supplier' ? 'Regulation Fournisseur' : 'Regulation Client' }}" />
 <div class="row">
   <div class="card">
 
@@ -37,9 +37,7 @@
           <td>{{$delivery->number}}</td>
           <td style="font-size: 0.8rem">{{ $type === 'supplier' ? $delivery->supplier->full_name :
             $delivery->project->client->name }}</td>
-          <td style="font-size: 0.8rem"><a
-              href="{{route('project.show',['id'=>$delivery->project_id])}}">{{$delivery->project->name}}
-            </a> </td>
+          <td style="font-size: 0.8rem">{{$delivery->project->name}}</td>
           <td>{{$delivery->payment_method}}</td>
           <td>
             {{$delivery->total_without_tax}}

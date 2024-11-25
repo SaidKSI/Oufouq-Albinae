@@ -69,10 +69,6 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::get('/delivery/{id}/details', [DeliveryController::class, 'getDeliveryDetails'])->name('delivery.details');
     // ? delivery bills
     Route::post('/delivery/{id}/add-bill', [DeliveryController::class, 'addBill'])->name('delivery.add-bill');
-    // ? delivery facture
-    Route::get('/delivery/facture', [DeliveryController::class, 'facture'])->name('delivery.facture.index');
-    Route::get('/delivery/facture/create', [DeliveryController::class, 'createFacture'])->name('delivery.facture.create');
-    Route::post('/delivery/facture/store', [DeliveryController::class, 'storeFacture'])->name('delivery.facture.store');
     // ? Project Estimate
     Route::get('/projects/estimate', [ProjectController::class, 'estimate'])->name('estimates');
     Route::delete('/projects/estimate/delete/{id}', [ProjectController::class, 'destroyEstimate'])->name('estimate.destroy');
@@ -81,7 +77,9 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     // * Estimate Payment 
     Route::get('projects/estimate/payment', [PaymentController::class, 'estimatePayment'])->name('estimate.payment');
     Route::post('facture/invoices/store', [ProjectController::class, 'storeEstimateFacture'])->name('project.store_invoice');
+    Route::get('facture/invoices/delete/{id}', [ProjectController::class, 'destroyEstimateFacture'])->name('invoice.delete');
 
+    
     Route::get('/estimates/{id}', [EstimateController::class, 'show'])->name('estimate.show');
     Route::get('/invoices/{id}', [EstimateController::class, 'show'])->name('invoice.show');
     Route::get('/project-estimates/create-invoice', [EstimateController::class, 'createInvoice'])->name('project-estimate.create-invoice');

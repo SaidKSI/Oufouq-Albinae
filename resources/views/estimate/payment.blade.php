@@ -37,6 +37,10 @@
                 <td>{{ $taxAmount }}</td>
                 <td>{{ number_format((float)$invoice->total_with_tax, 2) }}</td>
                 <td>
+                  <a href="#" onclick="confirmDelete('{{ route('invoice.delete', $invoice->id) }}')" title="Delete"
+                    class="text-danger">
+                    <i class="ri-delete-bin-fill fs-4"></i>
+                  </a>
                   <a href="{{ route('facture.print', $invoice->id) }}" target="_blank" title="Print"><i
                       class="ri-file-fill fs-4"></i></a>
                 </td>
@@ -52,4 +56,11 @@
 @endsection
 
 @push('scripts')
+<script>
+  function confirmDelete(deleteUrl) {
+    if (confirm('Are you sure you want to delete this invoice?')) {
+        window.location.href = deleteUrl;
+    }
+}
+</script>
 @endpush

@@ -39,13 +39,10 @@ class ExpenseController extends Controller
     {
         $expenses = TransportationExpenses::all();
         $projects = Project::all();
-        $products = Product::whereHas('orderItems', function ($query) {
-            $query->where('status', 'delivered');
-        })->get();
+
 
         return view('expense.transportation', [
             'projects' => $projects,
-            'products' => $products,
             'expenses' => $expenses
         ]);
     }
@@ -129,7 +126,7 @@ class ExpenseController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'project_id' => 'required|exists:projects,id',
-            'product_id' => 'required|exists:products,id',
+            'product' => 'required|string',
             'quantity' => 'required|integer',
             'highway_expense' => 'required|numeric',
             'gaz_expense' => 'required|numeric',
@@ -147,7 +144,7 @@ class ExpenseController extends Controller
 
         $expense = new TransportationExpenses();
         $expense->project_id = $request->project_id;
-        $expense->product_id = $request->product_id;
+        $expense->product = $request->product;
         $expense->quantity = $request->quantity;
         $expense->highway_expense = $request->highway_expense;
         $expense->gaz_expense = $request->gaz_expense;

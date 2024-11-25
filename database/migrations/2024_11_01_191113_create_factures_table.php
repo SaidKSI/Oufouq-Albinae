@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->foreignId('delivery_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('number')->unique();
             $table->date('date');
-            $table->enum('payment_method', ['bank_transfer', 'cheque', 'credit', 'cash', 'traita', 'other'])->nullable();
+            $table->string(column: 'payment_method')->nullable();
             $table->string('transaction_id')->nullable();
             $table->decimal('total_without_tax', 10, 2)->default(0);    
             $table->decimal('tax', 10, 2)->default(0);

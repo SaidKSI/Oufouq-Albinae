@@ -42,9 +42,7 @@
           <td>{{$delivery->number}}</td>
           <td style="font-size: 0.8rem">{{ $type === 'supplier' ? $delivery->supplier->full_name :
             $delivery->project->client->name }}</td>
-          <td style="font-size: 0.8rem"><a
-              href="{{route('project.show',['id'=>$delivery->project_id])}}">{{$delivery->project->name}}
-            </a> </td>
+          <td style="font-size: 0.8rem">{{$delivery->project->name}}</td>
           <td>
             <i class="ri-file-list-3-line" data-bs-toggle="modal" data-bs-target="#deliveryDetails{{$delivery->id}}"
               style="cursor: pointer;"></i>

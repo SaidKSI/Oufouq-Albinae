@@ -334,7 +334,7 @@
                 <input class="form-control quantity" type="number" name="qte[]">
             </td>
             <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                <input class="form-control unit-price" type="number" name="prix_unite[]">
+                <input class="form-control unit-price" type="number" step="0.01" name="prix_unite[]">
             </td>
             <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
                 <textarea class="form-control" rows="3" name="category[]"></textarea>

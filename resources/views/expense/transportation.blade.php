@@ -31,11 +31,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="product_id" class="form-label">Product</label>
-                                    <select class="form-select" id="product_id" name="product_id">
-                                        @foreach($products as $product)
-                                        <option value="{{ $product->id }}">{{ $product->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input type="text" class="form-control" id="product" name="product" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="quantity" class="form-label">Quantity</label>
@@ -88,7 +84,7 @@
                     @foreach ($expenses as $expense)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $expense->product->name }}</td>
+                        <td>{{ $expense->product }}</td>
                         <td>
                             <span data-bs-toggle="tooltip" data-bs-html="true"
                                 data-bs-title="City: {{$expense->project->city}}">{{ $expense->project->name }}</span>

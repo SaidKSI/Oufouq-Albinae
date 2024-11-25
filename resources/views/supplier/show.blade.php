@@ -51,6 +51,8 @@
                             <tr>
                                 <th>Date</th>
                                 <th>Reference</th>
+                                <th>Project</th>
+                                <th>Client</th>
                                 <th>Total With Tax</th>
                                 <th>Total Without Tax</th>
                                 <th>Status</th>
@@ -62,11 +64,15 @@
                             <tr>
                                 <td>{{ $delivery->created_at->format('Y-m-d') }}</td>
                                 <td>{{ $delivery->number }}</td>
+                                <td>{{ $delivery->project->name }}</td>
+                                <td>{{ $delivery->client->name }}</td>
                                 <td>{{ number_format($delivery->total_with_tax, 2) }} DH</td>
                                 <td>{{ number_format($delivery->total_without_tax, 2) }} DH</td>
                                 <td>
-                                    <span class="badge bg-{{ $delivery->getRemainingAmountAttribute() === 0 ? 'success' : 'warning' }}">
-                                        {{ ucfirst($delivery->getRemainingAmountAttribute() === 0 ? 'paid' : 'unpaid') }}
+                                    <span
+                                        class="badge bg-{{ $delivery->getRemainingAmountAttribute() === 0 ? 'success' : 'warning' }}">
+                                        {{ ucfirst($delivery->getRemainingAmountAttribute() === 0 ? 'paid' : 'unpaid')
+                                        }}
                                     </span>
                                 </td>
                                 <td>
@@ -82,12 +88,12 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="2" class="text-end"><strong>Total with tax:</strong></td>
+                                <td colspan="4" class="text-end"><strong>Total with tax:</strong></td>
                                 <td colspan="4"><strong>{{ number_format($deliveries->sum('total_with_tax'), 2) }}
                                         DH</strong></td>
                             </tr>
                             <tr>
-                                <td colspan="2" class="text-end"><strong>Total without tax:</strong></td>
+                                <td colspan="4" class="text-end"><strong>Total without tax:</strong></td>
                                 <td colspan="4"><strong>{{ number_format($deliveries->sum('total_without_tax'), 2) }}
                                         DH</strong></td>
                             </tr>

@@ -61,7 +61,7 @@ class Delivery extends Model
 
     public function factures()
     {
-        return $this->hasMany(Facture::class);
+        return $this->hasOne(Facture::class);
     }
 
     public function documents()

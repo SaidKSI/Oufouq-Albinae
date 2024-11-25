@@ -81,44 +81,48 @@
               </td>
               <td>
                 <div class="dropdown">
-                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Actions
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" href="#" onclick="confirmDelete({{$estimate->id}})">
-                                <i class="ri-delete-bin-2-fill"></i> Delete
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{{ route('estimate.print', $estimate->id) }}" target="_blank">
-                                <i class="ri-file-fill"></i> Print Estimate
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#" onclick="convertToFacture({{$estimate->id}})">
-                                <i class="ri-bill-fill"></i> Convert to Invoice
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#" onclick="convertToDelivery({{$estimate->id}})">
-                                <i class="ri-truck-fill"></i> Convert to Delivery
-                            </a>
-                        </li>
-                    </ul>
+                  <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    Actions
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a class="dropdown-item" href="#" onclick="confirmDelete({{$estimate->id}})">
+                        <i class="ri-delete-bin-2-fill"></i> Delete
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="{{ route('estimate.print', $estimate->id) }}" target="_blank">
+                        <i class="ri-file-fill"></i> Print Estimate
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="#" onclick="convertToFacture({{$estimate->id}})">
+                        <i class="ri-bill-fill"></i> Convert to Invoice
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="#" onclick="convertToDelivery({{$estimate->id}})">
+                        <i class="ri-truck-fill"></i> Convert to Delivery
+                      </a>
+                    </li>
+                  </ul>
                 </div>
-                
-                <form id="delete-form-{{$estimate->id}}" action="{{ route('estimate.destroy', $estimate->id) }}" method="POST" style="display: none;">
-                    @csrf
-                    @method('DELETE')
+
+                <form id="delete-form-{{$estimate->id}}" action="{{ route('estimate.destroy', $estimate->id) }}"
+                  method="POST" style="display: none;">
+                  @csrf
+                  @method('DELETE')
                 </form>
-                
-                <form id="facture-form-{{$estimate->id}}" action="{{ route('estimate.to.facture', $estimate->id) }}" method="POST" style="display: none;">
-                    @csrf
+
+                <form id="facture-form-{{$estimate->id}}" action="{{ route('estimate.to.facture', $estimate->id) }}"
+                  method="POST" style="display: none;" target="_blank">
+                  @csrf
                 </form>
-                
-                <form id="delivery-form-{{$estimate->id}}" action="{{ route('estimate.to.delivery', $estimate->id) }}" method="POST" style="display: none;">
-                    @csrf
+
+                <form id="delivery-form-{{$estimate->id}}" action="{{ route('estimate.to.delivery', $estimate->id) }}"
+                  method="POST" style="display: none;" target="_blank">
+                  @csrf
                 </form>
               </td>
             </tr>
@@ -132,76 +136,76 @@
 
 <!-- Add this modal at the bottom of your blade file -->
 <div class="modal fade" id="factureModal" tabindex="-1" aria-labelledby="factureModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="factureModalLabel">Convert to Invoice</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="factureDetailsForm">
-                    <input type="hidden" id="estimate_id" name="estimate_id">
-                    <div class="mb-3">
-                        <label for="payment_method" class="form-label">Payment Method</label>
-                        <select class="form-select" id="payment_method" name="payment_method" required>
-                            <option value="">Select payment method</option>
-                            <option value="cash">Cash</option>
-                            <option value="check">Check</option>
-                            <option value="bank_transfer">Bank Transfer</option>
-                            <option value="credit">Credit</option>
-                            <option value="traita">Traita</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="transaction_id" class="form-label">Transaction ID</label>
-                        <input type="text" class="form-control" id="transaction_id" name="transaction_id" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="submitFactureConversion()">Convert</button>
-            </div>
-        </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="factureModalLabel">Convert to Invoice</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="factureDetailsForm">
+          <input type="hidden" id="estimate_id" name="estimate_id">
+          <div class="mb-3">
+            <label for="payment_method" class="form-label">Payment Method</label>
+            <select class="form-select" id="payment_method" name="payment_method" required>
+              <option value="">Select payment method</option>
+              <option value="cash">Cash</option>
+              <option value="check">Check</option>
+              <option value="bank_transfer">Bank Transfer</option>
+              <option value="credit">Credit</option>
+              <option value="traita">Traita</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="transaction_id" class="form-label">Transaction ID</label>
+            <input type="text" class="form-control" id="transaction_id" name="transaction_id" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="submitFactureConversion()">Convert</button>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Add this modal for delivery conversion -->
 <div class="modal fade" id="deliveryModal" tabindex="-1" aria-labelledby="deliveryModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deliveryModalLabel">Convert to Delivery Note</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="deliveryDetailsForm">
-                    <input type="hidden" id="delivery_estimate_id" name="estimate_id">
-                    <div class="mb-3">
-                        <label for="delivery_payment_method" class="form-label">Payment Method</label>
-                        <select class="form-select" id="delivery_payment_method" name="payment_method" required>
-                            <option value="">Select payment method</option>
-                            <option value="cash">Cash</option>
-                            <option value="check">Check</option>
-                            <option value="bank_transfer">Bank Transfer</option>
-                            <option value="credit">Credit</option>
-                            <option value="traita">Traita</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="delivery_transaction_id" class="form-label">Transaction ID</label>
-                        <input type="text" class="form-control" id="delivery_transaction_id" name="transaction_id" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="submitDeliveryConversion()">Convert</button>
-            </div>
-        </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deliveryModalLabel">Convert to Delivery Note</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="deliveryDetailsForm">
+          <input type="hidden" id="delivery_estimate_id" name="estimate_id">
+          <div class="mb-3">
+            <label for="delivery_payment_method" class="form-label">Payment Method</label>
+            <select class="form-select" id="delivery_payment_method" name="payment_method" required>
+              <option value="">Select payment method</option>
+              <option value="cash">Cash</option>
+              <option value="check">Check</option>
+              <option value="bank_transfer">Bank Transfer</option>
+              <option value="credit">Credit</option>
+              <option value="traita">Traita</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="delivery_transaction_id" class="form-label">Transaction ID</label>
+            <input type="text" class="form-control" id="delivery_transaction_id" name="transaction_id" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="submitDeliveryConversion()">Convert</button>
+      </div>
     </div>
+  </div>
 </div>
 
 @endsection
@@ -251,6 +255,9 @@
       transactionIdInput.value = transactionId;
       form.appendChild(transactionIdInput);
 
+      // Close the modal
+      bootstrap.Modal.getInstance(document.getElementById('factureModal')).hide();
+
       // Submit the form
       form.submit();
   }
@@ -289,6 +296,9 @@
       transactionIdInput.name = 'transaction_id';
       transactionIdInput.value = transactionId;
       form.appendChild(transactionIdInput);
+
+      // Close the modal
+      bootstrap.Modal.getInstance(document.getElementById('deliveryModal')).hide();
 
       // Submit the form
       form.submit();
