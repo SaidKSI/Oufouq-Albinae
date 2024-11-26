@@ -146,6 +146,10 @@
         <form id="factureDetailsForm">
           <input type="hidden" id="estimate_id" name="estimate_id">
           <div class="mb-3">
+            <label for="reference" class="form-label">Reference</label>
+            <input type="text" class="form-control" id="reference" name="reference" required>
+          </div>
+          <div class="mb-3">
             <label for="payment_method" class="form-label">Payment Method</label>
             <select class="form-select" id="payment_method" name="payment_method" required>
               <option value="">Select payment method</option>
@@ -232,9 +236,9 @@
       const estimateId = document.getElementById('estimate_id').value;
       const paymentMethod = document.getElementById('payment_method').value;
       const transactionId = document.getElementById('transaction_id').value;
-
+      const reference = document.getElementById('reference').value;
       // Validate form
-      if (!paymentMethod || !transactionId) {
+      if (!paymentMethod || !transactionId || !reference) {
           alert('Please fill in all fields');
           return;
       }
@@ -254,6 +258,12 @@
       transactionIdInput.name = 'transaction_id';
       transactionIdInput.value = transactionId;
       form.appendChild(transactionIdInput);
+
+      const referenceInput = document.createElement('input');
+      referenceInput.type = 'hidden';
+      referenceInput.name = 'reference';
+      referenceInput.value = reference;
+      form.appendChild(referenceInput);
 
       // Close the modal
       bootstrap.Modal.getInstance(document.getElementById('factureModal')).hide();

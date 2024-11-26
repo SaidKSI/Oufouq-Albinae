@@ -162,7 +162,7 @@ class DeliveryController extends Controller
             $delivery->delete();
             return redirect()->route('delivery')->with('success', 'Delivery deleted successfully.');
         }
-        return redirect()->route('delivery')->with('error', 'Delivery not found.');
+        return redirect()->back()->with('error', 'Delivery not found.');
     }
 
     function print($id)

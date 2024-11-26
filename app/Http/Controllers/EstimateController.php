@@ -297,9 +297,11 @@ class EstimateController extends Controller
         $validator = Validator::make($request->all(), [
             'payment_method' => 'required|string',
             'transaction_id' => 'required|string',
+            'reference' => 'required|string',
         ], [
             'payment_method.required' => 'The payment method is required.',
             'transaction_id.required' => 'The transaction ID is required.',
+            'reference.required' => 'The reference is required.',
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
@@ -315,7 +317,7 @@ class EstimateController extends Controller
         // Create new facture from estimate
         $facture = Facture::create([
             'estimate_id' => $estimate->id,
-            'number' => random_int(100000, 999999),
+            'number' => $request->reference,
             'date' => now(),
             'payment_method' => $request->payment_method,
             'transaction_id' => $request->transaction_id,
