@@ -15,6 +15,7 @@ use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\RegulationController;
+use App\Http\Controllers\BackupController;
 
 /*
 |--------------------------------------------------------------------------
@@ -158,4 +159,9 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
 
     Route::get('/facture/{facture}/print', [InvoiceController::class, 'facturePrint'])->name('facture.print');
     Route::get('/delivery/{delivery}/print', [InvoiceController::class, 'deliveryPrint'])->name('delivery.print');
+
+    Route::post('/backup/create', [BackupController::class, 'create'])->name('backup.create');
+    Route::post('/backup/restore/{id}', [BackupController::class, 'restore'])->name('backup.restore');
+    Route::post('/backup/download/{id}', [BackupController::class, 'download'])->name('backup.download');
+    Route::delete('/backup/{id}', [BackupController::class, 'destroy'])->name('backup.destroy');
 });

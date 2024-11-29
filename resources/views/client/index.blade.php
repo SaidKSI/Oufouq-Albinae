@@ -190,7 +190,7 @@
 
 @push('scripts')
 <script>
-  function confirmDelete(id) {
+    function confirmDelete(id) {
       if (confirm('Are you sure you want to delete this supplier?')) {
           document.getElementById('delete-form-' + id).submit();
       }

@@ -18,6 +18,11 @@
                             Capital
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="#backup" data-bs-toggle="tab" aria-expanded="true" class="nav-link rounded-0">
+                            Backup
+                        </a>
+                    </li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane show active" id="about">
@@ -139,6 +144,65 @@
                                         <td>{{ number_format($transaction->amount, 2) }}</td>
                                         <td>{{ $transaction->description }}</td>
                                         <td>{{ $transaction->created_at->format('Y-m-d') }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="backup">
+                        <h2 class="text-center mb-4">Database Backup</h2>
+                        
+                        <div class="row justify-content-center mb-4">
+                            <div class="col-md-4">
+                                <form action="{{ route('backup.create') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="ri-download-cloud-line me-1"></i> Create New Backup
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Filename</th>
+                                        <th>Size</th>
+                                        <th>Created At</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($backups as $backup)
+                                    <tr>
+                                        <td>{{ $backup->filename }}</td>
+                                        <td>{{ $backup->size }}</td>
+                                        <td>{{ $backup->created_at }}</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <form action="{{ route('backup.download', $backup->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-info me-2">
+                                                        <i class="ri-download-line"></i> Download
+                                                    </button>
+                                                </form>
+                                                <form action="{{ route('backup.restore', $backup->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-warning me-2" onclick="return confirm('Are you sure you want to restore this backup? Current data will be replaced.')">
+                                                        <i class="ri-refresh-line"></i> Restore
+                                                    </button>
+                                                </form>
+                                                <form action="{{ route('backup.destroy', $backup->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this backup?')">
+                                                        <i class="ri-delete-bin-line"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </tbody>

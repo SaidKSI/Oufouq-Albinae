@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Backup;
 use App\Models\CapitalTransaction;
 use App\Models\CompanySetting;
 use App\Models\Task;
@@ -24,10 +25,10 @@ class DashboardController extends Controller
 
     function settings()
     {
-        
+        $backups = Backup::orderBy('created_at', 'desc')->get();
         $setting = CompanySetting::first();
         $transactions = CapitalTransaction::all();
-        return view('setting.index ', ['setting' => $setting, 'transactions' => $transactions]);
+        return view('setting.index ', ['setting' => $setting, 'transactions' => $transactions,'backups' => $backups]);
     }
 
     function storeTransaction(Request $request)
