@@ -37,7 +37,7 @@
                   <input type="date" step="0.01" class="form-control" id="start_date" name="start_date">
                 </div>
                 <div class="mb-3">
-                  <label for="expense-type" class="form-label">Target</label>
+                  <label for="expense-type" class="form-label">Type</label>
                   <select class="form-select" id="expense-type" name="type" required>
                     <option selected disabled> Select the Expense Type</option>
                     <option value="fix">Fix</option>
@@ -50,7 +50,7 @@
                       data-bs-html="true" data-bs-title="How many times the expense will be Repeated"></i> </label>
                   <div class="input-group">
                     <input type="number" class="form-control" placeholder="repeat interval" aria-label=""
-                      aria-describedby="basic-addon1" name="repeat_interval" >
+                      aria-describedby="basic-addon1" name="repeat_interval">
                     <select class="form-select" id="duration" name="duration" required>
                       <option selected disabled> Select the Duration</option>
                       <option value="daily">Every Day</option>
@@ -97,7 +97,8 @@
             <td>{{ $expense->project->name ?? 'Company' }}</td>
             <td>
               {{ $expense->name }}
-              <i class="ri-eye-line" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="{{ $expense->description }}"></i>
+              <i class="ri-eye-line" data-bs-toggle="tooltip" data-bs-html="true"
+                data-bs-title="{{ $expense->description }}"></i>
 
             </td>
             <td>{{$expense->type}}
@@ -154,7 +155,7 @@
               @endif
             </td>
             <td>
-            
+
               {{ $expense->total_amount }}
               @if($expense->type == 'fix')
               <i class="ri-information-fill" data-bs-toggle="tooltip" data-bs-html="true"
@@ -163,15 +164,15 @@
             </td>
             <td>{{ $expense->start_date }}</td>
             <td>
-         
-              <a href="#" class="text-danger" onclick="confirmDelete({{$expense->id}})"><i
-                class="ri-delete-bin-2-fill"></i></a>
 
-            <form id="delete-form-{{$expense->id}}" action="{{ route('expense.destroy', $expense->id) }}"
-              method="POST" style="display: none;">
-              @csrf
-              @method('DELETE')
-            </form>
+              <a href="#" class="text-danger" onclick="confirmDelete({{$expense->id}})"><i
+                  class="ri-delete-bin-2-fill"></i></a>
+
+              <form id="delete-form-{{$expense->id}}" action="{{ route('expense.destroy', $expense->id) }}"
+                method="POST" style="display: none;">
+                @csrf
+                @method('DELETE')
+              </form>
             </td>
           </tr>
           @endforeach

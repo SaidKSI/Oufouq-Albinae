@@ -81,7 +81,8 @@
                                     <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">
                                         Désignation</th>
                                     <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Qté</th>
-                                    <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Prix unitaire</th>
+                                    <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">Prix
+                                        unitaire</th>
                                     <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">catégorie
                                     </th>
                                     <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">montant
@@ -105,6 +106,7 @@
                             </button>
                         </div>
                     </div>
+                    <input type="hidden" name="tax_type" value="{{ $taxType }}">
                     <div class="text-center" style="margin-bottom: 20px;">
                         <table class="table table-sm table-borderless">
                             <tr>
@@ -115,7 +117,9 @@
                                 <th class="text-uppercase border-2 border-dark"
                                     style="background: rgba(255,255,255,0);">total ht</th>
                                 <th class="text-uppercase border-2 border-dark"
-                                    style="background: rgba(255,255,255,0);">tva (20%)</th>
+                                    style="background: rgba(255,255,255,0);">@if($taxType == 'normal') tva (20%)
+                                    @elseif($taxType == 'included') TVA (20% Inclus) @elseif($taxType == 'no_tax') TVA
+                                    (No Tax) @endif</th>
                                 <th class="text-uppercase border-2 border-dark"
                                     style="background: rgba(255,255,255,0);">total</th>
                             </tr>
@@ -357,8 +361,37 @@
 
     function recalculateTotals() {
         const totalWithoutTax = calculateTotalWithoutTax();
+        const taxType = '{{ $taxType }}';
+        
         elements.totalWithoutTaxInput.value = totalWithoutTax.toFixed(2);
-        calculateTotalWithTax(totalWithoutTax);
+        
+        let tax = 0;
+        let totalWithTax = totalWithoutTax;
+        
+        switch(taxType) {
+            case 'normal':
+                tax = totalWithoutTax * 0.20;
+                totalWithTax = totalWithoutTax + tax;
+                elements.taxInput.removeAttribute('readonly');
+                break;
+            
+            case 'included':
+                tax = (totalWithoutTax / 1.20) * 0.20;
+                totalWithTax = totalWithoutTax;
+                elements.totalWithoutTaxInput.value = (totalWithoutTax - tax).toFixed(2);
+                elements.taxInput.setAttribute('readonly', 'readonly');
+                break;
+            
+            case 'no_tax':
+                tax = 0;
+                totalWithTax = totalWithoutTax;
+                elements.taxInput.setAttribute('readonly', 'readonly');
+                break;
+        }
+        
+        elements.taxInput.value = tax.toFixed(2);
+        elements.totalWithTaxInput.value = totalWithTax.toFixed(2);
+        updateNumberToWord(totalWithTax);
     }
 
     function calculateTotalWithoutTax() {
@@ -382,6 +415,22 @@
             })
             .catch(error => console.error('Error:', error));
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const taxType = '{{ $taxType }}';
+        const taxLabel = document.querySelector('th:contains("tva (20%)")');
+        
+        switch(taxType) {
+            case 'included':
+                taxLabel.innerHTML = 'TVA (20% Inclus)';
+                break;
+            case 'no_tax':
+                taxLabel.innerHTML = 'TVA (Non Applicable)';
+                break;
+            default:
+                taxLabel.innerHTML = 'TVA (20%)';
+        }
+    });
 
     initializeInvoice();
 });

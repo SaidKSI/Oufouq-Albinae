@@ -108,5 +108,10 @@ class EmployerController extends Controller
         return redirect()->back()->with('success', 'Profession deleted successfully');
     }
 
-   
+    public function destroy($id)
+    {
+        $employer = Employer::findOrFail($id);
+        $employer->delete();
+        return redirect()->back()->with('success', 'Employer deleted successfully');
+    }
 }

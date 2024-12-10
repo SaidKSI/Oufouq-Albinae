@@ -18,6 +18,7 @@ class Facture extends Model
         'transaction_id',
         'total_without_tax',
         'tax',
+        'tax_type',
         'total_with_tax',
         'note',
         'doc'

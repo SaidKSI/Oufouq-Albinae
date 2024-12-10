@@ -18,6 +18,7 @@ class Estimate extends Model
         'due_date',
         'quantity',
         'tax',
+        'tax_type',
         'payment_method',
         'transaction_id',
         'note',
@@ -57,4 +58,15 @@ class Estimate extends Model
     {
         return $this->morphMany(Document::class, 'documentable');
     }
+
+    public function delivery()
+    {
+        return $this->belongsTo(Delivery::class, 'id', 'estimate_id');
+    }
+
+    public function hasDelivery()
+    {
+        return Delivery::where('estimate_id', $this->id)->exists();
+    }
+
 }

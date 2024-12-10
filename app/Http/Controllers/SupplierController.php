@@ -55,9 +55,9 @@ class SupplierController extends Controller
     public function show($id)
     {
         $supplier = Supplier::findOrFail($id);
-        
+
         $deliveriesQuery = $supplier->delivery();
-        
+
         // Apply date filters if present
         if (request('start_date')) {
             $deliveriesQuery->whereDate('created_at', '>=', request('start_date'));
@@ -65,21 +65,21 @@ class SupplierController extends Controller
         if (request('end_date')) {
             $deliveriesQuery->whereDate('created_at', '<=', request('end_date'));
         }
-        
+
         $deliveries = $deliveriesQuery->orderBy('created_at', 'desc')->get();
-        
+
         return view('supplier.show', compact('supplier', 'deliveries'));
     }
     function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'full_name' => 'required|string',
-            'phone' => 'required|string',
-            'email' => 'required|email',
-            'address' => 'required|string',
-            'city' => 'required|string',
-            'description' => 'required|string',
-            'ice' => 'required|string',
+            'full_name' => 'nullable|string',
+            'phone' => 'nullable|string',
+            'email' => 'nullable|email',
+            'address' => 'nullable|string',
+            'city' => 'nullable|string',
+            'description' => 'nullable|string',
+            'ice' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {

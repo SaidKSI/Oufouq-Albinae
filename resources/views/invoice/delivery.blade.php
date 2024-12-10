@@ -222,25 +222,6 @@
     <hr>
 
     <!-- Client & Project Info -->
-    <table>
-      <thead>
-        <tr>
-          @if($delivery->supplier)
-          <th>Fournisseur</th>
-          @endif
-          <th>Mode de Paiement</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          @if($delivery->supplier)
-          <td>{{ $delivery->supplier->full_name }}</td>
-          @endif
-          <td>{{ ucfirst($delivery->payment_method) }}</td>
-        </tr>
-      </tbody>
-    </table>
-
     <!-- Items -->
     <table class="items-table">
       <thead>
@@ -297,7 +278,24 @@
         </td>
       </tr>
     </table>
-
+    <table style="width: 50%; margin: 0 auto;font-size: 12px;font-weight: normal;">
+      <thead>
+        <tr>
+          <th>Payment Method</th>
+          @if($delivery->payment_method != 'cash')
+          <th>Transaction ID</th>
+          @endif
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ $delivery->payment_method }}</td>
+          @if($delivery->payment_method != 'cash')
+          <td>{{ $delivery->transaction_id }}</td>
+          @endif
+        </tr>
+      </tbody>
+    </table>
 
 
 

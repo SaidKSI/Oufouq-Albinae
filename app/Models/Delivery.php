@@ -9,6 +9,7 @@ class Delivery extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'estimate_id',
         'number',
         'date',
         'client_id',
@@ -16,6 +17,7 @@ class Delivery extends Model
         'supplier_id',
         'total_without_tax',
         'tax',
+        'tax_type',
         'total_with_tax',
         'doc',
         'note',
@@ -67,5 +69,10 @@ class Delivery extends Model
     public function documents()
     {
         return $this->hasMany(Document::class);
+    }
+
+    public function estimate()
+    {
+        return $this->belongsTo(Estimate::class, 'estimate_id', 'id');
     }
 }

@@ -205,11 +205,11 @@
                 <img src="{{asset('assets/invoice_asset/img/logo%20big.png')}}" class="logo" alt="Logo">
                 <div class="devis-number">Facture N°# {{ $invoice->number }}</div>
                 <div class="devis-number">
-                    Client N°# 
+                    Client N°#
                     @if($invoice->estimate_id)
-                        {{ $invoice->estimate->project->client->ice }}
+                    {{ $invoice->estimate->project->client->ice }}
                     @else
-                        {{ $invoice->delivery->client->ice }}
+                    {{ $invoice->delivery->client->ice }}
                     @endif
                 </div>
             </div>
@@ -222,37 +222,24 @@
                 <div class="client-info" style="align-items: flex-start;">
                     <div style="font-size: 18px">
                         @if($invoice->estimate_id)
-                            {{ $invoice->estimate->project->client->name }}
+                        {{ $invoice->estimate->project->client->name }}
                         @else
-                            {{ $invoice->delivery->client->name }}
+                        {{ $invoice->delivery->client->name }}
                         @endif
                     </div>
                     <br>
                     <div style="font-size: 18px">
                         @if($invoice->estimate_id)
-                            {{ $invoice->estimate->project->client->city }}
+                        {{ $invoice->estimate->project->client->city }}
                         @else
-                            {{ $invoice->delivery->client->city }}
+                        {{ $invoice->delivery->client->city }}
                         @endif
                     </div>
                 </div>
             </div>
         </div>
         <hr>
-        <table>
-            <thead>
-                <tr>
-                    <th>Payment Method</th>
-                    <th>Transaction ID</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{{ $invoice->payment_method }}</td>
-                    <td>{{ $invoice->transaction_id }}</td>
-                </tr>
-            </tbody>
-        </table>
+
         <!-- Items -->
         <table class="items-table">
             <thead>
@@ -266,25 +253,25 @@
             </thead>
             <tbody>
                 @if($invoice->estimate_id)
-                    @foreach($invoice->estimate->items as $item)
-                    <tr>
-                        <td>{{ $item->ref }}</td>
-                        <td>{{ $item->name }}</td>
-                        <td>{{ $item->qte }}</td>
-                        <td>{{ number_format($item->prix_unite, 2) }}</td>
-                        <td>{{ number_format($item->total_price_unite, 2) }}</td>
-                    </tr>
-                    @endforeach
+                @foreach($invoice->estimate->items as $item)
+                <tr>
+                    <td>{{ $item->ref }}</td>
+                    <td>{{ $item->name }}</td>
+                    <td>{{ $item->qte }}</td>
+                    <td>{{ number_format($item->prix_unite, 2) }}</td>
+                    <td>{{ number_format($item->total_price_unite, 2) }}</td>
+                </tr>
+                @endforeach
                 @else
-                    @foreach($invoice->delivery->items as $item)
-                    <tr>
-                        <td>{{ $item->ref }}</td>
-                        <td>{{ $item->name }}</td>
-                        <td>{{ $item->qte }}</td>
-                        <td>{{ number_format($item->prix_unite, 2) }}</td>
-                        <td>{{ number_format($item->total_price_unite, 2) }}</td>
-                    </tr>
-                    @endforeach
+                @foreach($invoice->delivery->items as $item)
+                <tr>
+                    <td>{{ $item->ref }}</td>
+                    <td>{{ $item->name }}</td>
+                    <td>{{ $item->qte }}</td>
+                    <td>{{ number_format($item->prix_unite, 2) }}</td>
+                    <td>{{ number_format($item->total_price_unite, 2) }}</td>
+                </tr>
+                @endforeach
                 @endif
             </tbody>
         </table>
@@ -319,11 +306,29 @@
                 </td>
             </tr>
         </table>
-
+        <table style="width: 50%; margin: 0 auto;font-size: 12px;font-weight: normal;">
+            <thead>
+                <tr>
+                    <th>Payment Method</th>
+                    @if($invoice->payment_method != 'cash')
+                    <th>Transaction ID</th>
+                    @endif
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ $invoice->payment_method }}</td>
+                    @if($invoice->payment_method != 'cash')
+                    <td>{{ $invoice->transaction_id }}</td>
+                    @endif
+                </tr>
+            </tbody>
+        </table>
         <div class="footer">
             <div class="footer-line"></div>
             <p>
-                Adresse : N°97 Rue Assila Laayayda Salé / IF : 3341831 / ICE : 000095738000027/ RC : 16137 CNSS : 8712863<br>
+                Adresse : N°97 Rue Assila Laayayda Salé / IF : 3341831 / ICE : 000095738000027/ RC : 16137 CNSS :
+                8712863<br>
                 Patente : 28565292 / Capitale : 100 000,00 Gsm : 06 98 46 33 60 - 06 61 78 99 70<br>
                 E-mail : contact@oufoqalbinae.com
             </p>

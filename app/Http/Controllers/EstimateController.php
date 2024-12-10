@@ -46,7 +46,9 @@ class EstimateController extends Controller
         $clients = Client::all();
         $selectedClientId = $request->input('client_id');
         $selectedProjectId = $request->input('project_id');
-        return view('estimate.create-invoice', compact('clients', 'selectedClientId', 'selectedProjectId'));
+        $taxType = $request->input('tax_type', 'normal'); // Default to normal if not specified
+
+        return view('estimate.create-invoice', compact('clients', 'selectedClientId', 'selectedProjectId', 'taxType'));
     }
     protected function handleDocumentUpload($estimate, $request)
     {
@@ -100,7 +102,8 @@ class EstimateController extends Controller
             'tax' => 'required|numeric',
             'total_with_tax' => 'required|numeric',
             'doc' => 'nullable|file',
-            'note' => 'nullable|string'
+            'note' => 'nullable|string',
+            'tax_type' => 'required|in:normal,included,no_tax'
         ], [
             'project_id.required' => 'The project ID is required.',
             'project_id.exists' => 'The selected project does not exist.',
@@ -136,7 +139,9 @@ class EstimateController extends Controller
             'tax.numeric' => 'The tax must be a number.',
             'total_with_tax.required' => 'The total with tax is required.',
             'total_with_tax.numeric' => 'The total with tax must be a number.',
-            'doc.file' => 'The document must be a file.'
+            'doc.file' => 'The document must be a file.',
+            'tax_type.required' => 'The tax type is required.',
+            'tax_type.in' => 'Invalid tax type selected.'
         ]);
 
         if ($validator->fails()) {
@@ -159,6 +164,7 @@ class EstimateController extends Controller
                 'due_date' => $request->date,
                 'tax' => $request->total_with_tax - $request->total_without_tax,
                 'note' => $request->note,
+                'tax_type' => $request->tax_type,
             ]);
 
             // Create estimate items
@@ -181,7 +187,7 @@ class EstimateController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            toastr()->error('An error occurred while creating the estimate');
+            toastr()->error('An error occurred while creating the estimate', $e->getMessage());
             return back()->withInput();
         }
     }
@@ -296,8 +302,8 @@ class EstimateController extends Controller
         // dd($request->all());
         $validator = Validator::make($request->all(), [
             'payment_method' => 'required|string',
-            'transaction_id' => 'required|string',
-            'reference' => 'required|string',
+            'transaction_id' => 'nullable|string',
+            'reference' => 'nullable|string',
         ], [
             'payment_method.required' => 'The payment method is required.',
             'transaction_id.required' => 'The transaction ID is required.',
@@ -310,7 +316,7 @@ class EstimateController extends Controller
             return back()->withErrors($validator->errors())->withInput();
         }
         // check if the estimate is already converted to facture
-        if ($estimate->facture) {
+        if ($estimate->hasFacture()) {
             toastr()->error('This estimate has already been converted to a facture.');
             return back();
         }
@@ -325,6 +331,7 @@ class EstimateController extends Controller
             'tax' => $estimate->tax,
             'total_with_tax' => $estimate->total_with_tax,
             'note' => $estimate->note,
+            'tax_type' => $estimate->tax_type,
         ]);
 
         return redirect()->route('facture.print', $facture->id)
@@ -336,10 +343,12 @@ class EstimateController extends Controller
         // Validate the request
         $validator = Validator::make($request->all(), [
             'payment_method' => 'required|string',
-            'transaction_id' => 'required|string|max:255',
-        ],[
+            'transaction_id' => 'nullable|string|max:255',
+            'reference' => 'nullable|string|max:255',
+        ], [
             'payment_method.required' => 'The payment method is required.',
             'transaction_id.required' => 'The transaction ID is required.',
+            'reference.required' => 'The reference is required.',
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
@@ -348,7 +357,7 @@ class EstimateController extends Controller
             return back()->withErrors($validator->errors())->withInput();
         }
         // check if the estimate is already converted to delivery
-        if ($estimate->delivery) {
+        if ($estimate->hasDelivery()) {
             toastr()->error('This estimate has already been converted to a delivery.');
             return back();
         }
@@ -357,7 +366,7 @@ class EstimateController extends Controller
 
             // Create new delivery from estimate
             $delivery = Delivery::create([
-                'number' => random_int(100000, 999999),
+                'number' => $request->reference,
                 'date' => now(),
                 'client_id' => $estimate->project->client_id,
                 'project_id' => $estimate->project_id,
@@ -367,7 +376,8 @@ class EstimateController extends Controller
                 'payment_method' => $request->payment_method,
                 'transaction_id' => $request->transaction_id,
                 'note' => $estimate->note,
-                'type' => 'client'
+                'type' => 'client',
+                'tax_type' => $estimate->tax_type,
             ]);
 
             // Copy estimate items to delivery items

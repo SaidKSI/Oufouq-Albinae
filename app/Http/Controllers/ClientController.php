@@ -19,14 +19,14 @@ class ClientController extends Controller
     {
         // dd($request->all());
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
-            'phone' => 'required|string',
-            'email' => 'required|email',
-            'address' => 'required|string',
-            'city' => 'required|string',
-            'ice' => 'required|string',
+            'name' => 'nullable|string',
+            'phone' => 'nullable|string',
+            'email' => 'nullable|email',
+            'address' => 'nullable|string',
+            'city' => 'nullable|string',
+            'ice' => 'nullable|string',
             'type' => [
-                'required',
+                'nullable',
                 'string',
                 function ($attribute, $value, $fail) {
                     if (!in_array($value, ['company', 'person'])) {
@@ -58,7 +58,7 @@ class ClientController extends Controller
     }
 
 
-    
+
     function update(Request $request, $id)
     {
         // dd($request->all());
@@ -111,7 +111,7 @@ class ClientController extends Controller
     {
         $client = Client::findOrFail($id);
         $projects = $client->projects;
-        
+
         return response()->json($projects);
     }
 }

@@ -6,8 +6,7 @@
   <div class="card">
     <div class="card-body p-2">
       <div class="col-md-2 m-1">
-        <a href="{{route('project-estimate.create-invoice')}}" class="btn btn-outline-primary">Create Estimate
-          Invoice</a>
+        <a href="#" onclick="showTaxTypeModal()" class="btn btn-outline-primary">Create Estimate Invoice</a>
       </div>
       <div class="col-md-12">
         <table id="basic-datatable" class="table table-striped dt-responsive">
@@ -75,7 +74,7 @@
                 </div>
               </td>
               <td>{{ number_format($estimate->total_without_tax,2) }}</td>
-              <td>{{ number_format($estimate->tax,2) }}</td>
+              <td data-bs-toggle="tooltip" data-bs-placement="top" title="Tax Type: {{ ucfirst($estimate->tax_type) }}">{{ number_format($estimate->tax,2) }}</td>
               <td>
                 {{ number_format($estimate->total_with_tax, 2) }}
               </td>
@@ -147,11 +146,12 @@
           <input type="hidden" id="estimate_id" name="estimate_id">
           <div class="mb-3">
             <label for="reference" class="form-label">Reference</label>
-            <input type="text" class="form-control" id="reference" name="reference" required>
+            <input type="text" class="form-control" id="reference" name="reference">
           </div>
           <div class="mb-3">
             <label for="payment_method" class="form-label">Payment Method</label>
-            <select class="form-select" id="payment_method" name="payment_method" required>
+            <select class="form-select" id="payment_method" name="payment_method" required
+              onchange="toggleTransactionId('facture')">
               <option value="">Select payment method</option>
               <option value="cash">Cash</option>
               <option value="check">Check</option>
@@ -161,9 +161,9 @@
               <option value="other">Other</option>
             </select>
           </div>
-          <div class="mb-3">
+          <div class="mb-3" id="transaction_id_div">
             <label for="transaction_id" class="form-label">Transaction ID</label>
-            <input type="text" class="form-control" id="transaction_id" name="transaction_id" required>
+            <input type="text" class="form-control" id="transaction_id" name="transaction_id">
           </div>
         </form>
       </div>
@@ -187,8 +187,13 @@
         <form id="deliveryDetailsForm">
           <input type="hidden" id="delivery_estimate_id" name="estimate_id">
           <div class="mb-3">
+            <label for="reference" class="form-label">Reference</label>
+            <input type="text" class="form-control" id="reference" name="reference">
+          </div>
+          <div class="mb-3">
             <label for="delivery_payment_method" class="form-label">Payment Method</label>
-            <select class="form-select" id="delivery_payment_method" name="payment_method" required>
+            <select class="form-select" id="delivery_payment_method" name="payment_method" required
+              onchange="toggleTransactionId('delivery')">
               <option value="">Select payment method</option>
               <option value="cash">Cash</option>
               <option value="check">Check</option>
@@ -198,15 +203,42 @@
               <option value="other">Other</option>
             </select>
           </div>
-          <div class="mb-3">
+          <div class="mb-3" id="delivery_transaction_id_div">
             <label for="delivery_transaction_id" class="form-label">Transaction ID</label>
-            <input type="text" class="form-control" id="delivery_transaction_id" name="transaction_id" required>
+            <input type="text" class="form-control" id="delivery_transaction_id" name="transaction_id">
           </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" onclick="submitDeliveryConversion()">Convert</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add this modal before  -->
+<div class="modal fade" id="taxTypeModal" tabindex="-1" aria-labelledby="taxTypeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="taxTypeModalLabel">Select Tax Calculation Type</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="taxTypeForm" action="{{ route('project-estimate.create-invoice') }}" method="GET">
+          <div class="mb-3">
+            <label for="tax_type" class="form-label">Tax Type</label>
+            <select class="form-select" id="tax_type" name="tax_type" required>
+              <option value="normal">Normal Tax (20% added to total)</option>
+              <option value="included">Tax Included (20% calculated from total)</option>
+              <option value="no_tax">No Tax</option>
+            </select>
+          </div>
+          <div class="text-end">
+            <button type="submit" class="btn btn-primary">Continue</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -238,8 +270,8 @@
       const transactionId = document.getElementById('transaction_id').value;
       const reference = document.getElementById('reference').value;
       // Validate form
-      if (!paymentMethod || !transactionId || !reference) {
-          alert('Please fill in all fields');
+      if (!paymentMethod) {
+          alert('Please fill payment method field');
           return;
       }
 
@@ -284,10 +316,10 @@
       const estimateId = document.getElementById('delivery_estimate_id').value;
       const paymentMethod = document.getElementById('delivery_payment_method').value;
       const transactionId = document.getElementById('delivery_transaction_id').value;
-
+      const reference = document.getElementById('reference').value;
       // Validate form
-      if (!paymentMethod || !transactionId) {
-          alert('Please fill in all fields');
+      if (!paymentMethod) {
+          alert('Please fill payment method field');
           return;
       }
 
@@ -312,6 +344,25 @@
 
       // Submit the form
       form.submit();
+  }
+
+  function toggleTransactionId(type) {
+      const paymentMethod = document.getElementById(type === 'facture' ? 'payment_method' : 'delivery_payment_method').value;
+      const transactionIdDiv = document.getElementById(type === 'facture' ? 'transaction_id_div' : 'delivery_transaction_id_div');
+      const transactionIdInput = document.getElementById(type === 'facture' ? 'transaction_id' : 'delivery_transaction_id');
+      
+      if (paymentMethod === 'cash') {
+          transactionIdDiv.style.display = 'none';
+          transactionIdInput.removeAttribute('required');
+      } else {
+          transactionIdDiv.style.display = 'block';
+          transactionIdInput.setAttribute('required', 'required');
+      }
+  }
+
+  function showTaxTypeModal() {
+      var modal = new bootstrap.Modal(document.getElementById('taxTypeModal'));
+      modal.show();
   }
 </script>
 @endpush

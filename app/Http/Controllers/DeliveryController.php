@@ -160,7 +160,7 @@ class DeliveryController extends Controller
         $delivery = Delivery::find($id);
         if ($delivery) {
             $delivery->delete();
-            return redirect()->route('delivery')->with('success', 'Delivery deleted successfully.');
+            return redirect()->back()->with('success', 'Delivery deleted successfully.');
         }
         return redirect()->back()->with('error', 'Delivery not found.');
     }
@@ -204,7 +204,7 @@ class DeliveryController extends Controller
     {
         try {
             $delivery = Delivery::with(['items', 'project', 'client'])->findOrFail($id);
-            
+
             return response()->json([
                 'delivery_id' => $delivery->id,
                 'project_id' => $delivery->project_id,
@@ -269,6 +269,6 @@ class DeliveryController extends Controller
             }
         }
     }
-    
-    
+
+
 }
