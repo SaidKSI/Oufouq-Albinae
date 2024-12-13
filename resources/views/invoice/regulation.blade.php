@@ -216,7 +216,8 @@
       <p>Téléphone: {{ $entity->phone }}</p>
     </div>
     @else
-    <h3 class="text-center text-bold">Tous les livraisons pour Les {{ $type === 'supplier' ? 'Fournisseur' : 'Client' }}</h3>
+    <h3 class="text-center text-bold">Tous les livraisons pour Les {{ $type === 'supplier' ? 'Fournisseur' : 'Client' }}
+    </h3>
     @endif
 
     <!-- Deliveries -->
@@ -262,14 +263,7 @@
     </div>
 
     <!-- Footer -->
-    <div class="footer">
-      <div class="footer-line"></div>
-      <p>
-        Adresse : N°97 Rue Assila Laayayda Salé / IF : 3341831 / ICE : 000095738000027/ RC : 16137 CNSS : 8712863<br>
-        Patente : 28565292 / Capitale : 100 000,00 Gsm : 06 98 46 33 60 - 06 61 78 99 70<br>
-        E-mail : contact@oufoqalbinae.com
-      </p>
-    </div>
+    <x-invoice-footer />
   </div>
 
   <!-- Print Button -->

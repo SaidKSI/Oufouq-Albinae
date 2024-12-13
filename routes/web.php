@@ -79,8 +79,9 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::get('projects/estimate/payment', [PaymentController::class, 'estimatePayment'])->name('estimate.payment');
     Route::post('facture/invoices/store', [ProjectController::class, 'storeEstimateFacture'])->name('project.store_invoice');
     Route::get('facture/invoices/delete/{id}', [ProjectController::class, 'destroyEstimateFacture'])->name('invoice.delete');
+    Route::get('/estimate/{id}/edit', [EstimateController::class, 'edit'])->name('estimate.edit');
+    Route::put('/estimate/{estimate}/update', [EstimateController::class, 'update'])->name('estimate.update');
 
-    
     Route::get('/estimates/{id}', [EstimateController::class, 'show'])->name('estimate.show');
     Route::get('/invoices/{id}', [EstimateController::class, 'show'])->name('invoice.show');
     Route::get('/project-estimates/create-invoice', [EstimateController::class, 'createInvoice'])->name('project-estimate.create-invoice');
@@ -141,6 +142,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::post('/tasks/{id}/update-status', [TaskController::class, 'updateStatus']);
     // ? Settings
     Route::get('/settings', [DashboardController::class, 'settings'])->name('settings');
+    Route::put('/settings/update', [DashboardController::class, 'updateSettings'])->name('settings.update');
     // Capital Transactions
     Route::post('/capital/transactions', [DashboardController::class, 'storeTransaction'])->name('capital.transactions.store');
     Route::get('/company/capital', [DashboardController::class, 'getCapital'])->name('company.capital');
@@ -164,4 +166,6 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::post('/backup/restore/{id}', [BackupController::class, 'restore'])->name('backup.restore');
     Route::post('/backup/download/{id}', [BackupController::class, 'download'])->name('backup.download');
     Route::delete('/backup/{id}', [BackupController::class, 'destroy'])->name('backup.destroy');
+
+
 });

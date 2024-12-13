@@ -1,29 +1,34 @@
 @extends('layouts.app')
-@section('title', 'Create Estimate Invoice')
+@section('title', 'Edit Estimate')
 @section('content')
-<x-Breadcrumb title="Create Estimate Invoice" />
+<x-Breadcrumb title="Edit Estimate" />
 <div class="row bg-secondary">
     <div class="card">
-        <form action="{{ route('project-estimate.store-invoice') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('estimate.update', $estimate->id) }}" method="POST"
+            enctype="multipart/form-data">
             @csrf
+            @method('PUT')
             <div class="card-body">
                 <div class="container shadow"
                     style="margin-top: 46px;background: url(&quot;{{asset('assets/invoice_asset/img/Oufoq%20albinae%20BIG.png')}}&quot;) center / cover no-repeat;border-radius: 12px;min-height: 1000px;">
                     <div class="vstack">
                         <div class="row d-flex d-xl-flex align-items-center align-items-xl-center">
-                            <div class="col"><img src="{{asset('assets/invoice_asset/img/logo%20big.png')}}"
-                                    style="width: 150px;background: rgba(255,255,255,0);"></div>
                             <div class="col">
-                                <h4 class="text-capitalize text-center">Devis N°# <input type="text" name="number"
-                                        id="number"> </h4>
+                                <img src="{{asset('assets/invoice_asset/img/logo%20big.png')}}"
+                                    style="width: 150px;background: rgba(255,255,255,0);">
                             </div>
-                            <div class="col text-center"><span class="fw-bold"
-                                    style="margin-right: 22px;">Salé</span><span>Le <input
-                                        class="border-0 focus-ring form-control-sm" type="date" style="width: 120px;"
-                                        name="date" value="{{now()->format('Y-m-d')}}"></span></div>
+                            <div class="col">
+                                <h4 class="text-capitalize text-center">Devis N°# {{ $estimate->number }}</h4>
+                            </div>
+                            <div class="col text-center">
+                                <span class="fw-bold" style="margin-right: 22px;">Salé</span>
+                                <span>Le <input class="border-0 focus-ring form-control-sm" type="date"
+                                        style="width: 120px;" name="date" value="{{ $estimate->due_date }}"></span>
+                            </div>
                         </div>
                     </div>
                     <hr>
+                    <!-- Client and Project Selection -->
                     <div>
                         <table class="table table-sm table-borderless">
                             <thead>
@@ -40,38 +45,36 @@
                             <tbody>
                                 <tr class="text-uppercase text-center">
                                     <td
-                                        style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
-                                        <div class="input-group">
-                                            <select class="bg-transparent border-0 focus-ring form-select"
-                                                id="client_id" name="client_id">
-                                                <option disabled selected>Select a Client</option>
-                                                @foreach($clients as $client)
-                                                <option value="{{ $client->id }}">{{ $client->name }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                        style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-top-style: none;">
+                                        <select class="bg-transparent border-0 focus-ring form-select" id="client_id"
+                                            name="client_id">
+                                            @foreach($clients as $client)
+                                            <option value="{{ $client->id }}" {{ ($estimate->project?->client_id ==
+                                                $client->id) ? 'selected' : '' }}>
+                                                {{ $client->name }}
+                                            </option>
+                                            @endforeach
+                                        </select>
                                     </td>
                                     <td
-                                        style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
-                                        <div class="input-group">
-                                            <select class="bg-transparent border-0 focus-ring form-select"
-                                                id="project_id" name="project_id">
-                                                @if($selectedProjectId)
-                                                <option value="{{ $selectedProjectId }}" selected>
-                                                    {{ App\Models\Project::find($selectedProjectId)->name }}
-                                                </option>
-                                                @else
-                                                <option disabled selected>Select a Project</option>
-                                                @endif
-                                            </select>
-                                        </div>
+                                        style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-top-style: none;">
+                                        <select class="bg-transparent border-0 focus-ring form-select" id="project_id"
+                                            name="project_id">
+                                            @if($estimate->project)
+                                            <option value="{{ $estimate->project_id }}" selected>{{
+                                                $estimate->project->name }}</option>
+                                            @else
+                                            <option value="" selected disabled>Select a Project</option>
+                                            @endif
+                                        </select>
                                     </td>
                                     <td></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Items Table -->
                     <div class="text-center" style="margin-bottom: 20px;">
                         <table class="table table-sm table-borderless">
                             <thead>
@@ -87,10 +90,47 @@
                                     </th>
                                     <th class="border-2 border-dark" style="background: rgba(255,255,255,0);">montant
                                     </th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody id="invoice-table-body">
-
+                                @foreach($estimate->items as $item)
+                                <tr>
+                                    <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                                        <input type="text" name="ref[]" class="form-control" value="{{ $item->ref }}">
+                                    </td>
+                                    <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                                        <textarea name="name[]" rows="1" class="form-control"
+                                            rows="3">{{ $item->name }}</textarea>
+                                    </td>
+                                    <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                                        <input type="number" name="qte[]" class="form-control quantity"
+                                            value="{{ $item->qte }}">
+                                    </td>
+                                    <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                                        <input type="number" name="prix_unite[]" class="form-control unit-price"
+                                            step="0.01" value="{{ $item->prix_unite }}">
+                                    </td>
+                                    <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                                        <textarea name="category[]" rows="1" class="form-control"
+                                            rows="3">{{ $item->category }}</textarea>
+                                    </td>
+                                    <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
+                                        <input type="number" name="total_price_unite[]" class="form-control total-price"
+                                            readonly value="{{ $item->total_price_unite }}">
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-outline-danger delete-row" type="button">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                                fill="currentColor" viewBox="0 0 16 16" class="bi bi-trash-fill">
+                                                <path
+                                                    d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                                @endforeach
                             </tbody>
                         </table>
                         <div class="text-center" style="margin-bottom: 20px;">
@@ -106,43 +146,49 @@
                             </button>
                         </div>
                     </div>
-                    <input type="hidden" name="tax_type" value="{{ $taxType }}">
+
+                    <!-- Totals -->
                     <div class="text-center" style="margin-bottom: 20px;">
                         <table class="table table-sm table-borderless">
                             <tr>
-                                <th class="text-capitalize border-2 border-dark"
-                                    style="background: rgba(255,255,255,0);" colspan="3" rowspan="2">Arreté La présente
-                                    facture à la somme de :<br>#... <span id="numberToWord"></span> ...#
+                                <th colspan="3" rowspan="2" class="text-capitalize border-2 border-dark"
+                                    style="background: rgba(255,255,255,0);">
+                                    Arreté La présente facture à la somme de :<br>#... <span id="numberToWord"></span>
+                                    ...#
                                 </th>
                                 <th class="text-uppercase border-2 border-dark"
                                     style="background: rgba(255,255,255,0);">total ht</th>
                                 <th class="text-uppercase border-2 border-dark"
-                                    style="background: rgba(255,255,255,0);">@if($taxType == 'normal') tva (20%)
-                                    @elseif($taxType == 'included') TVA (20% Inclus) @elseif($taxType == 'no_tax') TVA
-                                    (No Tax) @endif</th>
+                                    style="background: rgba(255,255,255,0);">
+                                    @if($taxType == 'normal')
+                                    TVA (20%)
+                                    @elseif($taxType == 'included')
+                                    TVA (20% Inclus)
+                                    @else
+                                    TVA (Non Applicable)
+                                    @endif
+                                </th>
                                 <th class="text-uppercase border-2 border-dark"
-                                    style="background: rgba(255,255,255,0);">total</th>
+                                    style="background: rgba(255,255,255,0);">total ttc</th>
                             </tr>
-
                             <tr>
                                 <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
                                     <input type="number" name="total_without_tax" id="total_without_tax"
-                                        class="form-control" step="0.01" placeholder="0.00">
+                                        class="form-control" value="{{ $estimate->total_without_tax }}" readonly>
                                 </td>
                                 <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                                    <div class="input-group">
-                                        <input class="form-control" type="number" value="0.00" id="tax" name="tax"
-                                            min="0" step="0.01" readonly>
-
-                                    </div>
+                                    <input type="number" name="tax" id="tax" class="form-control"
+                                        value="{{ $estimate->tax }}" readonly>
                                 </td>
                                 <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                                    <input type="text" name="total_with_tax" id="total_with_tax" class="form-control"
-                                        readonly>
+                                    <input type="number" name="total_with_tax" id="total_with_tax" class="form-control"
+                                        value="{{ $estimate->total_with_tax }}" readonly>
                                 </td>
                             </tr>
                         </table>
                     </div>
+
+                    <!-- Notes -->
                     <p class="fw-bold">Pièces Jointes :</p>
                     <button id="upload-button"
                         class="btn btn-outline-success btn-sm text-nowrap fw-bold border rounded-pill border-1 border-success"
@@ -155,11 +201,16 @@
                         </svg>&nbsp;Ajouter des Pièces Jointes
                     </button>
                     <input type="file" name="doc" id="doc" style="display: none" multiple accept="image/*">
-                    <div id="file-list"></div>
+                    @foreach($estimate->documents as $file)
+                    <div id="file-list">
+                        <a href="{{ asset('storage/' . $file->path) }}" target="_blank">{{ $file->name }}</a>
+                    </div>
+                    @endforeach
                     <div class="text-center" style="margin-bottom: 20px;">
                         <h3>Remarques</h3>
                         <div class="input-group"><textarea class="shadow-sm form-control" rows="12" style="height: auto"
-                                style="margin-bottom: 30px;border-radius: 10px;" name="note"></textarea></div>
+                                style="margin-bottom: 30px;border-radius: 10px;"
+                                name="note">{{ $estimate->note }}</textarea></div>
                     </div>
                     <div class="text-center" style="margin-bottom: 20px;">
                         <button
@@ -170,12 +221,11 @@
                         <div
                             style="width: 100%;height: 3px;background: #ed961c;border-radius: 26px;margin-bottom: 5px;">
                         </div>
-                        <p class="fw-bold text-center" style="font-size: 13px;">
-                            Adresse : {{ $company->address }}<br>
-                            IF : {{ $company->if }} / ICE : {{ $company->ice }} / RC : {{ $company->rc }} / CNSS : {{ $company->cnss }}<br>
-                            Patente : {{ $company->patente }} / Capitale : {{ number_format($company->capital, 2) }}<br>
-                            Gsm : {{ $company->phone1 }} - {{ $company->phone2 }}<br>
-                            E-mail : {{ $company->email }}
+                        <p class="fw-bold text-center" style="font-size: 13px;">Adresse : N°97 Rue Assila Laayayda Salé
+                            / IF :
+                            3341831 / ICE :&nbsp; 000095738000027/ RC : 16137 CNSS : 8712863&nbsp;<br>Patente : 28565292
+                            / Capitale :
+                            100 000,00 Gsm : 06 98 46 33 60 - 06 61 78 99 70<br>E-mail :&nbsp;contact@oufoqalbinae.com
                         </p>
                         <p class="text-capitalize text-center text-muted">Merci de Votre Confiance</p>
                     </div>
@@ -258,7 +308,6 @@
         totalWithoutTaxInput: document.getElementById('total_without_tax'),
         taxInput: document.getElementById('tax'),
         totalWithTaxInput: document.getElementById('total_with_tax'),
-        numberInput: document.getElementById('number'),
         numberToWord: document.getElementById('numberToWord')
     };
 
@@ -266,21 +315,25 @@
 
     function initializeInvoice() {
         setupFileUpload();
-        generateRandomNumber();
         setupEventListeners();
+        recalculateTotals(); // Calculate totals on page load
     }
 
     function setupFileUpload() {
-        elements.uploadButton.addEventListener('click', () => elements.fileInput.click());
-        elements.fileInput.addEventListener('change', updateFileList);
+        if (elements.uploadButton && elements.fileInput) {
+            elements.uploadButton.addEventListener('click', () => elements.fileInput.click());
+            elements.fileInput.addEventListener('change', updateFileList);
+        }
     }
 
     function updateFileList() {
-        elements.fileList.innerHTML = '';
-        Array.from(elements.fileInput.files).forEach(file => {
-            const fileBox = createFileBox(file.name);
-            elements.fileList.appendChild(fileBox);
-        });
+        if (elements.fileList) {
+            elements.fileList.innerHTML = '';
+            Array.from(elements.fileInput.files).forEach(file => {
+                const fileBox = createFileBox(file.name);
+                elements.fileList.appendChild(fileBox);
+            });
+        }
     }
 
     function createFileBox(fileName) {
@@ -290,15 +343,13 @@
         return fileBox;
     }
 
-    function generateRandomNumber() {
-        elements.numberInput.value = Math.floor(Math.random() * 1000000);
-    }
-
     function setupEventListeners() {
         elements.addRowButton.addEventListener('click', addNewRow);
         elements.tableBody.addEventListener('click', handleRowDelete);
         elements.tableBody.addEventListener('input', handleRowInput);
-        elements.taxInput.addEventListener('input', recalculateTotals);
+        if (elements.taxInput) {
+            elements.taxInput.addEventListener('input', recalculateTotals);
+        }
     }
 
     function addNewRow() {
@@ -328,11 +379,9 @@
             <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
                 <input class="form-control total-price" type="number" name="total_price_unite[]" readonly>
             </td>
-            <td style="background: rgba(255,255,255,0);">
+            <td>
                 <button class="btn btn-outline-danger delete-row" type="button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-trash-fill">
-                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"></path>
-                    </svg>
+                    <i class="bi bi-trash"></i>
                 </button>
             </td>
         `;
@@ -400,14 +449,6 @@
             .reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
     }
 
-    function calculateTotalWithTax(totalWithoutTax) {
-        const tax = (totalWithoutTax * 1.2) - totalWithoutTax;
-        const totalWithTax = totalWithoutTax * 1.2;
-        elements.totalWithTaxInput.value = totalWithTax.toFixed(2);
-        elements.taxInput.value = tax.toFixed(2);
-        updateNumberToWord(totalWithTax);
-    }
-
     function updateNumberToWord(totalWithTax) {
         fetch(`/dashboard/order/delivery/${totalWithTax}/to-number`)
             .then(response => response.json())
@@ -417,23 +458,15 @@
             .catch(error => console.error('Error:', error));
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const taxType = '{{ $taxType }}';
-        const taxLabel = document.querySelector('th:contains("tva (20%)")');
-        
-        switch(taxType) {
-            case 'included':
-                taxLabel.innerHTML = 'TVA (20% Inclus)';
-                break;
-            case 'no_tax':
-                taxLabel.innerHTML = 'TVA (Non Applicable)';
-                break;
-            default:
-                taxLabel.innerHTML = 'TVA (20%)';
-        }
-    });
-
     initializeInvoice();
 });
+</script>
+<script>
+    function updateTaxType() {
+        const newTaxType = document.getElementById('taxTypeSelect').value;
+        const currentUrl = window.location.href;
+        const baseUrl = currentUrl.split('/edit')[0].split('/').slice(0, -1).join('/');
+        window.location.href = `${baseUrl}/${newTaxType}/edit`;
+    }
 </script>
 @endpush

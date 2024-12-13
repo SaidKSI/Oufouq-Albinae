@@ -61,12 +61,12 @@ class Estimate extends Model
 
     public function delivery()
     {
-        return $this->belongsTo(Delivery::class, 'id', 'estimate_id');
+        return $this->hasOne(Delivery::class);
     }
 
     public function hasDelivery()
     {
-        return Delivery::where('estimate_id', $this->id)->exists();
+        return !is_null($this->delivery);
     }
 
 }

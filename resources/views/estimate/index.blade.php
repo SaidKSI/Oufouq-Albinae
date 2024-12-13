@@ -74,7 +74,8 @@
                 </div>
               </td>
               <td>{{ number_format($estimate->total_without_tax,2) }}</td>
-              <td data-bs-toggle="tooltip" data-bs-placement="top" title="Tax Type: {{ ucfirst($estimate->tax_type) }}">{{ number_format($estimate->tax,2) }}</td>
+              <td data-bs-toggle="tooltip" data-bs-placement="top" title="Tax Type: {{ ucfirst($estimate->tax_type) }}">
+                {{ number_format($estimate->tax,2) }}</td>
               <td>
                 {{ number_format($estimate->total_with_tax, 2) }}
               </td>
@@ -86,8 +87,8 @@
                   </button>
                   <ul class="dropdown-menu">
                     <li>
-                      <a class="dropdown-item" href="#" onclick="confirmDelete({{$estimate->id}})">
-                        <i class="ri-delete-bin-2-fill"></i> Delete
+                      <a href="{{ route('estimate.edit', [$estimate->id]) }}" class="dropdown-item">
+                        <i class="ri-edit-line"></i> Edit
                       </a>
                     </li>
                     <li>
@@ -103,6 +104,11 @@
                     <li>
                       <a class="dropdown-item" href="#" onclick="convertToDelivery({{$estimate->id}})">
                         <i class="ri-truck-fill"></i> Convert to Delivery
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="#" onclick="confirmDelete({{$estimate->id}})">
+                        <i class="ri-delete-bin-2-fill text-danger"></i> Delete
                       </a>
                     </li>
                   </ul>
@@ -123,6 +129,8 @@
                   method="POST" style="display: none;" target="_blank">
                   @csrf
                 </form>
+
+
               </td>
             </tr>
             @endforeach
@@ -187,8 +195,8 @@
         <form id="deliveryDetailsForm">
           <input type="hidden" id="delivery_estimate_id" name="estimate_id">
           <div class="mb-3">
-            <label for="reference" class="form-label">Reference</label>
-            <input type="text" class="form-control" id="reference" name="reference">
+            <label for="delivery_reference" class="form-label">Reference</label>
+            <input type="text" class="form-control" id="delivery_reference" name="reference">
           </div>
           <div class="mb-3">
             <label for="delivery_payment_method" class="form-label">Payment Method</label>
@@ -316,7 +324,8 @@
       const estimateId = document.getElementById('delivery_estimate_id').value;
       const paymentMethod = document.getElementById('delivery_payment_method').value;
       const transactionId = document.getElementById('delivery_transaction_id').value;
-      const reference = document.getElementById('reference').value;
+      const reference = document.getElementById('delivery_reference').value;
+      
       // Validate form
       if (!paymentMethod) {
           alert('Please fill payment method field');
@@ -338,6 +347,12 @@
       transactionIdInput.name = 'transaction_id';
       transactionIdInput.value = transactionId;
       form.appendChild(transactionIdInput);
+
+      const referenceInput = document.createElement('input');
+      referenceInput.type = 'hidden';
+      referenceInput.name = 'reference';
+      referenceInput.value = reference;
+      form.appendChild(referenceInput);
 
       // Close the modal
       bootstrap.Modal.getInstance(document.getElementById('deliveryModal')).hide();

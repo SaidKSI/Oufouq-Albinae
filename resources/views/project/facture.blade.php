@@ -151,9 +151,11 @@
           </div>
           <div class="vstack">
             <div style="width: 100%;height: 3px;background: #ed961c;border-radius: 26px;margin-bottom: 5px;"></div>
-            <p class="fw-bold text-center" style="font-size: 13px;">Adresse : N°97 Rue Assila Laayayda Salé / IF :
-              3341831 / ICE :&nbsp; 000095738000027/ RC : 16137 CNSS : 8712863&nbsp;<br>Patente : 28565292 / Capitale :
-              100 000,00 Gsm : 06 98 46 33 60 - 06 61 78 99 70<br>E-mail :&nbsp;contact@oufoqalbinae.com</p>
+            <p class="fw-bold text-center" style="font-size: 13px;">Adresse : {{ $company->address }} / IF :
+              {{ $company->if }} / ICE :&nbsp; {{ $company->ice }} / RC : {{ $company->rc }} CNSS : {{ $company->cnss
+              }}<br>Patente :
+              {{ $company->patente }} / Capitale : {{ $company->capital }}
+              Gsm : {{ $company->phone1 }} - {{ $company->phone2 }}<br>E-mail :&nbsp;{{ $company->email }}</p>
             <p class="text-capitalize text-center text-muted">Merci de Votre Confiance</p>
           </div>
         </div>
@@ -250,10 +252,10 @@
                       <textarea class="form-control" rows="3" name="name[]" >${item.name}</textarea>
                     </td>
                     <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                        <input class="form-control quantity" type="number" name="qte[]" value="${item.qte}" readonly>
+                        <input class="form-control quantity" type="number" name="qte[]" value="${item.qte}" readonly min="0" step="0.01">
                     </td>
                     <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
-                        <input class="form-control unit-price" type="number" name="prix_unite[]" value="${item.prix_unite}">
+                        <input class="form-control unit-price" type="number" name="prix_unite[]" value="${item.prix_unite}" min="0" step="0.01">
                     </td>
                     <td class="border-2 border-dark" style="background: rgba(255,255,255,0);">
                         <textarea class="form-control" rows="3" name="category[]">${item.category}</textarea>

@@ -47,8 +47,8 @@ class EstimateController extends Controller
         $selectedClientId = $request->input('client_id');
         $selectedProjectId = $request->input('project_id');
         $taxType = $request->input('tax_type', 'normal'); // Default to normal if not specified
-
-        return view('estimate.create-invoice', compact('clients', 'selectedClientId', 'selectedProjectId', 'taxType'));
+        $company = CompanySetting::first();
+        return view('estimate.create-invoice', compact('clients', 'selectedClientId', 'selectedProjectId', 'taxType', 'company'));
     }
     protected function handleDocumentUpload($estimate, $request)
     {
@@ -297,6 +297,134 @@ class EstimateController extends Controller
         }
     }
 
+    public function edit($id)
+    {
+        $estimate = Estimate::find($id);
+        $clients = Client::all();
+        $taxType = $estimate->tax_type;
+        return view('estimate.edit', compact('estimate', 'clients', 'taxType'));
+    }
+
+    public function update(Request $request, Estimate $estimate)
+    {
+        // dd($estimate);
+        $validator = Validator::make($request->all(), [
+            'project_id' => 'required|exists:projects,id',
+            'date' => 'required|date',
+            'ref' => 'required|array',
+            'ref.*' => 'required|string',
+            'name' => 'required|array',
+            'name.*' => 'required|string',
+            'qte' => 'required|array',
+            'qte.*' => 'required|numeric',
+            'prix_unite' => 'required|array',
+            'prix_unite.*' => 'required|numeric',
+            'category' => 'required|array',
+            'category.*' => 'required|string',
+            'total_price_unite' => 'required|array',
+            'total_without_tax' => 'required|numeric',
+            'tax' => 'required|numeric',
+            'total_with_tax' => 'required|numeric',
+            'note' => 'nullable|string',
+        ], [
+            'project_id.required' => 'The project ID is required.',
+            'project_id.exists' => 'The selected project does not exist.',
+            'date.required' => 'The date is required.',
+            'date.date' => 'Please enter a valid date.',
+            'ref.required' => 'The reference is required.',
+            'ref.*.required' => 'Each reference is required.',
+            'name.required' => 'The name is required.',
+            'name.*.required' => 'Each name is required.',
+            'qte.required' => 'The quantity is required.',
+            'qte.*.required' => 'Each quantity is required.',
+            'prix_unite.required' => 'The unit price is required.',
+            'prix_unite.*.required' => 'Each unit price is required.',
+            'category.required' => 'The category is required.',
+            'category.*.required' => 'Each category is required.',
+            'total_price_unite.required' => 'The total price is required.',
+            'total_price_unite.*.required' => 'Each total price is required.',
+            'total_without_tax.required' => 'The total without tax is required.',
+            'total_without_tax.numeric' => 'The total without tax must be a number.',
+            'tax.required' => 'The tax amount is required.',
+            'tax.numeric' => 'The tax must be a number.',
+            'total_with_tax.required' => 'The total with tax is required.',
+            'total_with_tax.numeric' => 'The total with tax must be a number.',
+            'note.string' => 'The note must be a string.',
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $errorMessage = implode('<br>', $errors);
+            toastr()->error($errorMessage);
+            return back()->withErrors($validator->errors())->withInput();
+        }
+        try {
+            DB::beginTransaction();
+
+            // Update estimate
+            $estimate->update([
+                'project_id' => $request->project_id,
+                'date' => $request->date,
+                'total_without_tax' => $request->total_without_tax,
+                'tax' => $request->tax,
+                'total_with_tax' => $request->total_with_tax,
+                'note' => $request->note,
+            ]);
+
+            // Delete existing items and create new ones
+            $estimate->items()->delete();
+            foreach ($request->ref as $key => $ref) {
+                $estimate->items()->create([
+                    'ref' => $ref,
+                    'name' => $request->name[$key],
+                    'qte' => $request->qte[$key],
+                    'prix_unite' => $request->prix_unite[$key],
+                    'category' => $request->category[$key],
+                    'total_price_unite' => $request->total_price_unite[$key],
+                ]);
+            }
+
+            // Update related delivery if exists
+            if ($estimate->hasDelivery()) {
+                $estimate->delivery()->update([
+                    'total_without_tax' => $request->total_without_tax,
+                    'tax' => $request->tax,
+                    'total_with_tax' => $request->total_with_tax,
+                    'note' => $request->note,
+                ]);
+
+                // Update delivery items
+                $estimate->delivery->items()->delete();
+                foreach ($request->ref as $key => $ref) {
+                    $estimate->delivery->items()->create([
+                        'ref' => $ref,
+                        'name' => $request->name[$key],
+                        'qte' => $request->qte[$key],
+                        'prix_unite' => $request->prix_unite[$key],
+                        'category' => $request->category[$key],
+                        'total_price_unite' => $request->total_price_unite[$key],
+                    ]);
+                }
+            }
+
+            // Update related facture if exists
+            if ($estimate->hasFacture()) {
+                $estimate->facture()->update([
+                    'total_without_tax' => $request->total_without_tax,
+                    'tax' => $request->tax,
+                    'total_with_tax' => $request->total_with_tax,
+                    'note' => $request->note,
+                ]);
+            }
+
+            DB::commit();
+            return redirect()->route('estimates')->with('success', 'Estimate updated successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            toastr()->error('Error updating estimate: ' . $e->getMessage());
+            return back()->withInput();
+        }
+    }
     public function convertToFacture(Request $request, Estimate $estimate)
     {
         // dd($request->all());
@@ -366,6 +494,7 @@ class EstimateController extends Controller
 
             // Create new delivery from estimate
             $delivery = Delivery::create([
+                'estimate_id' => $estimate->id,
                 'number' => $request->reference,
                 'date' => now(),
                 'client_id' => $estimate->project->client_id,

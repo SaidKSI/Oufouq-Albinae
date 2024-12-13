@@ -57,12 +57,14 @@ class DeliveryController extends Controller
         $suppliers = Supplier::all();
         $selectedClientId = $request->input('client_id');
         $selectedProjectId = $request->input('project_id');
+        $company = CompanySetting::first();
         return view('delivery.invoice', [
             'type' => $type,
             'clients' => $clients,
             'suppliers' => $suppliers,
             'selectedClientId' => $selectedClientId,
-            'selectedProjectId' => $selectedProjectId
+            'selectedProjectId' => $selectedProjectId,
+            'company' => $company
         ]);
     }
 

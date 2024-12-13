@@ -61,9 +61,14 @@ class Delivery extends Model
         return $this->total_with_tax - $this->total_paid;
     }
 
-    public function factures()
+    public function facture()
     {
         return $this->hasOne(Facture::class);
+    }
+
+    public function hasFacture()
+    {
+        return !is_null($this->facture);
     }
 
     public function documents()
@@ -73,6 +78,6 @@ class Delivery extends Model
 
     public function estimate()
     {
-        return $this->belongsTo(Estimate::class, 'estimate_id', 'id');
+        return $this->belongsTo(Estimate::class);
     }
 }

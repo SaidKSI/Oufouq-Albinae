@@ -26,58 +26,116 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane show active" id="about">
-                        <form class="needs-validation" novalidate>
-                            <div class="mb-3">
-                                <label class="form-label" for="validationCustom01">Company Name</label>
-                                <input type="text" class="form-control" id="validationCustom01"
-                                    placeholder="Company Name" value="{{ $setting->name }}" required>
+                        <form class="needs-validation" action="{{ route('settings.update') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Company Name</label>
+                                        <input type="text" class="form-control" name="name" value="{{ $setting->name }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" name="email" value="{{ $setting->email }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Phone 1</label>
+                                        <input type="text" class="form-control" name="phone1" value="{{ $setting->phone1 }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Phone 2</label>
+                                        <input type="text" class="form-control" name="phone2" value="{{ $setting->phone2 }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Fax</label>
+                                        <input type="text" class="form-control" name="fax" value="{{ $setting->fax }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Address</label>
+                                        <input type="text" class="form-control" name="address" value="{{ $setting->address }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">City</label>
+                                        <input type="text" class="form-control" name="city" value="{{ $setting->city }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">State</label>
+                                        <input type="text" class="form-control" name="state" value="{{ $setting->state }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Zip</label>
+                                        <input type="text" class="form-control" name="zip" value="{{ $setting->zip }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Country</label>
+                                        <input type="text" class="form-control" name="country" value="{{ $setting->country }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">IF</label>
+                                        <input type="text" class="form-control" name="if" value="{{ $setting->if }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">ICE</label>
+                                        <input type="text" class="form-control" name="ice" value="{{ $setting->ice }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">RC</label>
+                                        <input type="text" class="form-control" name="rc" value="{{ $setting->rc }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">CNSS</label>
+                                        <input type="text" class="form-control" name="cnss" value="{{ $setting->cnss }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Patente</label>
+                                        <input type="text" class="form-control" name="patente" value="{{ $setting->patente }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Capital</label>
+                                        <input type="number" step="0.01" class="form-control" name="capital" value="{{ $setting->capital }}">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="validationCustom02">Email</label>
-                                <input type="email" class="form-control" id="validationCustom02" placeholder="Email"
-                                    value="{{ $setting->email }}" required>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Website</label>
+                                        <input type="url" class="form-control" name="website" value="{{ $setting->website }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Footer Text</label>
+                                        <textarea class="form-control" name="footer_text" rows="2">{{ $setting->footer_text }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Bank Name</label>
+                                        <input type="text" class="form-control" name="bank_name" value="{{ $setting->bank_name }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Bank Account</label>
+                                        <input type="text" class="form-control" name="bank_account" value="{{ $setting->bank_account }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Bank RIB</label>
+                                        <input type="text" class="form-control" name="bank_rib" value="{{ $setting->bank_rib }}">
+                                    </div>
+                                </div>
                             </div>
+
                             <div class="mb-3">
-                                <label class="form-label" for="validationCustomUsername">Phone 1</label>
-                                <input type="text" class="form-control" id="validationCustomUsername"
-                                    placeholder="Phone 1" value="{{ $setting->phone1 }}" required>
+                                <label class="form-label">Company Logo</label>
+                                <input type="file" class="form-control" name="logo" accept="image/*">
+                                @if($setting->logo)
+                                    <img src="{{ asset('storage/' . $setting->logo) }}" alt="Company Logo" class="mt-2" style="max-height: 100px;">
+                                @endif
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="validationCustom03">Phone 2</label>
-                                <input type="text" class="form-control" id="validationCustom03" placeholder="Phone 2"
-                                    value="{{ $setting->phone2 }}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="validationCustom04">Fax</label>
-                                <input type="text" class="form-control" id="validationCustom04" placeholder="Fax"
-                                    value="{{ $setting->fax }}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="validationCustom05">Address</label>
-                                <input type="text" class="form-control" id="validationCustom05" placeholder="Address"
-                                    value="{{ $setting->address }}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="validationCustom06">City</label>
-                                <input type="text" class="form-control" id="validationCustom06" placeholder="City"
-                                    value="{{ $setting->city }}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="validationCustom07">State</label>
-                                <input type="text" class="form-control" id="validationCustom07" placeholder="State"
-                                    value="{{ $setting->state }}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="validationCustom08">Zip</label>
-                                <input type="text" class="form-control" id="validationCustom08" placeholder="Zip"
-                                    value="{{ $setting->zip }}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="validationCustom09">Country</label>
-                                <input type="text" class="form-control" id="validationCustom09" placeholder="Country"
-                                    value="{{ $setting->country }}" required>
-                            </div>
-                            <button class="btn btn-primary" type="submit">Submit form</button>
+
+                            <button class="btn btn-primary" type="submit">Update Settings</button>
                         </form>
                     </div>
                     <div class="tab-pane" id="capital">
@@ -152,7 +210,7 @@
                     </div>
                     <div class="tab-pane" id="backup">
                         <h2 class="text-center mb-4">Database Backup</h2>
-                        
+
                         <div class="row justify-content-center mb-4">
                             <div class="col-md-4">
                                 <form action="{{ route('backup.create') }}" method="POST">
@@ -182,22 +240,27 @@
                                         <td>{{ $backup->created_at }}</td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <form action="{{ route('backup.download', $backup->id) }}" method="POST" class="d-inline">
+                                                <form action="{{ route('backup.download', $backup->id) }}" method="POST"
+                                                    class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="btn btn-sm btn-info me-2">
                                                         <i class="ri-download-line"></i> Download
                                                     </button>
                                                 </form>
-                                                <form action="{{ route('backup.restore', $backup->id) }}" method="POST" class="d-inline">
+                                                <form action="{{ route('backup.restore', $backup->id) }}" method="POST"
+                                                    class="d-inline">
                                                     @csrf
-                                                    <button type="submit" class="btn btn-sm btn-warning me-2" onclick="return confirm('Are you sure you want to restore this backup? Current data will be replaced.')">
+                                                    <button type="submit" class="btn btn-sm btn-warning me-2"
+                                                        onclick="return confirm('Are you sure you want to restore this backup? Current data will be replaced.')">
                                                         <i class="ri-refresh-line"></i> Restore
                                                     </button>
                                                 </form>
-                                                <form action="{{ route('backup.destroy', $backup->id) }}" method="POST" class="d-inline">
+                                                <form action="{{ route('backup.destroy', $backup->id) }}" method="POST"
+                                                    class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this backup?')">
+                                                    <button type="submit" class="btn btn-sm btn-danger"
+                                                        onclick="return confirm('Are you sure you want to delete this backup?')">
                                                         <i class="ri-delete-bin-line"></i> Delete
                                                     </button>
                                                 </form>

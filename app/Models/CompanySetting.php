@@ -26,5 +26,15 @@ class CompanySetting extends Model
         'cnss',
         'patente',
         'capital',
+        'website',
+        'logo',
+        'footer_text',
+        'bank_name',
+        'bank_account',
+        'bank_rib'
+    ];
+
+    protected $casts = [
+        'capital' => 'decimal:2',
     ];
 }

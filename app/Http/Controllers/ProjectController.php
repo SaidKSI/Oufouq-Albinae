@@ -281,8 +281,9 @@ class ProjectController extends Controller
 
     public function showInvoice()
     {
+        $company = CompanySetting::first();
         $estimates = Estimate::where('type', 'estimate')->get();
-        return view('project.facture', compact('estimates'));
+        return view('project.facture', compact('estimates', 'company'));
     }
 
     public function destroyEstimateFacture($id)

@@ -5,16 +5,36 @@ namespace App\Http\Controllers;
 use App\Models\Backup;
 use App\Models\CapitalTransaction;
 use App\Models\CompanySetting;
+use App\Models\Delivery;
+use App\Models\Estimate;
 use App\Models\Task;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
 {
-    function index()
+    public function index()
     {
         $tasks = Task::all();
-        return view('dashboard.index',['tasks' => $tasks]);
+
+        // Get estimates not converted to delivery notes
+        $notConvertedToDelivery = Estimate::where('type', 'estimate')
+            ->doesntHave('delivery')
+            ->with(['project.client'])
+            ->get();
+
+        // Get estimate notes not converted to factures
+        $notConvertedToFacture = Estimate::where('type', 'estimate')
+            ->doesntHave('facture')
+            ->with(['project.client', 'items'])
+            ->get();
+
+        return view('dashboard.index', [
+            'tasks' => $tasks,
+            'notConvertedToDelivery' => $notConvertedToDelivery,
+            'notConvertedToFacture' => $notConvertedToFacture
+        ]);
     }
 
     function maintenance()
@@ -28,7 +48,7 @@ class DashboardController extends Controller
         $backups = Backup::orderBy('created_at', 'desc')->get();
         $setting = CompanySetting::first();
         $transactions = CapitalTransaction::all();
-        return view('setting.index ', ['setting' => $setting, 'transactions' => $transactions,'backups' => $backups]);
+        return view('setting.index ', ['setting' => $setting, 'transactions' => $transactions, 'backups' => $backups]);
     }
 
     function storeTransaction(Request $request)
@@ -92,5 +112,52 @@ class DashboardController extends Controller
         }
 
         return response()->json($capitalHistory);
+    }
+
+    public function updateSettings(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone1' => 'nullable|string|max:255',
+            'phone2' => 'nullable|string|max:255',
+            'fax' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'state' => 'nullable|string|max:255',
+            'zip' => 'nullable|string|max:255',
+            'country' => 'nullable|string|max:255',
+            'if' => 'nullable|string|max:255',
+            'ice' => 'nullable|string|max:255',
+            'rc' => 'nullable|string|max:255',
+            'cnss' => 'nullable|string|max:255',
+            'patente' => 'nullable|string|max:255',
+            'capital' => 'nullable|numeric',
+            'website' => 'nullable|url|max:255',
+            'footer_text' => 'nullable|string',
+            'bank_name' => 'nullable|string|max:255',
+            'bank_account' => 'nullable|string|max:255',
+            'bank_rib' => 'nullable|string|max:255',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        try {
+            $setting = CompanySetting::first();
+
+            if ($request->hasFile('logo')) {
+                // Delete old logo if exists
+                if ($setting->logo) {
+                    Storage::disk('public')->delete($setting->logo);
+                }
+                $logoPath = $request->file('logo')->store('logos', 'public');
+                $validated['logo'] = $logoPath;
+            }
+
+            $setting->update($validated);
+
+            return redirect()->back()->with('success', 'Company settings updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error updating settings: ' . $e->getMessage());
+        }
     }
 }
