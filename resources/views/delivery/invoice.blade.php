@@ -7,6 +7,7 @@
     <form action="{{route('delivery.store')}}" method="POST" enctype="multipart/form-data">
       @csrf
       <input type="hidden" name="type" value="{{$type}}">
+      <input type="hidden" name="tax_type" value="{{$tax_type}}">
       <div class="card-body">
         <div class="container shadow"
           style="margin-top: 46px;background: url(&quot;{{asset('assets/invoice_asset/img/Oufoq%20albinae%20BIG.png')}}&quot;) center / cover no-repeat;border-radius: 12px;min-height: 1000px;">
@@ -43,6 +44,9 @@
                   <th
                     style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-bottom-style: none;width: 175px;">
                     Mode Reglement</th>
+                  <th
+                    style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0);border-bottom-style: none;width: 175px;">
+                    Facture</th>
                   <th></th>
                 </tr>
               </thead>
@@ -90,12 +94,21 @@
                     <div class="input-group">
                       <select class="bg-transparent border-0 focus-ring form-select" id="payment_method"
                         name="payment_method">
-                        <option disabled selected>Mode Reglement</option>
+                        <option disabled selected>Select Payment Method</option>
                         <option value="bank_transfer">Bank Transfer</option>
                         <option value="cheque">Chèque</option>
                         <option value="credit">Credit</option>
                         <option value="cash">Cash</option>
                         <option value="traita">Traita</option>
+                      </select>
+                    </div>
+                  </td>
+                  <td style="background: rgba(255,255,255,0);border: 2px solid rgb(0,0,0) ;border-top-style: none;">
+                    <div class="input-group">
+                      <select class="bg-transparent border-0 focus-ring form-select" id="facture" name="facture">
+                        <option disabled selected>Select Facture</option>
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
                       </select>
                     </div>
                   </td>
@@ -141,7 +154,15 @@
                   rowspan="2">Arreté La présente facture à la somme de :<br>#... <span id="numberToWord"></span> ...#
                 </th>
                 <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">total ht</th>
-                <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">tva (20%)</th>
+                <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">
+                  @if($tax_type == 'normal')
+                  tva (20%)
+                  @elseif($tax_type == 'included')
+                  TVA (20% Inclus)
+                  @elseif($tax_type == 'no_tax')
+                  TVA (No Tax)
+                  @endif
+                </th>
                 <th class="text-uppercase border-2 border-dark" style="background: rgba(255,255,255,0);">total</th>
               </tr>
 
@@ -376,21 +397,42 @@
 
     function recalculateTotals() {
         const totalWithoutTax = calculateTotalWithoutTax();
+        const taxType = '{{ $tax_type }}';
+        
         elements.totalWithoutTaxInput.value = totalWithoutTax.toFixed(2);
-        calculateTotalWithTax(totalWithoutTax);
+        
+        let tax = 0;
+        let totalWithTax = totalWithoutTax;
+        
+        switch(taxType) {
+            case 'normal':
+                tax = totalWithoutTax * 0.20;
+                totalWithTax = totalWithoutTax + tax;
+                elements.taxInput.removeAttribute('readonly');
+                break;
+            
+            case 'included':
+                tax = (totalWithoutTax / 1.20) * 0.20;
+                totalWithTax = totalWithoutTax;
+                elements.totalWithoutTaxInput.value = (totalWithoutTax - tax).toFixed(2);
+                elements.taxInput.setAttribute('readonly', 'readonly');
+                break;
+            
+            case 'no_tax':
+                tax = 0;
+                totalWithTax = totalWithoutTax;
+                elements.taxInput.setAttribute('readonly', 'readonly');
+                break;
+        }
+        
+        elements.taxInput.value = tax.toFixed(2);
+        elements.totalWithTaxInput.value = totalWithTax.toFixed(2);
+        updateNumberToWord(totalWithTax);
     }
    
     function calculateTotalWithoutTax() {
         return Array.from(elements.tableBody.querySelectorAll('.total-price'))
             .reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
-    }
-
-    function calculateTotalWithTax(totalWithoutTax) {
-        const tax = (totalWithoutTax * 1.2) - totalWithoutTax;
-        const totalWithTax = totalWithoutTax * 1.2;
-        elements.totalWithTaxInput.value = totalWithTax.toFixed(2);
-        elements.taxInput.value = tax.toFixed(2);
-        updateNumberToWord(totalWithTax);
     }
 
     function updateNumberToWord(totalWithTax) {
@@ -401,6 +443,22 @@
             })
             .catch(error => console.error('Error:', error));
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const taxType = '{{ $tax_type }}';
+        const taxLabel = document.querySelector('th:contains("tva (20%)")');
+        
+        switch(taxType) {
+            case 'included':
+                taxLabel.innerHTML = 'TVA (20% Inclus)';
+                break;
+            case 'no_tax':
+                taxLabel.innerHTML = 'TVA (Non Applicable)';
+                break;
+            default:
+                taxLabel.innerHTML = 'TVA (20%)';
+        }
+    });
 
     initializeInvoice();
 });

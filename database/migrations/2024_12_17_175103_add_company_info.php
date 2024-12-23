@@ -12,28 +12,13 @@ return new class extends Migration {
     {
         Schema::table('company_settings', function (Blueprint $table) {
             // Add missing columns if they don't exist
-            if (!Schema::hasColumn('company_settings', 'website')) {
-                $table->string('website')->nullable();
-            }
-            if (!Schema::hasColumn('company_settings', 'logo')) {
-                $table->string('logo')->nullable();
-            }
-            if (!Schema::hasColumn('company_settings', 'footer_text')) {
-                $table->string('footer_text')->nullable();
-            }
-            if (!Schema::hasColumn('company_settings', 'bank_name')) {
-                $table->string('bank_name')->nullable();
-            }
-            if (!Schema::hasColumn('company_settings', 'bank_account')) {
-                $table->string('bank_account')->nullable();
-            }
-            if (!Schema::hasColumn('company_settings', 'bank_rib')) {
-                $table->string('bank_rib')->nullable();
-            }
-            // Convert capital to decimal if it's not already
-            if (Schema::hasColumn('company_settings', 'capital')) {
-                $table->decimal('capital', 10, 2)->nullable()->change();
-            }
+            $table->string('website')->nullable();
+            $table->string('logo')->nullable();
+            $table->string('footer_text')->nullable();
+            $table->string('bank_name')->nullable();
+            $table->string('bank_account')->nullable();
+            $table->string('bank_rib')->nullable();
+            $table->decimal('capital', 10, 2)->nullable()->change();
         });
     }
 

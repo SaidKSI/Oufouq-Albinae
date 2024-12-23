@@ -51,21 +51,25 @@ class DeliveryController extends Controller
     }
 
 
-    public function deliveryInvoice(Request $request, $type)
+    public function deliveryInvoice($type, Request $request)
     {
+        $tax_type = $request->query('tax_type', 'normal');
+        $selectedClientId = $request->query('client_id');
+        $selectedProjectId = $request->query('project_id');
+
         $clients = Client::all();
         $suppliers = Supplier::all();
-        $selectedClientId = $request->input('client_id');
-        $selectedProjectId = $request->input('project_id');
         $company = CompanySetting::first();
-        return view('delivery.invoice', [
-            'type' => $type,
-            'clients' => $clients,
-            'suppliers' => $suppliers,
-            'selectedClientId' => $selectedClientId,
-            'selectedProjectId' => $selectedProjectId,
-            'company' => $company
-        ]);
+
+        return view('delivery.invoice', compact(
+            'type',
+            'tax_type',
+            'clients',
+            'suppliers',
+            'company',
+            'selectedClientId',
+            'selectedProjectId'
+        ));
     }
 
     function store(Request $request)
@@ -94,6 +98,48 @@ class DeliveryController extends Controller
             'note' => 'nullable|string',
             'payment_method' => 'required|string',
             'type' => 'required|string',
+            'facture' => 'required|in:true,false',
+            'tax_type' => 'required|in:normal,included,no_tax',
+        ], [
+            'number.string' => 'The number must be a string',
+            'date.required' => 'The date is required',
+            'date.date' => 'Invalid date format',
+            'client_id.required' => 'Please select a client',
+            'client_id.exists' => 'Selected client does not exist',
+            'project_id.required' => 'Please select a project',
+            'project_id.exists' => 'Selected project does not exist',
+            'supplier_id.required_if' => 'Please select a supplier',
+            'supplier_id.exists' => 'Selected supplier does not exist',
+            'ref.required' => 'Reference is required',
+            'ref.*.required' => 'All references are required',
+            'ref.*.string' => 'References must be strings',
+            'name.required' => 'Name is required',
+            'name.*.required' => 'All names are required',
+            'name.*.string' => 'Names must be strings',
+            'qte.required' => 'Quantity is required',
+            'qte.*.required' => 'All quantities are required',
+            'qte.*.numeric' => 'Quantities must be numbers',
+            'prix_unite.required' => 'Unit price is required',
+            'prix_unite.*.required' => 'All unit prices are required',
+            'prix_unite.*.numeric' => 'Unit prices must be numbers',
+            'category.required' => 'Category is required',
+            'category.*.required' => 'All categories are required',
+            'category.*.string' => 'Categories must be strings',
+            'total_price_unite.required' => 'Total unit price is required',
+            'total_without_tax.required' => 'Total without tax is required',
+            'total_without_tax.numeric' => 'Total without tax must be a number',
+            'tax.required' => 'Tax is required',
+            'tax.numeric' => 'Tax must be a number',
+            'total_with_tax.required' => 'Total with tax is required',
+            'total_with_tax.numeric' => 'Total with tax must be a number',
+            'payment_method.required' => 'Payment method is required',
+            'payment_method.string' => 'Payment method must be a string',
+            'type.required' => 'Type is required',
+            'type.string' => 'Type must be a string',
+            'facture.required' => 'Please specify if this is a facture',
+            'facture.in' => 'Invalid facture value',
+            'tax_type.required' => 'Tax type is required',
+            'tax_type.in' => 'Invalid tax type'
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
@@ -119,6 +165,8 @@ class DeliveryController extends Controller
             'note' => $request['note'],
             'payment_method' => $request['payment_method'],
             'type' => $request['type'],
+            'facture' => $request['facture'] == 'true' ? true : false,
+            'tax_type' => $request['tax_type'],
         ]);
 
         foreach ($request['ref'] as $index => $ref) {

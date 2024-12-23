@@ -19,9 +19,13 @@ class CompanySettingsSeeder extends Seeder
             'if' => '3341831',
             'ice' => '000095738000027',
             'rc' => '16137',
+            'fax' => '05 37 80 00 00',
             'cnss' => '8712863',
             'patente' => '28565292',
             'capital' => '100000.00',
+            'state' => 'Salé',
+            'zip' => '40000',
+            'country' => 'Maroc',
             'footer_text' => 'Merci de Votre Confiance'
         ]);
     }

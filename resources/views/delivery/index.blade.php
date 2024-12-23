@@ -5,7 +5,7 @@
 <div class="row">
   <div class="card">
     <div class="col-md-2 mx-3 my-1">
-      <a href="{{route('delivery.invoice',['type'=>$type])}}" class="btn btn-outline-primary">Create invoice</a>
+      <a href="#" onclick="showTaxTypeModal()" class="btn btn-outline-primary">Create invoice</a>
     </div>
     <form method="GET" action="{{ route('delivery.index', ['type' => $type]) }}" class="m-3">
       <div class="form-group w-25">
@@ -241,6 +241,33 @@
   </div>
 </div>
 
+<div class="modal fade" id="taxTypeModal" tabindex="-1" aria-labelledby="taxTypeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="taxTypeModalLabel">Select Tax Calculation Type</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="taxTypeForm" action="{{ route('delivery.invoice',['type'=>$type]) }}" method="GET">
+          <input type="hidden" name="type" value="{{$type}}">
+          <div class="mb-3">
+            <label for="tax_type" class="form-label">Tax Type</label>
+            <select class="form-select" id="tax_type" name="tax_type" required>
+              <option value="normal">Normal Tax (20% added to total)</option>
+              <option value="included">Tax Included (20% calculated from total)</option>
+              <option value="no_tax">No Tax</option>
+            </select>
+          </div>
+          <div class="text-end">
+            <button type="submit" class="btn btn-primary">Continue</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -273,5 +300,11 @@ document.addEventListener('DOMContentLoaded', function() {
       billNumberInput.value= Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
     }
 });
+</script>
+<script>
+  function showTaxTypeModal() {
+    var modal = new bootstrap.Modal(document.getElementById('taxTypeModal'));
+    modal.show();
+}
 </script>
 @endpush
