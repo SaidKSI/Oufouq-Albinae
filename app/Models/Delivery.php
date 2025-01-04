@@ -22,9 +22,13 @@ class Delivery extends Model
         'doc',
         'note',
         'payment_method',
-        'type'
+        'type',
+        'facture'
     ];
 
+    protected $casts = [
+        'facture' => 'boolean',
+    ];
     public function items()
     {
         return $this->hasMany(DeliveryItem::class);

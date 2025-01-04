@@ -170,6 +170,48 @@
       </div>
     </div>
   </div>
+  <!-- Deliveries Without Facture -->
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <h4>Deliveries Without Facture</h4>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped dt-responsive nowrap w-100">
+            <thead>
+              <tr>
+                <th>Reference</th>
+                <th>Client</th>
+                <th>Project</th>
+                <th>Date</th>
+                <th>Total HT</th>
+                <th>TVA</th>
+                <th>Total TTC</th>
+              </tr>
+            </thead>
+            <tbody>
+              @forelse($deliveriesWithoutFacture as $delivery)
+              <tr>
+                <td>{{ $delivery->number }}</td>
+                <td>{{ $delivery->client->name }}</td>
+                <td>{{ $delivery->project->name }}</td>
+                <td>{{ $delivery->created_at->format('d/m/Y') }}</td>
+                <td>{{ number_format($delivery->total_without_tax, 2) }}</td>
+                <td>{{ number_format($delivery->tax, 2) }}</td>
+                <td>{{ number_format($delivery->total_with_tax, 2) }}</td>
+              </tr>
+              @empty
+              <tr>
+                <td colspan="8" class="text-center">No deliveries without facture found</td>
+              </tr>
+              @endforelse
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- Add this modal at the bottom of your blade file -->
   <div class="modal fade" id="factureModal" tabindex="-1" aria-labelledby="factureModalLabel" aria-hidden="true">
     <div class="modal-dialog">

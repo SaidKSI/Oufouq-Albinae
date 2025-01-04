@@ -68,6 +68,8 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::get('/order/delivery/print/{id}', [DeliveryController::class, 'print'])->name('delivery.print');
     Route::get('/order/delivery/{number}/to-number', [DeliveryController::class, 'numberToFrenchWords'])->name('numberToWords');
     Route::get('/delivery/{id}/details', [DeliveryController::class, 'getDeliveryDetails'])->name('delivery.details');
+    Route::get('/order/delivery/{id}/edit', [DeliveryController::class, 'edit'])->name('delivery.edit');
+    Route::put('/order/delivery/{id}/update', [DeliveryController::class, 'update'])->name('delivery.update');
     // ? delivery bills
     Route::post('/delivery/{id}/add-bill', [DeliveryController::class, 'addBill'])->name('delivery.add-bill');
     // ? Project Estimate

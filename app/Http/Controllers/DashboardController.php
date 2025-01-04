@@ -30,10 +30,16 @@ class DashboardController extends Controller
             ->with(['project.client', 'items'])
             ->get();
 
+        // Get deliveries without facture
+        $deliveriesWithoutFacture = Delivery::where('facture', false)
+            ->with(['project.client'])
+            ->get();
+
         return view('dashboard.index', [
             'tasks' => $tasks,
             'notConvertedToDelivery' => $notConvertedToDelivery,
-            'notConvertedToFacture' => $notConvertedToFacture
+            'notConvertedToFacture' => $notConvertedToFacture,
+            'deliveriesWithoutFacture' => $deliveriesWithoutFacture
         ]);
     }
 

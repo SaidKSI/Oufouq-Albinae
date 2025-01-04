@@ -155,76 +155,40 @@
 
           </td>
           <td>
-            <a href="{{route('delivery.show',['id'=>$delivery->id])}}"><i class="ri-eye-fill"></i></a>
-            <i class="ri-bank-card-2-fill" data-bs-toggle="modal" data-bs-target="#addBillModal{{$delivery->id}}"
-              style="cursor: pointer;"></i>
-            <a href="{{ route('delivery.print', $delivery->id) }}" target="_blank" title="Print"><i
-                class="ri-file-fill fs-4"></i></a>
-            <!-- Modal for adding a bill -->
-            <div class="modal fade" id="addBillModal{{$delivery->id}}" tabindex="-1"
-              aria-labelledby="addBillModalLabel{{$delivery->id}}" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="addBillModalLabel{{$delivery->id}}">Add Bill for Delivery
-                      #{{$delivery->number}}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <form action="{{ route('delivery.add-bill', $delivery->id) }}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                      <div class="mb-3">
-                        <label for="bill_number" class="form-label">Bill Number</label>
-                        <input type="text" class="form-control" id="bill_number" name="bill_number" required>
-                      </div>
-                      <div class="mb-3">
-                        <label for="bill_amount" class="form-label">Bill Amount</label>
-                        <input type="number" step="0.01" class="form-control" id="bill_amount" name="bill_amount"
-                          value="{{$delivery->total_with_tax}}" readonly>
-                      </div>
-                      <div class="mb-3">
-                        <label for="remaining_amount" class="form-label">Remaining Amount</label>
-                        <input type="number" step="0.01" class="form-control" id="remaining_amount"
-                          name="remaining_amount" value="{{$delivery->remaining_amount}}" readonly>
-                      </div>
-                      <div class="mb-3">
-                        <label for="supplier" class="form-label">Supplier</label>
-                        <input type="text" class="form-control" id="supplier" name="supplier"
-                          value="{{ $type === 'supplier' ?  $delivery->supplier->full_name : 'Nous' }}" readonly>
-                      </div>
-                      <div class="mb-3">
-                        <label for="bill_date" class="form-label">Bill Date</label>
-                        <input type="date" class="form-control" id="bill_date" name="bill_date" required
-                          value="{{date('Y-m-d')}}">
-                      </div>
-                      <div class="mb-3">
-                        <label for="amount" class="form-label">Amount</label>
-                        <input type="number" step="0.01" class="form-control" id="amount" name="amount" required>
-                      </div>
-                      <div class="mb-3">
-                        <label for="payment_method" class="form-label">Payment Method</label>
-                        <select class="form-select" id="payment_method" name="payment_method" required>
-                          <option value="bank_transfer">Bank Transfer</option>
-                          <option value="cheque">Cheque</option>
-                          <option value="cash">Cash</option>
-                          <option value="credit_card">Credit Card</option>
-                        </select>
-                      </div>
-                      <div class="mb-3">
-                        <label for="note" class="form-label">Note</label>
-                        <textarea class="form-control" id="note" name="note" rows="3"></textarea>
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <button type="submit" class="btn btn-primary">Add Bill</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
+            <div class="dropdown">
+              <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Actions
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" href="{{route('delivery.show',['id'=>$delivery->id])}}">
+                    <i class="ri-eye-line"></i> View
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ route('delivery.edit', $delivery->id) }}">
+                    <i class="ri-edit-line"></i> Edit
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="#" data-bs-toggle="modal"
+                    data-bs-target="#addBillModal{{$delivery->id}}">
+                    <i class="ri-bank-card-2-fill"></i> Add Bill
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ route('delivery.print', $delivery->id) }}" target="_blank">
+                    <i class="ri-file-fill"></i> Print
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item text-danger" href="#" onclick="confirmDelete({{$delivery->id}})">
+                    <i class="ri-delete-bin-2-fill"></i> Delete
+                  </a>
+                </li>
+              </ul>
             </div>
-            <a href="#" class="text-danger" onclick="confirmDelete({{$delivery->id}})"><i
-                class="ri-delete-bin-2-fill"></i></a>
 
             <form id="delete-form-{{$delivery->id}}" action="{{ route('delivery.destroy', $delivery->id) }}"
               method="POST" style="display: none;">

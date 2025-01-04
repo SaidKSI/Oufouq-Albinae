@@ -320,5 +320,145 @@ class DeliveryController extends Controller
         }
     }
 
+    public function edit($id)
+    {
+        $delivery = Delivery::with('items')->findOrFail($id);
+        $clients = Client::all();
+        $suppliers = Supplier::all();
+        $company = CompanySetting::first();
+
+        return view('delivery.edit', compact(
+            'delivery',
+            'clients',
+            'suppliers',
+            'company'
+        ));
+    }
+
+    public function update(Request $request, $id)
+    {
+        // dd($request->all());
+        $delivery = Delivery::findOrFail($id);
+
+        $validator = Validator::make($request->all(), [
+            'number' => 'nullable|string',
+            'date' => 'required|date',
+            'client_id' => 'required|exists:clients,id',
+            'project_id' => 'required|exists:projects,id',
+            'supplier_id' => 'required_if:type,supplier|exists:suppliers,id',
+            'ref' => 'required|array',
+            'ref.*' => 'required|string',
+            'name' => 'required|array',
+            'name.*' => 'required|string',
+            'qte' => 'required|array',
+            'qte.*' => 'required|numeric',
+            'prix_unite' => 'required|array',
+            'prix_unite.*' => 'required|numeric',
+            'category' => 'required|array',
+            'category.*' => 'required|string',
+            'total_price_unite' => 'required|array',
+            'total_without_tax' => 'required|numeric',
+            'tax' => 'required|numeric',
+            'total_with_tax' => 'required|numeric',
+            'doc' => 'nullable|file',
+            'note' => 'nullable|string',
+            'payment_method' => 'required|string',
+            'type' => 'required|string',
+            'facture' => 'required|in:true,false',
+            'tax_type' => 'required|in:normal,included,no_tax',
+        ], [
+            'number.string' => 'The number must be a string',
+            'date.required' => 'The date is required',
+            'date.date' => 'Invalid date format',
+            'client_id.required' => 'Please select a client',
+            'client_id.exists' => 'Selected client does not exist',
+            'project_id.required' => 'Please select a project',
+            'project_id.exists' => 'Selected project does not exist',
+            'supplier_id.required_if' => 'Please select a supplier',
+            'supplier_id.exists' => 'Selected supplier does not exist',
+            'ref.required' => 'Reference is required',
+            'ref.*.required' => 'All references are required',
+            'ref.*.string' => 'References must be strings',
+            'name.required' => 'Name is required',
+            'name.*.required' => 'All names are required',
+            'name.*.string' => 'Names must be strings',
+            'qte.required' => 'Quantity is required',
+            'qte.*.required' => 'All quantities are required',
+            'qte.*.numeric' => 'Quantities must be numbers',
+            'prix_unite.required' => 'Unit price is required',
+            'prix_unite.*.required' => 'All unit prices are required',
+            'prix_unite.*.numeric' => 'Unit prices must be numbers',
+            'category.required' => 'Category is required',
+            'category.*.required' => 'All categories are required',
+            'category.*.string' => 'Categories must be strings',
+            'total_price_unite.required' => 'Total unit price is required',
+            'total_without_tax.required' => 'Total without tax is required',
+            'total_without_tax.numeric' => 'Total without tax must be a number',
+            'tax.required' => 'Tax is required',
+            'tax.numeric' => 'Tax must be a number',
+            'total_with_tax.required' => 'Total with tax is required',
+            'total_with_tax.numeric' => 'Total with tax must be a number',
+            'payment_method.required' => 'Payment method is required',
+            'payment_method.string' => 'Payment method must be a string',
+            'type.required' => 'Type is required',
+            'type.string' => 'Type must be a string',
+            'facture.required' => 'Please specify if this is a facture',
+            'facture.in' => 'Invalid facture value',
+            'tax_type.required' => 'Tax type is required',
+            'tax_type.in' => 'Invalid tax type'
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $errorMessage = implode('<br>', $errors);
+            toastr()->error($errorMessage);
+            return back()->withErrors($validator->errors())->withInput();
+        }
+        $docPath = null;
+        // Handle document upload if new file is provided
+        $docPath = $delivery->doc;
+        if ($request->hasFile('doc')) {
+            // Delete old file if exists
+            if ($docPath && Storage::disk('public')->exists($docPath)) {
+                Storage::disk('public')->delete($docPath);
+            }
+            $docPath = $request->file('doc')->store('delivery-docs', 'public');
+        }
+
+        // Update delivery
+        $delivery->update([
+            'number' => $request['number'],
+            'date' => $request['date'],
+            'client_id' => $request['client_id'],
+            'project_id' => $request['project_id'],
+            'supplier_id' => $request['supplier_id'],
+            'total_without_tax' => $request['total_without_tax'],
+            'tax' => $request['total_with_tax'] - $request['total_without_tax'],
+            'total_with_tax' => $request['total_with_tax'],
+            'doc' => $docPath,
+            'note' => $request['note'],
+            'payment_method' => $request['payment_method'],
+            'type' => $request['type'],
+            'facture' => $request['facture'] == 'true' ? true : false,
+            'tax_type' => $request['tax_type'],
+        ]);
+
+        // Delete old items
+        $delivery->items()->delete();
+
+        // Create new items
+        foreach ($request['ref'] as $index => $ref) {
+            $delivery->items()->create([
+                'ref' => $ref,
+                'name' => $request['name'][$index],
+                'qte' => $request['qte'][$index],
+                'prix_unite' => $request['prix_unite'][$index],
+                'category' => $request['category'][$index],
+                'total_price_unite' => $request['total_price_unite'][$index],
+            ]);
+        }
+
+        return redirect()->route('delivery.index', ['type' => $request['type']])
+            ->with('success', 'Delivery updated successfully.');
+    }
 
 }
