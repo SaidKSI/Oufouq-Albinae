@@ -19,10 +19,7 @@ class Payment extends Model
         'type'
     ];
 
-    public function order()
-    {
-        return $this->belongsTo(Order::class);
-    }
+
     public function project()
     {
         return $this->belongsTo(Project::class);

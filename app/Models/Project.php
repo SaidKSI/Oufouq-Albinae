@@ -75,12 +75,12 @@ class Project extends Model
 
     public function getTotalEstimateAmount()
     {
-        return $this->estimate()->sum('total_price');
+        return $this->estimate()->sum('total_with_tax');
     }
 
     public function getTotalPaidAmount()
     {
-        return $this->payments()->sum('amount');
+        return $this->payments()->sum('paid_price');
     }
 
     public function getRemainingAmount()
@@ -92,4 +92,10 @@ class Project extends Model
     {
         return $amount <= $this->getRemainingAmount();
     }
+
+    public function transportationExpenses()
+    {
+        return $this->hasMany(TransportationExpenses::class);
+    }
+
 }

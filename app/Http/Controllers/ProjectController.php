@@ -106,25 +106,17 @@ class ProjectController extends Controller
 
     function show($id)
     {
-        $project = Project::find($id);
-        $expenses = Expense::select(
-            'ref',
-            DB::raw('MAX(id) as id'),
-            DB::raw('MAX(name) as name'),
-            DB::raw('MAX(total_amount) as total_amount'),
-            DB::raw('MAX(type) as type'),
-            DB::raw('MAX(amount) as amount'),
-            DB::raw('MAX(description) as description'),
-            DB::raw('MAX(start_date) as start_date'),
-            DB::raw('MAX(repeat_interval) as repeat_interval')
-        )
-            ->groupBy('ref')
-            ->where('project_id', $id)
-            ->get();
-        $projects = Project::all();
-        $employers = Employer::all();
-        $supplier = Supplier::all();
-        return view('project.show', ['project' => $project, 'expenses' => $expenses, 'projects' => $projects, 'employers' => $employers, 'suppliers' => $supplier]);
+        $project = Project::with([
+            'client',
+            'tasks',
+            'deliveries',
+            'deliveries.facture',
+            'expenses',
+            'transportationExpenses',
+            'payments'
+        ])->findOrFail($id);
+
+        return view('project.show', compact('project'));
     }
 
 
