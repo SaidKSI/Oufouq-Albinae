@@ -22,30 +22,41 @@ class ShiftController extends Controller
     }
     public function generateWeeklyShifts()
     {
-        $startDate = Carbon::now()->startOfYear()->startOfWeek(); // Start of the first week of the current year (Monday)
-        $endDate = $startDate->copy()->endOfWeek(); // End of the first week of the current year (Sunday)
-        $currentYear = $startDate->year;
+        // Get the last shift or use current date if no shifts exist
+        $lastShift = Shift::orderBy('date_end', 'desc')->first();
+        $startDate = $lastShift
+            ? Carbon::parse($lastShift->date_end)->addDay()->startOfWeek()
+            : Carbon::now()->startOfWeek();
 
-        // Check if shifts for the current year already exist
-        $existingShifts = Shift::whereYear('date_begin', $currentYear)->count();
+        $endDate = $startDate->copy()->endOfWeek();
+        $weeksToGenerate = 4;
+        $shiftsGenerated = 0;
 
-        if ($existingShifts > 0) {
-            return redirect()->back()->with('error', 'Shifts for the current year have already been generated.');
-        }
+        for ($i = 0; $i < $weeksToGenerate; $i++) {
+            // Check if a shift already exists for this week
+            $existingShift = Shift::where('date_begin', $startDate->toDateString())
+                ->where('date_end', $endDate->toDateString())
+                ->first();
 
-        while ($startDate->year == $currentYear) {
-            Shift::create([
-                'name' => $startDate->format('F') . '-Shift-' . $startDate->weekOfYear,
-                'date_begin' => $startDate->toDateString(),
-                'date_end' => $endDate->toDateString(),
-            ]);
+            if (!$existingShift) {
+                Shift::create([
+                    'name' => $startDate->format('F') . '-Shift-' . $startDate->weekOfYear,
+                    'date_begin' => $startDate->toDateString(),
+                    'date_end' => $endDate->toDateString(),
+                ]);
+                $shiftsGenerated++;
+            }
 
             // Move to the next week
             $startDate->addWeek();
             $endDate->addWeek();
         }
 
-        return redirect()->back()->with('success', 'Weekly shifts for the current year generated successfully.');
+        if ($shiftsGenerated > 0) {
+            return redirect()->back()->with('success', $shiftsGenerated . ' new shifts generated successfully.');
+        } else {
+            return redirect()->back()->with('info', 'No new shifts were needed. Shifts already exist for the next 4 weeks.');
+        }
     }
     public function assignUsers(Request $request)
     {
